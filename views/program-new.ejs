@@ -19,7 +19,7 @@
     <label>Maks. peserta <input type="number" name="max_participants" min="1"></label>
     <label>Mulai <input type="datetime-local" name="start_at" required></label>
     <label>Selesai <input type="datetime-local" name="end_at"></label>
-    <label>Hadiah Benih per peserta <input type="number" name="benih_reward" min="0" value="0"></label>
+    <label>Target donasi (Benih, opsional) <input type="number" name="benih_target" min="1"></label>
     <div class="full">
       <div id="picker-map" class="map small" data-maps-key="<%= mapsKey %>">
         <% if (!mapsKey) { %><p class="muted">Peta nonaktif. Isi koordinat secara manual.</p><% } %>

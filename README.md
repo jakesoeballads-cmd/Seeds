@@ -2,6 +2,14 @@
 
 Platform kegiatan pelestarian lingkungan. Member membuat kegiatan (reforestasi, mangrove, bersih pantai, dll.) yang tampil di peta, member lain bisa mengikutinya, dan **Benih** adalah mata uang di platform ini yang dibeli lewat payment gateway.
 
+## Model Benih
+
+- **1 Benih = Rp2.000** (`BENIH_PRICE_IDR`).
+- Member membeli Benih lewat Midtrans. Benih ini masuk ke `benih_balance` dan dipakai untuk **berdonasi** ke kegiatan member lain.
+- Donasi berpindah ke `benih_earned` milik penyelenggara kegiatan, dan tercatat di `programs.benih_collected`. Penyelenggara tidak bisa berdonasi ke kegiatannya sendiri.
+- Hanya `benih_earned` (hasil donasi) yang bisa **ditarik** ke rekening. Penarikan dipotong **2,5%** untuk pengembangan platform (`WITHDRAWAL_FEE_PERCENT`). Contoh: 100 Benih = Rp200.000, potongan Rp5.000, diterima Rp195.000.
+- Pengajuan penarikan langsung mengurangi saldo dan berstatus `pending`; admin mentransfer lalu menandai `paid`, atau memanggil `reject_withdrawal` yang mengembalikan saldo.
+
 Stack: Node.js + Express, EJS, Supabase (database + auth), Google Maps JavaScript API, Midtrans Snap.
 
 ## Struktur folder
@@ -19,10 +27,12 @@ Stack: Node.js + Express, EJS, Supabase (database + auth), Google Maps JavaScrip
 │   │   ├── auth.js           # /register, /login, /logout
 │   │   ├── pages.js          # Halaman: beranda, buat kegiatan, beli Benih
 │   │   ├── programs.js       # API /api/programs
-│   │   └── payments.js       # API /api/payments (checkout, webhook, riwayat)
+│   │   ├── payments.js       # API /api/payments (checkout, webhook, riwayat)
+│   │   └── wallet.js         # API /api/wallet (saldo, penarikan)
 │   └── services/
 │       ├── midtrans.js       # Snap API, verifikasi signature, pemetaan status
-│       └── benih.js          # Logika pembelian & pencatatan pembayaran
+│       ├── benih.js          # Logika pembelian & pencatatan pembayaran
+│       └── wallet.js         # Perhitungan potongan penarikan
 ├── views/                    # Template EJS
 ├── public/                   # CSS & JavaScript browser
 ├── supabase/schema.sql       # Tabel, fungsi SQL, dan RLS
@@ -46,6 +56,11 @@ Tanpa `MIDTRANS_SERVER_KEY`, pembayaran berjalan dalam **mode simulasi**: setela
 | GET | `/api/programs/:id` | Detail program |
 | POST | `/api/programs` | Buat kegiatan (login) |
 | POST | `/api/programs/:id/join` | Ikuti kegiatan (login) |
+| POST | `/api/programs/:id/donate` | Donasi Benih, body `{ "benih_amount": 10, "message": "..." }` (login) |
+| GET | `/api/wallet` | Saldo Benih dan hasil donasi (login) |
+| POST | `/api/wallet/withdrawals` | Ajukan penarikan, body `{ benih_amount, bank_name, bank_account_number, bank_account_name }` (login) |
+| GET | `/api/wallet/withdrawals` | Riwayat penarikan (login) |
+| GET | `/api/wallet/withdrawals/preview?benih_amount=` | Rincian potongan penarikan (login) |
 | POST | `/api/payments/checkout` | Beli Benih, body `{ "benih_amount": 50 }` (login) |
 | POST | `/api/payments/notification` | Webhook Midtrans |
 | POST | `/api/payments/simulate/:orderId` | Simulasi hasil bayar, hanya mode simulasi (login) |

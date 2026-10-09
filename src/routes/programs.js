@@ -1,6 +1,7 @@
 const express = require('express');
 const { supabase, supabaseAdmin } = require('../config/supabase');
 const { requireAuth, requireDatabase } = require('../middleware/auth');
+const { parseBenihAmount } = require('../services/benih');
 
 const router = express.Router();
 router.use(requireDatabase);
@@ -36,7 +37,7 @@ router.get('/', async (req, res, next) => {
 
     const { data, error } = await supabase
       .from('programs')
-      .select('id, title, description, category, location_name, lat, lng, start_at, end_at, benih_reward, max_participants')
+      .select('id, title, description, category, location_name, lat, lng, start_at, end_at, benih_target, benih_collected, max_participants')
       .gte('start_at', new Date().toISOString())
       .order('start_at', { ascending: true })
       .limit(100);
@@ -90,7 +91,7 @@ router.post('/', requireAuth, async (req, res, next) => {
       start_at: startAt.toISOString(),
       end_at: endAt ? endAt.toISOString() : null,
       max_participants: b.max_participants ? Number(b.max_participants) : null,
-      benih_reward: b.benih_reward ? Number(b.benih_reward) : 0,
+      benih_target: b.benih_target ? Number(b.benih_target) : null,
     };
 
     const { data, error } = await supabaseAdmin.from('programs').insert(row).select().single();
@@ -113,6 +114,29 @@ router.post('/:id/join', requireAuth, async (req, res, next) => {
       throw error;
     }
     res.status(201).json({ participant: data });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Member lain mendonasikan Benih ke kegiatan. Benih masuk ke saldo hasil
+// donasi penyelenggara, yang bisa ditarik ke rekening.
+router.post('/:id/donate', requireAuth, async (req, res, next) => {
+  try {
+    const amount = parseBenihAmount(req.body.benih_amount);
+    const message = req.body.message ? String(req.body.message).slice(0, 280) : null;
+    const { data, error } = await supabaseAdmin.rpc('donate_benih', {
+      p_program_id: req.params.id,
+      p_donor_id: req.user.id,
+      p_amount: amount,
+      p_message: message,
+    });
+    if (error) {
+      if (error.code === 'P0001') throw badRequest(error.message);
+      if (error.code === '22P02') return res.status(404).json({ error: 'Program tidak ditemukan.' });
+      throw error;
+    }
+    res.status(201).json({ donation: data });
   } catch (err) {
     next(err);
   }

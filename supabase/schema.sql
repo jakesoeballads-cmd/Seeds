@@ -10,7 +10,10 @@ create table if not exists public.profiles (
   id            uuid primary key references auth.users (id) on delete cascade,
   full_name     text not null default '',
   role          text not null default 'member' check (role in ('member', 'admin')),
+  -- Benih hasil pembelian: dipakai untuk berdonasi, tidak bisa ditarik.
   benih_balance bigint not null default 0 check (benih_balance >= 0),
+  -- Benih yang terkumpul dari donasi ke kegiatan milik pengguna: bisa ditarik.
+  benih_earned  bigint not null default 0 check (benih_earned >= 0),
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );
@@ -48,7 +51,8 @@ create table if not exists public.programs (
   start_at         timestamptz not null,
   end_at           timestamptz,
   max_participants integer check (max_participants is null or max_participants > 0),
-  benih_reward     integer not null default 0 check (benih_reward >= 0),
+  benih_target     integer check (benih_target is null or benih_target > 0),
+  benih_collected  bigint not null default 0 check (benih_collected >= 0),
   status           text not null default 'published' check (status in ('draft', 'published', 'cancelled', 'done')),
   created_at       timestamptz not null default now()
 );
@@ -69,13 +73,13 @@ create or replace function public.nearby_programs(p_lat double precision, p_lng 
 returns table (
   id uuid, title text, description text, category text, location_name text,
   lat double precision, lng double precision, start_at timestamptz, end_at timestamptz,
-  benih_reward integer, max_participants integer, distance_km double precision
+  benih_target integer, benih_collected bigint, max_participants integer, distance_km double precision
 )
 language sql stable
 as $$
   select * from (
     select p.id, p.title, p.description, p.category, p.location_name,
-           p.lat, p.lng, p.start_at, p.end_at, p.benih_reward, p.max_participants,
+           p.lat, p.lng, p.start_at, p.end_at, p.benih_target, p.benih_collected, p.max_participants,
            6371 * 2 * asin(sqrt(
              power(sin(radians(p.lat - p_lat) / 2), 2) +
              cos(radians(p_lat)) * cos(radians(p.lat)) *
@@ -191,9 +195,164 @@ begin
 end;
 $$;
 
+-- ---------------------------------------------------------------------------
+-- Donasi Benih ke kegiatan
+-- Benih berpindah dari benih_balance donatur ke benih_earned penyelenggara.
+-- ---------------------------------------------------------------------------
+create table if not exists public.donations (
+  id           uuid primary key default gen_random_uuid(),
+  program_id   uuid not null references public.programs (id) on delete restrict,
+  donor_id     uuid not null references public.profiles (id) on delete restrict,
+  organizer_id uuid not null references public.profiles (id) on delete restrict,
+  benih_amount integer not null check (benih_amount > 0),
+  message      text check (message is null or char_length(message) <= 280),
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists donations_program_id_idx on public.donations (program_id, created_at desc);
+create index if not exists donations_donor_id_idx on public.donations (donor_id, created_at desc);
+
+create or replace function public.donate_benih(
+  p_program_id uuid, p_donor_id uuid, p_amount integer, p_message text default null
+)
+returns public.donations
+language plpgsql
+security definer set search_path = public
+as $$
+declare
+  v_program public.programs;
+  v_row     public.donations;
+begin
+  if p_amount is null or p_amount <= 0 then
+    raise exception 'Jumlah donasi harus lebih dari 0.';
+  end if;
+
+  select * into v_program from public.programs where id = p_program_id for update;
+  if not found or v_program.status <> 'published' then
+    raise exception 'Program tidak tersedia.';
+  end if;
+  if v_program.organizer_id = p_donor_id then
+    raise exception 'Tidak bisa berdonasi ke kegiatan sendiri.';
+  end if;
+
+  update public.profiles
+     set benih_balance = benih_balance - p_amount, updated_at = now()
+   where id = p_donor_id and benih_balance >= p_amount;
+  if not found then
+    raise exception 'Saldo Benih tidak cukup.';
+  end if;
+
+  update public.profiles
+     set benih_earned = benih_earned + p_amount, updated_at = now()
+   where id = v_program.organizer_id;
+
+  update public.programs
+     set benih_collected = benih_collected + p_amount
+   where id = p_program_id;
+
+  insert into public.donations (program_id, donor_id, organizer_id, benih_amount, message)
+  values (p_program_id, p_donor_id, v_program.organizer_id, p_amount, nullif(trim(p_message), ''))
+  returning * into v_row;
+  return v_row;
+end;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- Penarikan saldo (Benih hasil donasi -> Rupiah)
+-- Potongan platform dihitung saat pengajuan dan disimpan per baris, sehingga
+-- perubahan tarif di kemudian hari tidak mengubah riwayat.
+-- Pencairan ke rekening dilakukan admin (status pending -> paid / rejected).
+-- ---------------------------------------------------------------------------
+create table if not exists public.withdrawals (
+  id                  uuid primary key default gen_random_uuid(),
+  user_id             uuid not null references public.profiles (id) on delete restrict,
+  benih_amount        integer not null check (benih_amount > 0),
+  price_idr           integer not null check (price_idr > 0),   -- harga 1 Benih saat pengajuan
+  gross_idr           bigint not null,                           -- benih_amount * price_idr
+  fee_bps             integer not null check (fee_bps between 0 and 10000),
+  fee_idr             bigint not null,                           -- potongan pengembangan platform
+  net_idr             bigint not null check (net_idr > 0),       -- yang ditransfer ke pengguna
+  bank_name           text not null,
+  bank_account_number text not null,
+  bank_account_name   text not null,
+  status              text not null default 'pending' check (status in ('pending', 'paid', 'rejected')),
+  admin_note          text,
+  processed_at        timestamptz,
+  created_at          timestamptz not null default now(),
+  check (gross_idr = fee_idr + net_idr)
+);
+
+create index if not exists withdrawals_user_id_idx on public.withdrawals (user_id, created_at desc);
+
+create or replace function public.request_withdrawal(
+  p_user_id uuid, p_amount integer, p_price_idr integer, p_fee_bps integer,
+  p_bank_name text, p_bank_account_number text, p_bank_account_name text
+)
+returns public.withdrawals
+language plpgsql
+security definer set search_path = public
+as $$
+declare
+  v_gross bigint;
+  v_fee   bigint;
+  v_row   public.withdrawals;
+begin
+  if p_amount is null or p_amount <= 0 then
+    raise exception 'Jumlah penarikan harus lebih dari 0.';
+  end if;
+
+  update public.profiles
+     set benih_earned = benih_earned - p_amount, updated_at = now()
+   where id = p_user_id and benih_earned >= p_amount;
+  if not found then
+    raise exception 'Saldo hasil donasi tidak cukup.';
+  end if;
+
+  v_gross := p_amount::bigint * p_price_idr;
+  v_fee   := round(v_gross * p_fee_bps / 10000.0);
+
+  insert into public.withdrawals (
+    user_id, benih_amount, price_idr, gross_idr, fee_bps, fee_idr, net_idr,
+    bank_name, bank_account_number, bank_account_name
+  ) values (
+    p_user_id, p_amount, p_price_idr, v_gross, p_fee_bps, v_fee, v_gross - v_fee,
+    p_bank_name, p_bank_account_number, p_bank_account_name
+  )
+  returning * into v_row;
+  return v_row;
+end;
+$$;
+
+-- Admin menolak penarikan: saldo dikembalikan ke pengguna.
+create or replace function public.reject_withdrawal(p_withdrawal_id uuid, p_note text default null)
+returns public.withdrawals
+language plpgsql
+security definer set search_path = public
+as $$
+declare
+  v_row public.withdrawals;
+begin
+  update public.withdrawals
+     set status = 'rejected', admin_note = p_note, processed_at = now()
+   where id = p_withdrawal_id and status = 'pending'
+  returning * into v_row;
+  if not found then
+    raise exception 'Penarikan tidak ditemukan atau sudah diproses.';
+  end if;
+
+  update public.profiles
+     set benih_earned = benih_earned + v_row.benih_amount, updated_at = now()
+   where id = v_row.user_id;
+  return v_row;
+end;
+$$;
+
 -- Fungsi yang mengubah saldo hanya boleh dipanggil server (service role).
 revoke execute on function public.settle_transaction(text, text, text, jsonb) from public, anon, authenticated;
 revoke execute on function public.join_program(uuid, uuid) from public, anon, authenticated;
+revoke execute on function public.donate_benih(uuid, uuid, integer, text) from public, anon, authenticated;
+revoke execute on function public.request_withdrawal(uuid, integer, integer, integer, text, text, text) from public, anon, authenticated;
+revoke execute on function public.reject_withdrawal(uuid, text) from public, anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Row Level Security
@@ -204,6 +363,8 @@ alter table public.profiles enable row level security;
 alter table public.programs enable row level security;
 alter table public.program_participants enable row level security;
 alter table public.transactions enable row level security;
+alter table public.donations enable row level security;
+alter table public.withdrawals enable row level security;
 
 drop policy if exists "pengguna melihat profil sendiri" on public.profiles;
 create policy "pengguna melihat profil sendiri" on public.profiles
@@ -219,4 +380,12 @@ create policy "peserta melihat keikutsertaan sendiri" on public.program_particip
 
 drop policy if exists "pengguna melihat transaksi sendiri" on public.transactions;
 create policy "pengguna melihat transaksi sendiri" on public.transactions
+  for select using (auth.uid() = user_id);
+
+drop policy if exists "donatur dan penyelenggara melihat donasi" on public.donations;
+create policy "donatur dan penyelenggara melihat donasi" on public.donations
+  for select using (auth.uid() = donor_id or auth.uid() = organizer_id);
+
+drop policy if exists "pengguna melihat penarikan sendiri" on public.withdrawals;
+create policy "pengguna melihat penarikan sendiri" on public.withdrawals
   for select using (auth.uid() = user_id);

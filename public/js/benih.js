@@ -62,4 +62,58 @@
 
   updateTotal();
   loadHistory();
+
+  // Penarikan hasil donasi.
+  const wForm = document.getElementById('withdraw-form');
+  const wBreakdown = document.getElementById('withdraw-breakdown');
+  const wMessage = document.getElementById('withdraw-message');
+  const wList = document.getElementById('withdrawals');
+  const wPrice = Number(wForm.dataset.price);
+  const feeBps = Number(wForm.dataset.feeBps);
+  const wStatus = { pending: 'Diproses', paid: 'Dicairkan', rejected: 'Ditolak' };
+
+  function updateBreakdown() {
+    const amount = Number(wForm.benih_amount.value) || 0;
+    const gross = amount * wPrice;
+    const fee = Math.round((gross * feeBps) / 10000);
+    wBreakdown.textContent = amount
+      ? `Nilai ${rupiah(gross)} − potongan ${rupiah(fee)} = diterima ${rupiah(gross - fee)}`
+      : '';
+  }
+
+  async function loadWithdrawals() {
+    const res = await fetch('/api/wallet/withdrawals');
+    const data = await res.json();
+    if (!res.ok) {
+      wList.innerHTML = '<li class="muted"></li>';
+      wList.firstChild.textContent = data.error;
+      return;
+    }
+    wList.innerHTML = data.withdrawals.length ? '' : '<li class="muted">Belum ada penarikan.</li>';
+    data.withdrawals.forEach((w) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${w.benih_amount} Benih · diterima ${rupiah(w.net_idr)} (potongan ${rupiah(w.fee_idr)})</span>
+        <span class="badge ${w.status}">${wStatus[w.status] || w.status}</span>`;
+      wList.appendChild(li);
+    });
+  }
+
+  wForm.benih_amount.addEventListener('input', updateBreakdown);
+  wForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const res = await fetch('/api/wallet/withdrawals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.fromEntries(new FormData(wForm))),
+    });
+    const data = await res.json();
+    wMessage.hidden = false;
+    wMessage.className = `alert ${res.ok ? 'success' : 'error'}`;
+    wMessage.textContent = res.ok
+      ? `Penarikan diajukan. ${rupiah(data.withdrawal.net_idr)} akan ditransfer setelah diverifikasi.`
+      : data.error;
+    if (res.ok) setTimeout(() => window.location.reload(), 1500);
+  });
+
+  loadWithdrawals();
 })();

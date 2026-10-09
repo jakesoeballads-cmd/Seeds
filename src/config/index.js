@@ -19,7 +19,9 @@ const config = {
     clientKey: process.env.MIDTRANS_CLIENT_KEY || '',
   },
 
-  benihPriceIdr: Number(process.env.BENIH_PRICE_IDR) || 1000,
+  benihPriceIdr: Number(process.env.BENIH_PRICE_IDR) || 2000,
+  // Potongan penarikan saldo untuk pengembangan platform, dalam basis poin (250 = 2,5%).
+  withdrawalFeeBps: Math.round((Number(process.env.WITHDRAWAL_FEE_PERCENT) || 2.5) * 100),
 };
 
 config.isProduction = config.env === 'production';

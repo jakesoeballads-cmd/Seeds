@@ -28,6 +28,31 @@
     button.textContent = res.ok ? 'Terdaftar ✓' : data.error;
   }
 
+  async function donate(id, button) {
+    if (!window.BENIH.loggedIn) {
+      window.location.href = '/login?next=/';
+      return;
+    }
+    const amount = Number(window.prompt('Berapa Benih yang ingin kamu donasikan?', '10'));
+    if (!Number.isInteger(amount) || amount < 1) return;
+    button.disabled = true;
+    const res = await fetch(`/api/programs/${id}/donate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ benih_amount: amount }),
+    });
+    const data = await res.json();
+    button.disabled = false;
+    if (res.ok) {
+      window.alert(`Terima kasih! ${amount} Benih terkirim.`);
+      load();
+    } else if (res.status === 400 && /tidak cukup/.test(data.error)) {
+      if (window.confirm(`${data.error} Beli Benih sekarang?`)) window.location.href = '/benih';
+    } else {
+      window.alert(data.error);
+    }
+  }
+
   function render(programs) {
     markers.forEach((m) => m.setMap(null));
     markers = [];
@@ -42,9 +67,14 @@
       li.innerHTML = `
         <h3>${escapeHtml(p.title)}</h3>
         <p class="muted">${escapeHtml(p.location_name || '')} · ${p.distance_km.toFixed(1)} km</p>
-        <p class="muted">${formatDate(p.start_at)}${p.benih_reward ? ` · 🌱 ${p.benih_reward} Benih` : ''}</p>
-        <button class="btn small">Ikuti</button>`;
-      li.querySelector('button').addEventListener('click', (e) => joinProgram(p.id, e.currentTarget));
+        <p class="muted">${formatDate(p.start_at)}</p>
+        <p class="muted">🌱 ${p.benih_collected} ${p.benih_target ? `/ ${p.benih_target} ` : ''}Benih terkumpul</p>
+        <div class="actions">
+          <button class="btn small" data-action="join">Ikuti</button>
+          <button class="btn small secondary" data-action="donate">Donasi Benih</button>
+        </div>`;
+      li.querySelector('[data-action="join"]').addEventListener('click', (e) => joinProgram(p.id, e.currentTarget));
+      li.querySelector('[data-action="donate"]').addEventListener('click', (e) => donate(p.id, e.currentTarget));
       listEl.appendChild(li);
 
       if (map) {

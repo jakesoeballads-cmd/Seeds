@@ -22,6 +22,7 @@ app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/pages'));
 app.use('/api/programs', require('./routes/programs'));
 app.use('/api/payments', require('./routes/payments'));
+app.use('/api/wallet', require('./routes/wallet'));
 
 app.use((req, res) => {
   if (req.originalUrl.startsWith('/api/')) return res.status(404).json({ error: 'Tidak ditemukan.' });

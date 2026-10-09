@@ -16,18 +16,23 @@ router.get('/program/baru', requireAuth, (req, res) => {
 router.get('/benih', requireAuth, async (req, res, next) => {
   try {
     let balance = 0;
+    let earned = 0;
     if (isConfigured) {
       const { data } = await supabaseAdmin
         .from('profiles')
-        .select('benih_balance')
+        .select('benih_balance, benih_earned')
         .eq('id', req.user.id)
         .maybeSingle();
       balance = data ? data.benih_balance : 0;
+      earned = data ? data.benih_earned : 0;
     }
     res.render('benih', {
       title: 'Beli Benih',
       balance,
+      earned,
       price: config.benihPriceIdr,
+      feePercent: config.withdrawalFeeBps / 100,
+      feeBps: config.withdrawalFeeBps,
       simulated: config.midtrans.simulated,
       clientKey: config.midtrans.clientKey,
       snapJsUrl: config.midtrans.isProduction

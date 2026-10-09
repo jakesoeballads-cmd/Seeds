@@ -36,3 +36,9 @@ test('parseBenihAmount memvalidasi jumlah', () => {
   assert.throws(() => parseBenihAmount(1.5));
   assert.throws(() => parseBenihAmount('abc'));
 });
+
+test('calcWithdrawal memotong 2,5% dari nilai Rp2.000 per Benih', () => {
+  const { calcWithdrawal } = require('../src/services/wallet');
+  assert.deepStrictEqual(calcWithdrawal(100, 2000, 250), { grossIdr: 200000, feeIdr: 5000, netIdr: 195000 });
+  assert.deepStrictEqual(calcWithdrawal(1, 2000, 250), { grossIdr: 2000, feeIdr: 50, netIdr: 1950 });
+});
