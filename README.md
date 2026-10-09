@@ -5,9 +5,11 @@ Platform kegiatan pelestarian lingkungan. Member membuat kegiatan (reforestasi, 
 ## Model Benih
 
 - **1 Benih = Rp2.000** (`BENIH_PRICE_IDR`).
-- Member membeli Benih lewat Midtrans. Benih ini masuk ke `benih_balance` dan dipakai untuk **berdonasi** ke kegiatan member lain.
-- Donasi berpindah ke `benih_earned` milik penyelenggara kegiatan, dan tercatat di `programs.benih_collected`. Penyelenggara tidak bisa berdonasi ke kegiatannya sendiri.
-- Hanya `benih_earned` (hasil donasi) yang bisa **ditarik** ke rekening. Penarikan dipotong **2,5%** untuk pengembangan platform (`WITHDRAWAL_FEE_PERCENT`). Contoh: 100 Benih = Rp200.000, potongan Rp5.000, diterima Rp195.000.
+- Member membeli Benih lewat Midtrans. Benih masuk ke `benih_balance` dan bisa dipakai untuk **berdonasi** ke kegiatan member lain.
+- Donasi berpindah ke `benih_balance` penyelenggara kegiatan, tercatat di `programs.benih_collected` (Benih yang didapat per event) dan menambah `profiles.benih_donated` donatur. Penyelenggara tidak bisa berdonasi ke kegiatannya sendiri.
+- Seluruh `benih_balance` (hasil beli maupun donasi) bisa **ditarik** ke rekening. Penarikan dipotong **2,5%** untuk pengembangan platform (`WITHDRAWAL_FEE_PERCENT`). Contoh: 100 Benih = Rp200.000, potongan Rp5.000, diterima Rp195.000.
+- **Badge donatur** ditentukan dari total Benih yang disumbangkan (`src/services/badges.js`): 🌰 Penabur Benih (≥1), 🌱 Tunas (≥50), 🌿 Pohon Muda (≥250), 🌳 Pohon Rindang (≥1.000), 🏞️ Penjaga Hutan (≥5.000).
+- **Dashboard** (`/dashboard`) menampilkan Benih yang dimiliki, Benih yang disumbangkan beserta badge, dan Benih yang didapat dari setiap event yang diadakan.
 - Pengajuan penarikan langsung mengurangi saldo dan berstatus `pending`; admin mentransfer lalu menandai `paid`, atau memanggil `reject_withdrawal` yang mengembalikan saldo.
 
 Stack: Node.js + Express, EJS, Supabase (database + auth), Google Maps JavaScript API, Midtrans Snap.
@@ -32,7 +34,8 @@ Stack: Node.js + Express, EJS, Supabase (database + auth), Google Maps JavaScrip
 │   └── services/
 │       ├── midtrans.js       # Snap API, verifikasi signature, pemetaan status
 │       ├── benih.js          # Logika pembelian & pencatatan pembayaran
-│       └── wallet.js         # Perhitungan potongan penarikan
+│       ├── wallet.js         # Data dashboard & perhitungan potongan penarikan
+│       └── badges.js         # Tingkatan badge donatur
 ├── views/                    # Template EJS
 ├── public/                   # CSS & JavaScript browser
 ├── supabase/schema.sql       # Tabel, fungsi SQL, dan RLS
@@ -57,7 +60,7 @@ Tanpa `MIDTRANS_SERVER_KEY`, pembayaran berjalan dalam **mode simulasi**: setela
 | POST | `/api/programs` | Buat kegiatan (login) |
 | POST | `/api/programs/:id/join` | Ikuti kegiatan (login) |
 | POST | `/api/programs/:id/donate` | Donasi Benih, body `{ "benih_amount": 10, "message": "..." }` (login) |
-| GET | `/api/wallet` | Saldo Benih dan hasil donasi (login) |
+| GET | `/api/wallet` | Data dashboard: saldo, total donasi + badge, Benih per event (login) |
 | POST | `/api/wallet/withdrawals` | Ajukan penarikan, body `{ benih_amount, bank_name, bank_account_number, bank_account_name }` (login) |
 | GET | `/api/wallet/withdrawals` | Riwayat penarikan (login) |
 | GET | `/api/wallet/withdrawals/preview?benih_amount=` | Rincian potongan penarikan (login) |

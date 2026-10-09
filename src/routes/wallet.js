@@ -3,7 +3,7 @@ const config = require('../config');
 const { supabaseAdmin } = require('../config/supabase');
 const { requireAuth, requireDatabase } = require('../middleware/auth');
 const { parseBenihAmount } = require('../services/benih');
-const { calcWithdrawal } = require('../services/wallet');
+const { calcWithdrawal, getDashboard } = require('../services/wallet');
 
 const router = express.Router();
 router.use(requireDatabase, requireAuth);
@@ -12,20 +12,15 @@ function badRequest(message) {
   return Object.assign(new Error(message), { status: 400 });
 }
 
-// GET /api/wallet  Saldo Benih (untuk donasi) dan hasil donasi (bisa ditarik).
+// GET /api/wallet  Data dashboard: saldo, total donasi + badge, dan Benih
+// yang terkumpul per kegiatan yang diadakan pengguna.
 router.get('/', async (req, res, next) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('profiles')
-      .select('benih_balance, benih_earned')
-      .eq('id', req.user.id)
-      .maybeSingle();
-    if (error) throw error;
+    const dashboard = await getDashboard(req.user.id);
     res.json({
-      benih_balance: data ? data.benih_balance : 0,
-      benih_earned: data ? data.benih_earned : 0,
-      price_idr: config.benihPriceIdr,
-      withdrawal_fee_percent: config.withdrawalFeeBps / 100,
+      ...dashboard,
+      priceIdr: config.benihPriceIdr,
+      withdrawalFeePercent: config.withdrawalFeeBps / 100,
     });
   } catch (err) {
     next(err);
@@ -34,7 +29,8 @@ router.get('/', async (req, res, next) => {
 
 // POST /api/wallet/withdrawals
 // { "benih_amount": 100, "bank_name": "BCA", "bank_account_number": "123", "bank_account_name": "Nama" }
-// Menarik Benih hasil donasi ke rekening, dipotong biaya pengembangan platform.
+// Menarik Benih (hasil beli maupun donasi) ke rekening, dipotong biaya
+// pengembangan platform.
 router.post('/withdrawals', async (req, res, next) => {
   try {
     const amount = parseBenihAmount(req.body.benih_amount);

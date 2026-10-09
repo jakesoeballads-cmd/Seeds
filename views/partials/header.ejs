@@ -11,8 +11,9 @@
     <a href="/" class="brand">🌱 Benih</a>
     <nav>
       <% if (user) { %>
+        <a href="/dashboard">Dashboard</a>
         <a href="/program/baru">Buat Kegiatan</a>
-        <a href="/benih">Beli Benih</a>
+        <a href="/benih">Beli & Tarik</a>
         <form action="/logout" method="post" class="inline">
           <button type="submit" class="link">Keluar</button>
         </form>

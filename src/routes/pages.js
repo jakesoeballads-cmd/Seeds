@@ -2,6 +2,8 @@ const express = require('express');
 const config = require('../config');
 const { supabaseAdmin, isConfigured } = require('../config/supabase');
 const { requireAuth } = require('../middleware/auth');
+const { getDashboard } = require('../services/wallet');
+const { DONOR_BADGES } = require('../services/badges');
 
 const router = express.Router();
 
@@ -16,20 +18,17 @@ router.get('/program/baru', requireAuth, (req, res) => {
 router.get('/benih', requireAuth, async (req, res, next) => {
   try {
     let balance = 0;
-    let earned = 0;
     if (isConfigured) {
       const { data } = await supabaseAdmin
         .from('profiles')
-        .select('benih_balance, benih_earned')
+        .select('benih_balance')
         .eq('id', req.user.id)
         .maybeSingle();
       balance = data ? data.benih_balance : 0;
-      earned = data ? data.benih_earned : 0;
     }
     res.render('benih', {
-      title: 'Beli Benih',
+      title: 'Beli & Tarik Benih',
       balance,
-      earned,
       price: config.benihPriceIdr,
       feePercent: config.withdrawalFeeBps / 100,
       feeBps: config.withdrawalFeeBps,
@@ -38,6 +37,26 @@ router.get('/benih', requireAuth, async (req, res, next) => {
       snapJsUrl: config.midtrans.isProduction
         ? 'https://app.midtrans.com/snap/snap.js'
         : 'https://app.sandbox.midtrans.com/snap/snap.js',
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/dashboard', requireAuth, async (req, res, next) => {
+  try {
+    if (!isConfigured) {
+      return res.status(503).render('error', {
+        title: 'Dashboard',
+        message: 'Database belum dikonfigurasi. Isi variabel SUPABASE_* di .env.',
+      });
+    }
+    const dashboard = await getDashboard(req.user.id);
+    res.render('dashboard', {
+      title: 'Dashboard',
+      ...dashboard,
+      price: config.benihPriceIdr,
+      badges: DONOR_BADGES,
     });
   } catch (err) {
     next(err);

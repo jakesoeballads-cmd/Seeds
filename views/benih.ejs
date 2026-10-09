@@ -1,8 +1,9 @@
 <%- include('partials/header') %>
 <section class="card narrow">
-  <h1>Beli Benih</h1>
-  <p class="balance">Saldo Benih: <strong><%= balance %></strong> Benih</p>
-  <p class="muted">Saldo ini dipakai untuk berdonasi ke kegiatan member lain.</p>
+  <h1>Beli & Tarik Benih</h1>
+  <p class="balance">Saldo Benih: <strong><%= balance %></strong> Benih
+    (Rp<%= (balance * price).toLocaleString('id-ID') %>)</p>
+  <p class="muted">Saldo bisa didonasikan ke kegiatan member lain atau ditarik ke rekening.</p>
   <% if (simulated) { %>
     <p class="alert info">Mode simulasi aktif: pembayaran tidak benar-benar diproses.</p>
   <% } %>
@@ -15,17 +16,15 @@
 </section>
 
 <section class="card narrow">
-  <h2>Tarik hasil donasi</h2>
-  <p class="balance">Terkumpul dari donasi: <strong><%= earned %></strong> Benih
-    (Rp<%= (earned * price).toLocaleString('id-ID') %>)</p>
+  <h2>Tarik saldo</h2>
   <p class="muted">Penarikan dipotong <%= feePercent.toLocaleString('id-ID') %>% untuk pengembangan platform.</p>
   <form id="withdraw-form" data-price="<%= price %>" data-fee-bps="<%= feeBps %>">
-    <label>Jumlah Benih <input type="number" name="benih_amount" min="1" max="<%= earned %>" required <%= earned < 1 ? 'disabled' : '' %>></label>
+    <label>Jumlah Benih <input type="number" name="benih_amount" min="1" max="<%= balance %>" required <%= balance < 1 ? 'disabled' : '' %>></label>
     <label>Nama bank <input type="text" name="bank_name" placeholder="cth. BCA" required></label>
     <label>Nomor rekening <input type="text" name="bank_account_number" inputmode="numeric" required></label>
     <label>Nama pemilik rekening <input type="text" name="bank_account_name" required></label>
     <p class="muted" id="withdraw-breakdown"></p>
-    <button type="submit" class="btn" <%= earned < 1 ? 'disabled' : '' %>>Ajukan penarikan</button>
+    <button type="submit" class="btn" <%= balance < 1 ? 'disabled' : '' %>>Ajukan penarikan</button>
   </form>
   <p id="withdraw-message" class="alert" hidden></p>
   <h3>Riwayat penarikan</h3>

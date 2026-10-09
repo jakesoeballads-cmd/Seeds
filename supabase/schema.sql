@@ -10,10 +10,10 @@ create table if not exists public.profiles (
   id            uuid primary key references auth.users (id) on delete cascade,
   full_name     text not null default '',
   role          text not null default 'member' check (role in ('member', 'admin')),
-  -- Benih hasil pembelian: dipakai untuk berdonasi, tidak bisa ditarik.
+  -- Saldo Benih: hasil pembelian + donasi yang diterima. Bisa didonasikan atau ditarik.
   benih_balance bigint not null default 0 check (benih_balance >= 0),
-  -- Benih yang terkumpul dari donasi ke kegiatan milik pengguna: bisa ditarik.
-  benih_earned  bigint not null default 0 check (benih_earned >= 0),
+  -- Total Benih yang pernah disumbangkan pengguna (dasar badge donatur).
+  benih_donated bigint not null default 0 check (benih_donated >= 0),
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );
@@ -197,7 +197,7 @@ $$;
 
 -- ---------------------------------------------------------------------------
 -- Donasi Benih ke kegiatan
--- Benih berpindah dari benih_balance donatur ke benih_earned penyelenggara.
+-- Benih berpindah dari saldo donatur ke saldo penyelenggara.
 -- ---------------------------------------------------------------------------
 create table if not exists public.donations (
   id           uuid primary key default gen_random_uuid(),
@@ -236,14 +236,16 @@ begin
   end if;
 
   update public.profiles
-     set benih_balance = benih_balance - p_amount, updated_at = now()
+     set benih_balance = benih_balance - p_amount,
+         benih_donated = benih_donated + p_amount,
+         updated_at = now()
    where id = p_donor_id and benih_balance >= p_amount;
   if not found then
     raise exception 'Saldo Benih tidak cukup.';
   end if;
 
   update public.profiles
-     set benih_earned = benih_earned + p_amount, updated_at = now()
+     set benih_balance = benih_balance + p_amount, updated_at = now()
    where id = v_program.organizer_id;
 
   update public.programs
@@ -258,7 +260,7 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------------
--- Penarikan saldo (Benih hasil donasi -> Rupiah)
+-- Penarikan saldo (Benih -> Rupiah), baik Benih hasil beli maupun hasil donasi
 -- Potongan platform dihitung saat pengajuan dan disimpan per baris, sehingga
 -- perubahan tarif di kemudian hari tidak mengubah riwayat.
 -- Pencairan ke rekening dilakukan admin (status pending -> paid / rejected).
@@ -302,10 +304,10 @@ begin
   end if;
 
   update public.profiles
-     set benih_earned = benih_earned - p_amount, updated_at = now()
-   where id = p_user_id and benih_earned >= p_amount;
+     set benih_balance = benih_balance - p_amount, updated_at = now()
+   where id = p_user_id and benih_balance >= p_amount;
   if not found then
-    raise exception 'Saldo hasil donasi tidak cukup.';
+    raise exception 'Saldo Benih tidak cukup.';
   end if;
 
   v_gross := p_amount::bigint * p_price_idr;
@@ -341,7 +343,7 @@ begin
   end if;
 
   update public.profiles
-     set benih_earned = benih_earned + v_row.benih_amount, updated_at = now()
+     set benih_balance = benih_balance + v_row.benih_amount, updated_at = now()
    where id = v_row.user_id;
   return v_row;
 end;

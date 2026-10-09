@@ -42,3 +42,16 @@ test('calcWithdrawal memotong 2,5% dari nilai Rp2.000 per Benih', () => {
   assert.deepStrictEqual(calcWithdrawal(100, 2000, 250), { grossIdr: 200000, feeIdr: 5000, netIdr: 195000 });
   assert.deepStrictEqual(calcWithdrawal(1, 2000, 250), { grossIdr: 2000, feeIdr: 50, netIdr: 1950 });
 });
+
+test('donorBadge memilih tingkatan berdasarkan total donasi', () => {
+  const { donorBadge } = require('../src/services/badges');
+  assert.strictEqual(donorBadge(0).current, null);
+  assert.strictEqual(donorBadge(0).next.key, 'penabur');
+  assert.strictEqual(donorBadge(49).current.key, 'penabur');
+  assert.strictEqual(donorBadge(49).remaining, 1);
+  assert.strictEqual(donorBadge(50).current.key, 'tunas');
+  const top = donorBadge(10000);
+  assert.strictEqual(top.current.key, 'penjaga-hutan');
+  assert.strictEqual(top.next, null);
+  assert.strictEqual(top.progress, 1);
+});
