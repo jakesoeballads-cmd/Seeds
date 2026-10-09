@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+<section class="hero">
+  <h1>Kegiatan pelestarian lingkungan di sekitarmu</h1>
+  <p>Temukan program reforestasi dan aksi lingkungan terdekat, lalu ikut bergabung bersama member lain.</p>
+</section>
+
+<div class="map-layout">
+  <div id="map" class="map" data-maps-key="<%= mapsKey %>">
+    <% if (!mapsKey) { %>
+      <p class="muted">Isi <code>GOOGLE_MAPS_API_KEY</code> di .env untuk menampilkan peta.</p>
+    <% } %>
+  </div>
+  <aside>
+    <div class="list-header">
+      <h2>Program terdekat</h2>
+      <select id="radius" aria-label="Radius">
+        <option value="10">10 km</option>
+        <option value="25" selected>25 km</option>
+        <option value="50">50 km</option>
+        <option value="100">100 km</option>
+      </select>
+    </div>
+    <p id="status" class="muted">Mencari lokasimu…</p>
+    <ul id="program-list" class="program-list"></ul>
+  </aside>
+</div>
+
+<script>window.BENIH = { loggedIn: <%= user ? 'true' : 'false' %> };</script>
+<script src="/js/map.js"></script>
+<% if (mapsKey) { %>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=<%= encodeURIComponent(mapsKey) %>&callback=initMap&loading=async"></script>
+<% } else { %>
+  <script>window.addEventListener('load', () => window.initMap());</script>
+<% } %>
+<%- include('partials/footer') %>

@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<section class="card narrow">
+  <h1>Masuk</h1>
+  <% if (error) { %><p class="alert error"><%= error %></p><% } %>
+  <form method="post" action="/login">
+    <input type="hidden" name="next" value="<%= next %>">
+    <label>Email <input type="email" name="email" value="<%= values.email || '' %>" required autocomplete="email"></label>
+    <label>Kata sandi <input type="password" name="password" required autocomplete="current-password"></label>
+    <button type="submit" class="btn">Masuk</button>
+  </form>
+  <p class="muted">Belum punya akun? <a href="/register">Daftar sebagai relawan/donatur</a></p>
+</section>
+<%- include('partials/footer') %>

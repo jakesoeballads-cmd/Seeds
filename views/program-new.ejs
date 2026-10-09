@@ -1,0 +1,37 @@
+<%- include('partials/header') %>
+<section class="card">
+  <h1>Buat Kegiatan</h1>
+  <p class="muted">Klik peta untuk menandai lokasi kegiatan.</p>
+  <p id="form-message" class="alert" hidden></p>
+  <form id="program-form" class="grid-form">
+    <label>Judul <input type="text" name="title" minlength="3" required></label>
+    <label>Kategori
+      <select name="category">
+        <option value="reforestasi">Reforestasi</option>
+        <option value="mangrove">Penanaman mangrove</option>
+        <option value="bersih-pantai">Bersih pantai</option>
+        <option value="edukasi">Edukasi lingkungan</option>
+        <option value="lainnya">Lainnya</option>
+      </select>
+    </label>
+    <label class="full">Deskripsi <textarea name="description" rows="4"></textarea></label>
+    <label>Nama lokasi <input type="text" name="location_name" placeholder="cth. Hutan Kota Srengseng"></label>
+    <label>Maks. peserta <input type="number" name="max_participants" min="1"></label>
+    <label>Mulai <input type="datetime-local" name="start_at" required></label>
+    <label>Selesai <input type="datetime-local" name="end_at"></label>
+    <label>Hadiah Benih per peserta <input type="number" name="benih_reward" min="0" value="0"></label>
+    <div class="full">
+      <div id="picker-map" class="map small" data-maps-key="<%= mapsKey %>">
+        <% if (!mapsKey) { %><p class="muted">Peta nonaktif. Isi koordinat secara manual.</p><% } %>
+      </div>
+    </div>
+    <label>Latitude <input type="number" name="lat" step="any" required></label>
+    <label>Longitude <input type="number" name="lng" step="any" required></label>
+    <div class="full"><button type="submit" class="btn">Simpan kegiatan</button></div>
+  </form>
+</section>
+<script src="/js/program-new.js"></script>
+<% if (mapsKey) { %>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=<%= encodeURIComponent(mapsKey) %>&callback=initPickerMap&loading=async"></script>
+<% } %>
+<%- include('partials/footer') %>

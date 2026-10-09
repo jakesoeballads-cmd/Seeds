@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+<section class="card narrow">
+  <h1>Beli Benih</h1>
+  <p class="balance">Saldo kamu: <strong><%= balance %></strong> Benih</p>
+  <% if (simulated) { %>
+    <p class="alert info">Mode simulasi aktif: pembayaran tidak benar-benar diproses.</p>
+  <% } %>
+  <form id="buy-form" data-price="<%= price %>" data-simulated="<%= simulated %>">
+    <label>Jumlah Benih <input type="number" name="benih_amount" min="1" max="100000" value="10" required></label>
+    <p class="muted">Total: <strong id="total">Rp0</strong> (Rp<%= price.toLocaleString('id-ID') %> per Benih)</p>
+    <button type="submit" class="btn">Bayar</button>
+  </form>
+  <p id="buy-message" class="alert" hidden></p>
+</section>
+
+<section class="card narrow">
+  <h2>Riwayat transaksi</h2>
+  <ul id="history" class="history"><li class="muted">Memuat…</li></ul>
+</section>
+
+<% if (!simulated && clientKey) { %>
+  <script src="<%= snapJsUrl %>" data-client-key="<%= clientKey %>"></script>
+<% } %>
+<script src="/js/benih.js"></script>
+<%- include('partials/footer') %>

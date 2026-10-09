@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> · Benih</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="/" class="brand">🌱 Benih</a>
+    <nav>
+      <% if (user) { %>
+        <a href="/program/baru">Buat Kegiatan</a>
+        <a href="/benih">Beli Benih</a>
+        <form action="/logout" method="post" class="inline">
+          <button type="submit" class="link">Keluar</button>
+        </form>
+      <% } else { %>
+        <a href="/login">Masuk</a>
+        <a href="/register" class="btn">Daftar</a>
+      <% } %>
+    </nav>
+  </header>
+  <main class="container">
