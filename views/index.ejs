@@ -1,12 +1,43 @@
 <%- include('partials/header') %>
-<section class="hero">
-  <h1>Kegiatan pelestarian lingkungan di sekitarmu</h1>
-  <p>Temukan program reforestasi dan aksi lingkungan terdekat, lalu ikut bergabung bersama member lain.</p>
-  <div class="welcome">
-    <p><strong>Selamat datang di Benih.</strong> Sebuah tempat bagi para environmentalist untuk berkontribusi dan saling mendukung untuk pelestarian lingkungan dan sustainability. Apa pun dan sekecil apa pun kepekaanmu kepada lingkungan akan selalu berdampak.</p>
+<section class="hero-photo full-bleed">
+  <div class="inner">
+    <h1>Kegiatan pelestarian lingkungan di sekitarmu</h1>
+    <p>Temukan program reforestasi dan aksi lingkungan terdekat, lalu ikut bergabung bersama member lain.</p>
+    <a href="<%= user ? '/program/baru' : '/register' %>" class="btn light"><%= user ? 'Buat kegiatan' : 'Gabung komunitas' %></a>
+    <span class="tagline">Setiap kepedulian kecil berdampak.</span>
   </div>
 </section>
 
+<section class="band full-bleed">
+  <div class="inner">
+    <h2>Selamat datang di Benih.</h2>
+    <p class="welcome-text">Sebuah tempat bagi para environmentalist untuk berkontribusi dan saling mendukung untuk pelestarian lingkungan dan sustainability. Apa pun dan sekecil apa pun kepekaanmu kepada lingkungan akan selalu berdampak.</p>
+    <div class="features">
+      <div class="feature">
+        <svg viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="40" r="22" fill="none" stroke="#454545" stroke-width="5"/><path d="M48 62v20M36 82h24" stroke="#454545" stroke-width="5" stroke-linecap="round"/><path d="M39 40l7 7 13-14" fill="none" stroke="#74ac00" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Ikuti kegiatan</h3>
+        <p>Bergabung sebagai relawan atau pekerja di aksi terdekat.</p>
+      </div>
+      <div class="feature">
+        <svg viewBox="0 0 96 96" aria-hidden="true"><path d="M48 80S16 60 16 38a16 16 0 0 1 32-6 16 16 0 0 1 32 6c0 22-32 42-32 42Z" fill="none" stroke="#454545" stroke-width="5" stroke-linejoin="round"/><path d="M48 66V44M48 50c-8 0-12-5-12-12 8 0 12 5 12 12Zm0-4c0-7 4-12 12-12 0 7-4 12-12 12Z" fill="#74ac00" stroke="#74ac00" stroke-width="3" stroke-linecap="round"/></svg>
+        <h3>Donasi Benih</h3>
+        <p>Dukung kegiatan yang kamu pedulikan, 1 Benih = Rp2.000.</p>
+      </div>
+      <div class="feature">
+        <svg viewBox="0 0 96 96" aria-hidden="true"><rect x="16" y="22" width="64" height="56" rx="8" fill="none" stroke="#454545" stroke-width="5"/><path d="M16 38h64M32 14v14M64 14v14" stroke="#454545" stroke-width="5" stroke-linecap="round"/><path d="M48 48v20M38 58h20" stroke="#74ac00" stroke-width="6" stroke-linecap="round"/></svg>
+        <h3>Buat kegiatan</h3>
+        <p>Ajak member lain dan kumpulkan Benih untuk aksimu.</p>
+      </div>
+      <div class="feature">
+        <svg viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="40" r="22" fill="none" stroke="#454545" stroke-width="5"/><path d="M36 58l-6 24 18-9 18 9-6-24" fill="none" stroke="#454545" stroke-width="5" stroke-linejoin="round"/><path d="M48 28l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1Z" fill="#74ac00"/></svg>
+        <h3>Kumpulkan badge</h3>
+        <p>Poin relawan dan donasi membuka badge baru.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<h2 class="section-title">Program terdekat</h2>
 <div class="map-layout">
   <div id="map" class="map" data-maps-key="<%= mapsKey %>">
     <% if (!mapsKey) { %>
@@ -15,7 +46,7 @@
   </div>
   <aside>
     <div class="list-header">
-      <h2>Program terdekat</h2>
+      <h3>Daftar kegiatan</h3>
       <select id="radius" aria-label="Radius">
         <option value="10">10 km</option>
         <option value="25" selected>25 km</option>

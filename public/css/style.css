@@ -1,29 +1,40 @@
 :root {
-  /* Palet terinspirasi iNaturalist: hijau daun cerah, latar abu terang, teks arang. */
-  --green: #74ac00;        /* aksen merek: logo, progres, garis aktif */
-  --green-dark: #4f7a00;   /* tombol & tautan (kontras cukup dengan teks putih) */
-  --green-darker: #3e6100;
-  --green-soft: #eef6e0;
-  --bg: #f5f5f5;
+  /* Palet mengikuti iNaturalist: header putih, hijau daun, pita hijau pucat, teks abu arang. */
+  --green: #74ac00;        /* tombol utama, ikon, progres */
+  --green-dark: #4f7a00;   /* tautan dan teks hijau di atas latar terang */
+  --green-darker: #5f8f00; /* hover tombol hijau */
+  --green-soft: #ecf2e2;   /* pita/section hijau pucat */
+  --bg: #ffffff;
   --card: #ffffff;
-  --text: #333333;
-  --muted: #757575;
-  --border: #dddddd;
-  --radius: 4px;
+  --text: #454545;
+  --ink: #111111;          /* wordmark */
+  --muted: #6f706c;
+  --border: #dcdfd6;
+  --radius: 8px;
+  --pill: 999px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, .12);
   --font: "Lato", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "Courier Prime", "Courier New", monospace;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; }
+body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; overflow-x: clip; }
 a { color: var(--green-dark); }
+h1, h2 { font-family: var(--serif); font-weight: 600; color: var(--text); letter-spacing: -.01em; }
 h1, h2, h3 { text-wrap: balance; }
 code { background: var(--green-soft); padding: 0 4px; border-radius: 4px; }
 
-.topbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; padding: 12px 24px; background: var(--card); border-bottom: 1px solid var(--border); }
-.topbar nav { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
-.topbar nav a:not(.btn) { color: var(--text); text-decoration: none; font-weight: 700; }
-.topbar nav a:not(.btn):hover { color: var(--green-dark); }
-.brand { font-weight: 900; font-size: 1.35rem; text-decoration: none; color: var(--green); letter-spacing: -.01em; }
+.topbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 20px; padding: 14px 24px; background: #fff; border-bottom: 1px solid var(--border); }
+.topbar nav { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+.topbar nav a:not(.btn):not(.pill), .topbar nav button.link { color: var(--text); text-decoration: none; font-weight: 400; font-size: 1.05rem; }
+.topbar nav a:not(.btn):not(.pill):hover { color: var(--green-dark); }
+.brand { display: inline-flex; align-items: center; gap: 2px; font-weight: 900; font-size: 1.7rem; text-decoration: none; color: var(--ink); letter-spacing: -.02em; }
+.brand svg { width: 26px; height: 30px; }
+/* Tombol pil putih berbayang, seperti "Donate" di iNaturalist. */
+.pill { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: var(--text); border-radius: var(--pill); padding: 8px 16px; box-shadow: var(--shadow); text-decoration: none; font-size: 1.05rem; }
+.pill:hover { box-shadow: 0 3px 12px rgba(0, 0, 0, .18); }
+.pill .leaf { color: var(--green); }
 .inline { display: inline; margin: 0; }
 
 .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
@@ -31,19 +42,22 @@ code { background: var(--green-soft); padding: 0 4px; border-radius: 4px; }
 .hero h1 { margin-bottom: 4px; }
 .muted { color: var(--muted); }
 
-.btn { display: inline-block; background: var(--green-dark); color: #fff; border: 0; border-radius: var(--radius); padding: 10px 16px; font-size: 1rem; font-weight: 700; font-family: inherit; cursor: pointer; text-decoration: none; }
+.btn { display: inline-block; background: var(--green); color: #fff; border: 0; border-radius: var(--pill); padding: 10px 20px; font-size: 1rem; font-weight: 700; font-family: inherit; cursor: pointer; text-decoration: none; text-align: center; }
 .btn:hover { background: var(--green-darker); }
 .btn.secondary { background: #6b6b6b; }
+.btn.light { background: #fff; color: var(--text); font-family: var(--serif); font-weight: 600; font-size: 1.35rem; padding: 12px 32px; border-radius: var(--radius); }
+.btn.light:hover { background: #f1f1f1; }
 .btn.ghost { background: transparent; color: var(--green-dark); border: 1px solid var(--border); }
 .btn.ghost:hover { background: var(--green-soft); }
 .btn.small { padding: 6px 12px; font-size: .9rem; }
 .btn:disabled { opacity: .6; cursor: default; }
 button.link { background: none; border: 0; color: var(--text); font-weight: 700; font-family: inherit; cursor: pointer; font-size: 1rem; padding: 0; }
 
-.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 24px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, .05); }
 .card.narrow { max-width: 480px; margin-left: auto; margin-right: auto; }
 form label { display: block; margin-bottom: 12px; font-weight: 500; }
-input, select, textarea { display: block; width: 100%; margin-top: 4px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; }
+input, select, textarea { display: block; width: 100%; margin-top: 4px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius); font: inherit; color: var(--text); }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--green); outline-offset: 0; border-color: var(--green); }
 .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
 .grid-form .full { grid-column: 1 / -1; }
 .actions { display: flex; gap: 12px; }
@@ -98,9 +112,6 @@ input, select, textarea { display: block; width: 100%; margin-top: 4px; padding:
 }
 
 /* Beranda */
-.welcome { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--green); border-radius: var(--radius); padding: 16px 20px; margin: 16px 0 24px; max-width: 75ch; }
-.welcome p { margin: 0; }
-.welcome strong { color: var(--green-dark); }
 .program-list li { display: grid; grid-template-columns: 72px 1fr; gap: 12px; }
 .program-list .thumb { width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius); background: var(--green-soft); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
 .program-list .org { font-size: .85rem; color: var(--text); }
@@ -144,3 +155,31 @@ input, select, textarea { display: block; width: 100%; margin-top: 4px; padding:
 .badge.paid { background: var(--green-soft); color: var(--green-dark); }
 .badge.cancelled { background: #eee; color: var(--muted); }
 .stack > .card, .stack > section.card { margin-bottom: 0; }
+
+/* ---- Beranda bergaya iNaturalist ---- */
+.full-bleed { margin-inline: calc(50% - 50vw); }
+.hero-photo {
+  position: relative; color: #fff; text-align: center; padding: 72px 16px 64px; margin-top: -24px;
+  /* Ganti url di bawah dengan foto sendiri (mis. /img/hero.jpg) bila ada. */
+  background: linear-gradient(rgba(0, 0, 0, .38), rgba(0, 0, 0, .38)), url('/img/hero.svg') center / cover, #0b2108;
+}
+.hero-photo .inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.hero-photo h1 { color: #fff; font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.12; margin: 0; }
+.hero-photo p { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.3rem); max-width: 40ch; }
+.hero-photo .tagline { font-family: var(--mono); font-size: 1rem; opacity: .95; }
+.band { background: var(--green-soft); padding: 48px 16px; }
+.band .inner { max-width: 1000px; margin: 0 auto; text-align: center; }
+.band h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); margin: 0 0 8px; }
+.band .welcome-text { max-width: 62ch; margin: 0 auto 32px; font-size: 1.1rem; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px 24px; }
+.feature { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.feature svg { width: 96px; height: 96px; }
+.feature h3 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; margin: 8px 0 0; }
+.feature p { margin: 0; font-size: 1.05rem; max-width: 22ch; }
+.section-title { margin: 40px 0 16px; }
+@media (max-width: 560px) {
+  .features { grid-template-columns: 1fr 1fr; gap: 24px 12px; }
+  .feature svg { width: 64px; height: 64px; }
+  .feature h3 { font-size: 1.2rem; }
+  .feature p { font-size: .95rem; }
+}
