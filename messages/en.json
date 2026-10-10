@@ -266,5 +266,9 @@
   "nav.loginShort": "Log in",
   "chat.soon": "In-app messaging is coming soon. Until then, reach the organiser through the contact details they share.",
   "join.cancel": "Cancel registration",
-  "join.full": "This activity is full."
+  "join.full": "This activity is full.",
+  "err.loadActivities": "Activities can’t be loaded right now because Benih couldn’t reach the database. Please try again shortly.",
+  "setup.invalid": "Supabase settings aren’t right yet: check NEXT_PUBLIC_SUPABASE_URL (it must start with https:// and end in .supabase.co) and the key. Sample data is shown for now.",
+  "err.page": "Sorry, something went wrong while loading this page.",
+  "err.retry": "Try again"
 }

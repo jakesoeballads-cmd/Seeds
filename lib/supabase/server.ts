@@ -23,6 +23,11 @@ export async function createClient() {
 export async function getUser() {
   const supabase = await createClient();
   if (!supabase) return { supabase, user: null };
-  const { data } = await supabase.auth.getUser();
-  return { supabase, user: data.user };
+  try {
+    const { data } = await supabase.auth.getUser();
+    return { supabase, user: data.user };
+  } catch (err) {
+    console.error('[benih] Gagal membaca sesi Supabase:', err);
+    return { supabase, user: null };
+  }
 }

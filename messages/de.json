@@ -263,5 +263,9 @@
   "nav.loginShort": "Anmelden",
   "chat.soon": "Nachrichten in Benih kommen bald. Bis dahin erreichst du das Orga-Team über die angegebenen Kontaktdaten.",
   "join.cancel": "Anmeldung zurückziehen",
-  "join.full": "Diese Aktion ist ausgebucht."
+  "join.full": "Diese Aktion ist ausgebucht.",
+  "err.loadActivities": "Die Aktionen können gerade nicht geladen werden, weil Benih die Datenbank nicht erreicht. Bitte versuche es gleich noch einmal.",
+  "setup.invalid": "Die Supabase-Einstellungen stimmen noch nicht: Prüfe NEXT_PUBLIC_SUPABASE_URL (muss mit https:// beginnen und auf .supabase.co enden) und den Schlüssel. Bis dahin werden Beispieldaten angezeigt.",
+  "err.page": "Beim Laden dieser Seite ist leider ein Fehler aufgetreten.",
+  "err.retry": "Erneut versuchen"
 }

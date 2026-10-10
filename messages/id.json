@@ -251,5 +251,9 @@
   "nav.loginShort": "Masuk",
   "chat.soon": "Fitur pesan di dalam Benih segera hadir. Sementara itu, hubungi penyelenggara lewat kontak yang mereka bagikan.",
   "join.cancel": "Batalkan pendaftaran",
-  "join.full": "Kuota peserta sudah penuh."
+  "join.full": "Kuota peserta sudah penuh.",
+  "err.loadActivities": "Daftar kegiatan belum bisa dimuat karena Benih gagal terhubung ke database. Coba muat ulang sebentar lagi.",
+  "setup.invalid": "Pengaturan Supabase belum benar: periksa NEXT_PUBLIC_SUPABASE_URL (harus diawali https:// dan berakhiran .supabase.co) dan kuncinya. Sementara ini tampil data contoh.",
+  "err.page": "Maaf, terjadi kesalahan saat memuat halaman ini.",
+  "err.retry": "Coba lagi"
 }

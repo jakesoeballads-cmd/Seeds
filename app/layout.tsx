@@ -6,7 +6,7 @@ import { LangSelect } from '@/components/LangSelect';
 import { Nav } from '@/components/Nav';
 import { Logo } from '@/components/Logo';
 import { getI18n } from '@/lib/i18n-server';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { isSupabaseConfigured, supabaseConfigInvalid } from '@/lib/supabase/config';
 
 export const metadata: Metadata = {
   title: { default: 'Benih', template: '%s · Benih' },
@@ -36,7 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <I18nProvider lang={lang}>
-          {!isSupabaseConfigured && <div className="notice">{t('setup.notice')}</div>}
+          {!isSupabaseConfigured && <div className="notice">{t(supabaseConfigInvalid ? 'setup.invalid' : 'setup.notice')}</div>}
           <header className="topbar">
             <Link className="brand" href="/" aria-label={t('brand.label')}>
               <Logo />

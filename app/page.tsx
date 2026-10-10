@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const { t, f } = await getI18n();
-  const [{ user }, activities] = await Promise.all([getUser(), getUpcomingActivities()]);
+  const [{ user }, { activities, error }] = await Promise.all([getUser(), getUpcomingActivities()]);
 
   return (
     <div className="stack">
@@ -31,6 +31,7 @@ export default async function HomePage() {
         </div>
       </section>
       <h2 style={{ margin: '16px 0 0' }}>{t('home.programs')}</h2>
+      {error && <p className="alert error">{t('err.loadActivities')}</p>}
       <NearbyActivities activities={activities} userId={user?.id ?? null} />
     </div>
   );
