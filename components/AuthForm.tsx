@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { getBrowserClient } from '@/lib/supabase/client';
+import { GOOGLE_LOGIN_ENABLED } from '@/lib/supabase/config';
 import { useI18n } from './I18nProvider';
 
 const GoogleIcon = () => (
@@ -86,12 +87,16 @@ export function AuthForm({ mode, next }: { mode: 'login' | 'register'; next?: st
     <section className="card narrow stack tight">
       <h1>{kind}</h1>
       <p className="muted">{isLogin ? t('auth.loginSub') : t('auth.regSub')}</p>
-      <div className="social">
-        <button type="button" onClick={google}>
-          <GoogleIcon /> {t(isLogin ? 'auth.loginWith' : 'auth.regWith', { p: 'Google' })}
-        </button>
-      </div>
-      <div className="divider">{t('auth.orEmail')}</div>
+      {GOOGLE_LOGIN_ENABLED && (
+        <>
+          <div className="social">
+            <button type="button" onClick={google}>
+              <GoogleIcon /> {t(isLogin ? 'auth.loginWith' : 'auth.regWith', { p: 'Google' })}
+            </button>
+          </div>
+          <div className="divider">{t('auth.orEmail')}</div>
+        </>
+      )}
       <form onSubmit={onSubmit}>
         {!isLogin && (
           <label>

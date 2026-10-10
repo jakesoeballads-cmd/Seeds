@@ -30,3 +30,6 @@ export const supabaseConfigInvalid = Boolean((SUPABASE_URL || SUPABASE_ANON_KEY)
 export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && validUrl(SUPABASE_URL));
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim().replace(/\/$/, '');
+
+/** Tombol login Google hanya tampil setelah provider Google diaktifkan di Supabase (isi 'true'). */
+export const GOOGLE_LOGIN_ENABLED = (process.env.NEXT_PUBLIC_ENABLE_GOOGLE_LOGIN ?? '').trim().toLowerCase() === 'true';
