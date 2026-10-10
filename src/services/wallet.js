@@ -34,7 +34,7 @@ async function getDashboard(userId) {
     // Rekam jejak partisipasi kegiatan.
     supabaseAdmin
       .from('program_participants')
-      .select('role, status, agreed_benih, joined_at, program:programs(id, title, organizer_name, location_name, start_at, end_at)')
+      .select('role, status, agreed_benih, joined_at, program:programs(id, title, organizer_id, organizer_name, location_name, start_at, end_at)')
       .eq('user_id', userId)
       .order('joined_at', { ascending: false })
       .limit(100),

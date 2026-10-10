@@ -92,6 +92,7 @@ function middleware(req, res, next) {
     t,
     languages: LANGUAGES,
     fmt: formatters(lang),
+    currentPath: req.path,
     // Untuk menyisipkan nilai ke terjemahan yang berisi HTML (<%- t(...) %>).
     esc: escapeHtml,
     // Tautan halaman yang sama dalam bahasa lain, query lain tetap dibawa.

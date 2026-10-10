@@ -42,7 +42,7 @@ function requireOrganizer(req, res, next) {
 }
 
 const LIST_COLUMNS =
-  'id, title, description, category, location_name, organizer_name, organizer_type, photo_urls, lat, lng, start_at, end_at, benih_target, benih_collected, max_participants';
+  'id, title, description, category, location_name, organizer_id, organizer_name, organizer_type, photo_urls, lat, lng, start_at, end_at, benih_target, benih_collected, max_participants';
 
 // GET /api/programs?lat=-6.2&lng=106.8&radius_km=25
 // Terbuka untuk semua pengunjung (member maupun bukan).

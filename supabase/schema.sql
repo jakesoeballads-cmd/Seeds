@@ -18,9 +18,18 @@ create table if not exists public.profiles (
   -- Poin relawan tanpa imbal balik (dasar badge relawan). Bertambah saat
   -- penyelenggara mengonfirmasi kehadiran relawan.
   volunteer_points integer not null default 0 check (volunteer_points >= 0),
+  -- Profil publik: bisa dilihat member lain kecuali dikunci (is_private).
+  bio           text check (char_length(bio) <= 500),
+  city          text check (char_length(city) <= 80),
+  is_private    boolean not null default false,
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );
+
+-- Untuk database yang dibuat sebelum kolom profil publik ada.
+alter table public.profiles add column if not exists bio text check (char_length(bio) <= 500);
+alter table public.profiles add column if not exists city text check (char_length(city) <= 80);
+alter table public.profiles add column if not exists is_private boolean not null default false;
 
 -- Buat profil otomatis setiap ada pendaftaran baru.
 create or replace function public.handle_new_user()
@@ -108,10 +117,12 @@ create index if not exists program_messages_thread_idx on public.program_message
 
 -- Program dalam radius tertentu, diurutkan dari yang terdekat (rumus haversine).
 -- Untuk data besar, pertimbangkan ekstensi PostGIS.
+-- Kolom hasil berubah (organizer_id), jadi fungsi lama dihapus dulu.
+drop function if exists public.nearby_programs(double precision, double precision, double precision);
 create or replace function public.nearby_programs(p_lat double precision, p_lng double precision, p_radius_km double precision default 25)
 returns table (
   id uuid, title text, description text, category text, location_name text,
-  organizer_name text, organizer_type text, photo_urls text[],
+  organizer_id uuid, organizer_name text, organizer_type text, photo_urls text[],
   lat double precision, lng double precision, start_at timestamptz, end_at timestamptz,
   benih_target integer, benih_collected bigint, max_participants integer, distance_km double precision
 )
@@ -119,7 +130,7 @@ language sql stable
 as $$
   select * from (
     select p.id, p.title, p.description, p.category, p.location_name,
-           p.organizer_name, p.organizer_type, p.photo_urls,
+           p.organizer_id, p.organizer_name, p.organizer_type, p.photo_urls,
            p.lat, p.lng, p.start_at, p.end_at, p.benih_target, p.benih_collected, p.max_participants,
            6371 * 2 * asin(sqrt(
              power(sin(radians(p.lat - p_lat) / 2), 2) +

@@ -5,6 +5,7 @@ const { requireAuth } = require('../middleware/auth');
 const { getDashboard } = require('../services/wallet');
 const { DONOR_BADGES, VOLUNTEER_BADGES, VOLUNTEER_POINTS_PER_EVENT } = require('../services/badges');
 const programs = require('../services/programs');
+const profiles = require('../services/profiles');
 
 function needDatabase(req, res, title) {
   if (isConfigured) return false;
@@ -68,6 +69,52 @@ router.get('/dashboard', requireAuth, async (req, res, next) => {
       pointsPerEvent: VOLUNTEER_POINTS_PER_EVENT,
     });
   } catch (err) {
+    next(err);
+  }
+});
+
+// Profil publik member. Terbuka untuk semua pengunjung, kecuali bagian yang
+// disembunyikan bila member mengunci profilnya.
+router.get('/member/:id', async (req, res, next) => {
+  try {
+    if (needDatabase(req, res, 'Profil')) return;
+    const member = await profiles.getPublicProfile(req.params.id, req.user && req.user.id);
+    if (!member) return res.status(404).render('error', { title: req.t('Tidak ditemukan'), message: req.t('Member tidak ditemukan.') });
+    res.render('member', {
+      title: member.fullName || req.t('Member'),
+      member,
+      organizerTypes: programs.ORGANIZER_TYPES,
+      pointsPerEvent: VOLUNTEER_POINTS_PER_EVENT,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Ubah profil sendiri: nama, bio, kota, dan kunci profil.
+router.get('/profil', requireAuth, async (req, res, next) => {
+  try {
+    if (needDatabase(req, res, 'Profil saya')) return;
+    res.render('profile-edit', { title: req.t('Profil saya'), profile: await profiles.getOwnProfile(req.user.id), error: null, saved: req.query.saved === '1' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/profil', requireAuth, async (req, res, next) => {
+  try {
+    if (needDatabase(req, res, 'Profil saya')) return;
+    await profiles.updateProfile(req.user.id, req.body);
+    res.redirect('/profil?saved=1');
+  } catch (err) {
+    if (err.status === 400) {
+      return res.status(400).render('profile-edit', {
+        title: req.t('Profil saya'),
+        profile: { ...req.body, is_private: req.body.is_private === 'on' },
+        error: req.t(err.message, err.vars),
+        saved: false,
+      });
+    }
     next(err);
   }
 });

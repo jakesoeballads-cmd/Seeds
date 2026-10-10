@@ -37,6 +37,18 @@ Instagram dan Threads tidak menyediakan login untuk aplikasi pihak ketiga, jadi 
 
 Checkout Midtrans Snap menampilkan QRIS di urutan pertama (`MIDTRANS_ENABLED_PAYMENTS`, kode `other_qris`). QRIS harus diaktifkan di Dashboard Midtrans agar muncul. Pengguna bisa memindai kode dengan aplikasi bank atau e-wallet apa pun.
 
+## Profil member
+
+Setiap member punya profil publik di `/member/:id`: nama, foto, kota, bio, badge, kegiatan yang diadakan, dan rekam jejak partisipasi. Nama penyelenggara di beranda dan halaman kegiatan membuka profil ini. Saldo Benih dan penarikan tidak pernah tampil di profil publik.
+
+Member mengubah profilnya di `/profil`. Bila **Kunci profil** dicentang (`profiles.is_private`), orang lain hanya melihat nama dan foto; kegiatannya tetap tampil di beranda.
+
+## Cari lokasi lain
+
+Kotak pencarian di beranda mencari kota atau daerah mana pun (mis. dari Jerman mencari kegiatan di Bandung). Dengan `GOOGLE_MAPS_API_KEY` dipakai Google Geocoder; tanpa key dipakai OpenStreetMap Nominatim. Tombol **Lokasiku** kembali ke lokasi pengunjung.
+
+Di layar ponsel, menu utama pindah ke bar melayang di bawah (Beranda, Cari, Buat, Benih, Profil).
+
 ## Bahasa
 
 Antarmuka tersedia dalam Bahasa Indonesia (bawaan), English, dan Deutsch. Pengunjung memilih lewat tombol ID / EN / DE di header (`?lang=en`, disimpan di cookie `lang`); tanpa pilihan, bahasa mengikuti `Accept-Language` browser.

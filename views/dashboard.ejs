@@ -15,7 +15,15 @@
       <span class="muted"><%= t('Tingkat badge tertinggi tercapai. Terima kasih!') %></span>
     <% } %>
 <% } %>
-<h1><%= t('Halo, {name}', { name: fullName || t('Member') }) %></h1>
+<div class="dash-head">
+  <%- include('partials/avatar', { url: avatarUrl, name: fullName, size: '' }) %>
+  <h1><%= t('Halo, {name}', { name: fullName || t('Member') }) %></h1>
+  <div class="row">
+    <a class="btn small ghost" href="/member/<%= user.id %>"><%= t('Lihat profil publik') %></a>
+    <a class="btn small ghost" href="/profil"><%= t('Ubah profil') %></a>
+    <form action="/logout" method="post" class="inline mobile-only"><button type="submit" class="btn small ghost"><%= t('Keluar') %></button></form>
+  </div>
+</div>
 
 <div class="stats">
   <div class="stat">
@@ -55,7 +63,7 @@
       <tbody>
         <% participations.forEach((x) => { const p = x.program || {}; %>
           <tr>
-            <td><a href="/kegiatan/<%= p.id %>"><%= p.title %></a><br><span class="muted"><%= t('oleh {name}', { name: p.organizer_name }) %></span></td>
+            <td><a href="/kegiatan/<%= p.id %>"><%= p.title %></a><br><span class="muted"><%- t('oleh {name}', { name: `<a href="/member/${esc(p.organizer_id)}">${esc(p.organizer_name)}</a>` }) %></span></td>
             <td><%= fmt.schedule(p.start_at, p.end_at) %></td>
             <td><%= x.role === 'paid' ? t('Tenaga berbayar') : t('Relawan') %></td>
             <td><span class="badge <%= x.status %>"><%= t(statusLabel[x.status]) %></span>

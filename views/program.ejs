@@ -10,7 +10,7 @@
     <% } %>
     <header>
       <h1 style="margin-bottom:4px"><%= program.title %></h1>
-      <p style="margin:0"><%- t('oleh {name}', { name: `<strong>${esc(program.organizer_name)}</strong>` }) %>
+      <p style="margin:0"><%- t('oleh {name}', { name: `<a class="org-link" href="/member/${esc(program.organizer_id)}"><strong>${esc(program.organizer_name)}</strong></a>` }) %>
         <span class="org-type"><%= t(organizerTypes[program.organizer_type]) %></span></p>
     </header>
     <p class="muted" style="margin:0">📅 <%= fmt.schedule(program.start_at, program.end_at, 'full') %><br>📍 <%= program.location_name || `${program.lat}, ${program.lng}` %>

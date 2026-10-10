@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+<section class="card narrow">
+  <h1><%= t('Profil saya') %></h1>
+  <% if (error) { %><p class="alert error"><%= error %></p><% } %>
+  <% if (saved) { %><p class="alert success"><%= t('Profil tersimpan.') %> <a href="/member/<%= user.id %>"><%= t('Lihat profil publik') %></a></p><% } %>
+  <form method="post" action="/profil" class="stack" style="gap:12px">
+    <label><%= t('Nama tampilan') %> <input type="text" name="full_name" minlength="2" maxlength="80" required value="<%= profile.full_name || '' %>"></label>
+    <label><%= t('Kota') %> <input type="text" name="city" maxlength="80" value="<%= profile.city || '' %>" placeholder="<%= t('cth. Bandung') %>"></label>
+    <label><%= t('Bio') %> <textarea name="bio" rows="4" maxlength="500" placeholder="<%= t('Ceritakan kepedulianmu pada lingkungan') %>"><%= profile.bio || '' %></textarea></label>
+    <label class="check">
+      <input type="checkbox" name="is_private" <%= profile.is_private ? 'checked' : '' %>>
+      <span><strong><%= t('Kunci profil') %></strong><br><span class="muted"><%= t('Member lain hanya melihat nama dan fotomu. Kegiatan yang kamu adakan tetap tampil di beranda.') %></span></span>
+    </label>
+    <div class="row">
+      <button type="submit" class="btn"><%= t('Simpan') %></button>
+      <a class="btn ghost" href="/member/<%= user.id %>"><%= t('Lihat profil publik') %></a>
+    </div>
+  </form>
+</section>
+<%- include('partials/footer') %>
