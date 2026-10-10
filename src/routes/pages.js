@@ -6,6 +6,9 @@ const { getDashboard } = require('../services/wallet');
 const { DONOR_BADGES, VOLUNTEER_BADGES, VOLUNTEER_POINTS_PER_EVENT } = require('../services/badges');
 const programs = require('../services/programs');
 const profiles = require('../services/profiles');
+const benih = require('../services/benih');
+const messages = require('../services/messages');
+const maps = require('../services/maps');
 
 function needDatabase(req, res, title) {
   if (isConfigured) return false;
@@ -46,6 +49,7 @@ router.get('/benih', requireAuth, async (req, res, next) => {
       feePercent: config.withdrawalFeeBps / 100,
       feeBps: config.withdrawalFeeBps,
       simulated: config.midtrans.simulated,
+      paypal: { currency: config.paypal.currency, idrRate: config.paypal.idrRate, simulated: config.paypal.simulated },
       clientKey: config.midtrans.clientKey,
       snapJsUrl: config.midtrans.isProduction
         ? 'https://app.midtrans.com/snap/snap.js'
@@ -134,6 +138,11 @@ router.get('/kegiatan/:id', async (req, res, next) => {
     ]);
 
     res.render('program', {
+      map: {
+        embed: maps.embedUrl(program.lat, program.lng, { key: config.googleMapsApiKey, lang: req.lang }),
+        open: maps.openUrl(program.lat, program.lng),
+        directions: maps.directionsUrl(program.lat, program.lng),
+      },
       title: program.title,
       program,
       isOrganizer,
@@ -161,6 +170,7 @@ router.get(['/kegiatan/:id/pesan', '/kegiatan/:id/pesan/:participantId'], requir
     const participantId = req.params.participantId || req.user.id;
     const participation = await programs.assertConversationAccess(program, participantId, req.user.id);
     const isOrganizer = req.user.id === program.organizer_id;
+    await messages.markProgramRead(program.id, participantId, req.user.id);
     let otherName = program.organizer_name;
     if (isOrganizer) {
       const { data } = await supabaseAdmin.from('profiles').select('full_name').eq('id', participantId).maybeSingle();
@@ -184,13 +194,72 @@ router.get(['/kegiatan/:id/pesan', '/kegiatan/:id/pesan/:participantId'], requir
   }
 });
 
+// Kotak masuk: pesan langsung dan percakapan kegiatan.
+router.get('/pesan', requireAuth, async (req, res, next) => {
+  try {
+    if (needDatabase(req, res, 'Pesan')) return;
+    res.render('inbox', { title: req.t('Pesan'), conversations: await messages.listConversations(req.user.id) });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Pesan langsung dengan satu member.
+router.get('/pesan/:userId', requireAuth, async (req, res, next) => {
+  try {
+    if (needDatabase(req, res, 'Pesan')) return;
+    const other = await messages.getRecipient(req.user.id, req.params.userId);
+    const thread = await messages.getDirectThread(req.user.id, other.id);
+    await messages.markDirectRead(req.user.id, other.id);
+    res.render('dm', {
+      title: req.t('Pesan dengan {name}', { name: other.full_name }),
+      other,
+      messages: thread,
+      canSend: await messages.canStartConversation(req.user.id, other),
+      draft: typeof req.query.tentang === 'string'
+        ? req.t('Halo, saya ingin bertanya tentang kegiatan "{title}".', { title: req.query.tentang.slice(0, 200) })
+        : '',
+    });
+  } catch (err) {
+    if (err.status === 400 || err.status === 404) {
+      return res.status(err.status).render('error', { title: req.t('Pesan'), message: req.t(err.message, err.vars) });
+    }
+    next(err);
+  }
+});
+
+// Halaman simulasi; endpoint-nya hanya menerima transaksi yang dibuat dalam mode simulasi.
 router.get('/benih/simulasi/:orderId', requireAuth, (req, res) => {
-  if (!config.midtrans.simulated) return res.redirect('/benih');
+  if (config.midtrans.simulated === false && config.paypal.simulated === false) return res.redirect('/benih');
   res.render('benih-simulate', { title: req.t('Simulasi Pembayaran'), orderId: req.params.orderId });
 });
 
 router.get('/benih/selesai', requireAuth, (req, res) => {
-  res.render('benih-finish', { title: req.t('Pembayaran'), orderId: req.query.order_id || null });
+  res.render('benih-finish', { title: req.t('Pembayaran'), orderId: req.query.order_id || null, status: req.query.status || null });
+});
+
+// Kembali dari PayPal setelah pembeli menyetujui pembayaran (?token= id order PayPal).
+router.get('/benih/paypal/kembali', requireAuth, async (req, res, next) => {
+  try {
+    if (needDatabase(req, res, 'Pembayaran')) return;
+    const orderId = String(req.query.order_id || '');
+    const status = await benih.completePaypalPurchase(req.user, orderId, String(req.query.token || ''));
+    res.redirect(`/benih/selesai?order_id=${encodeURIComponent(orderId)}&status=${status}`);
+  } catch (err) {
+    if (err.status === 404) return res.status(404).render('error', { title: req.t('Pembayaran'), message: req.t(err.message) });
+    next(err);
+  }
+});
+
+router.get('/benih/paypal/batal', requireAuth, async (req, res, next) => {
+  try {
+    if (needDatabase(req, res, 'Pembayaran')) return;
+    const orderId = String(req.query.order_id || '');
+    await benih.cancelPaypalPurchase(req.user, orderId);
+    res.redirect(`/benih/selesai?order_id=${encodeURIComponent(orderId)}&status=cancelled`);
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

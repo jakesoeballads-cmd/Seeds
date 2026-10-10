@@ -12,8 +12,12 @@ router.use(requireDatabase);
 // Membuat transaksi pembelian Benih dan mengembalikan token Snap Midtrans.
 router.post('/checkout', requireAuth, async (req, res, next) => {
   try {
-    const result = await benih.createPurchase(req.user, req.body.benih_amount);
+    const method = req.body.method === 'paypal' ? 'paypal' : 'midtrans';
+    const result = await benih.createPurchase(req.user, req.body.benih_amount, method, req.lang);
     res.status(201).json({
+      method,
+      currency: result.currency || 'IDR',
+      amount: result.amount || String(result.grossAmount),
       order_id: result.orderId,
       benih_amount: result.benihAmount,
       gross_amount: result.grossAmount,
@@ -52,17 +56,15 @@ router.post('/notification', async (req, res, next) => {
 // Hanya tersedia tanpa MIDTRANS_SERVER_KEY. Menjalankan alur webhook yang sama
 // agar pencatatan status dan penambahan saldo bisa diuji tanpa Midtrans.
 router.post('/simulate/:orderId', requireAuth, async (req, res, next) => {
-  if (!config.midtrans.simulated) {
-    return res.status(404).json({ error: req.t('Tidak ditemukan.') });
-  }
   try {
     const { data: trx, error } = await supabaseAdmin
       .from('transactions')
-      .select('order_id, user_id, gross_amount')
+      .select('order_id, user_id, gross_amount, provider')
       .eq('order_id', req.params.orderId)
       .maybeSingle();
     if (error) throw error;
-    if (!trx || trx.user_id !== req.user.id) {
+    // Hanya transaksi yang memang dibuat dalam mode simulasi (Midtrans atau PayPal).
+    if (!trx || trx.user_id !== req.user.id || !['simulation', 'paypal_simulation'].includes(trx.provider)) {
       return res.status(404).json({ error: req.t('Transaksi tidak ditemukan.') });
     }
 
@@ -71,7 +73,7 @@ router.post('/simulate/:orderId', requireAuth, async (req, res, next) => {
       order_id: trx.order_id,
       gross_amount: String(trx.gross_amount),
       transaction_status: success ? 'settlement' : 'deny',
-      payment_type: 'simulation',
+      payment_type: trx.provider === 'paypal_simulation' ? 'paypal' : 'simulation',
     });
     res.json({ ok: true, status: result.status });
   } catch (err) {
@@ -84,7 +86,7 @@ router.get('/history', requireAuth, async (req, res, next) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('transactions')
-      .select('order_id, benih_amount, gross_amount, status, payment_type, created_at, paid_at')
+      .select('order_id, benih_amount, gross_amount, status, provider, payment_type, currency, provider_amount, created_at, paid_at')
       .eq('user_id', req.user.id)
       .order('created_at', { ascending: false })
       .limit(50);

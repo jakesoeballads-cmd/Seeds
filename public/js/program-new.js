@@ -24,6 +24,22 @@
     });
   };
 
+  // Tanpa API key: pratinjau titik di Google Maps dari isian koordinat.
+  const pickerEmbed = document.getElementById('picker-embed');
+  if (pickerEmbed) {
+    const preview = () => {
+      const lat = Number(form.lat.value);
+      const lng = Number(form.lng.value);
+      if (!form.lat.value || !form.lng.value || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
+      const params = new URLSearchParams({ q: `${lat},${lng}`, z: '15', output: 'embed', hl: window.BENIH_I18N.lang });
+      pickerEmbed.src = `https://maps.google.com/maps?${params}`;
+      pickerEmbed.hidden = false;
+      document.getElementById('picker-note').hidden = true;
+    };
+    form.lat.addEventListener('change', preview);
+    form.lng.addEventListener('change', preview);
+  }
+
   // Pratinjau foto sebelum diunggah.
   form.photos.addEventListener('change', () => {
     const preview = document.getElementById('photo-preview');

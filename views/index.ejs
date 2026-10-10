@@ -47,7 +47,8 @@
 <div class="map-layout">
   <div id="map" class="map" data-maps-key="<%= mapsKey %>">
     <% if (!mapsKey) { %>
-      <p class="muted"><%- t('Isi {key} di .env untuk menampilkan peta.', { key: '<code>GOOGLE_MAPS_API_KEY</code>' }) %></p>
+      <%# Tanpa API key: peta Google biasa tanpa penanda kegiatan. %>
+      <iframe id="map-embed" class="map-embed fill" title="<%= t('Peta Google') %>" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     <% } %>
   </div>
   <aside>

@@ -5,7 +5,7 @@
   <article class="stack">
     <% if (program.photo_urls && program.photo_urls.length) { %>
       <div class="gallery">
-        <% program.photo_urls.forEach((url, i) => { %><img src="<%= url %>" alt="<%= t('Foto kegiatan {n}', { n: i + 1 }) %>" loading="lazy"><% }) %>
+        <% program.photo_urls.forEach((url, i) => { %><a href="<%= url %>" data-lightbox="kegiatan" aria-label="<%= t('Lihat foto {n} layar penuh', { n: i + 1 }) %>"><img src="<%= url %>" alt="<%= t('Foto kegiatan {n}', { n: i + 1 }) %>" loading="lazy"></a><% }) %>
       </div>
     <% } %>
     <header>
@@ -22,6 +22,14 @@
       <% } %>
       <p class="muted">🌱 <strong><%= fmt.num(program.benih_collected) %></strong><%= program.benih_target ? ` / ${fmt.num(program.benih_target)}` : '' %> <%= t('Benih terkumpul') %></p>
     </div>
+
+    <section class="map-card">
+      <iframe class="map-embed" src="<%= map.embed %>" title="<%= t('Peta lokasi kegiatan') %>" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <div class="row">
+        <a class="btn small ghost" href="<%= map.open %>" target="_blank" rel="noopener"><%= t('Buka di Google Maps') %></a>
+        <a class="btn small ghost" href="<%= map.directions %>" target="_blank" rel="noopener"><%= t('Petunjuk arah') %></a>
+      </div>
+    </section>
 
     <% if (isOrganizer) { %>
       <section class="card">
@@ -95,6 +103,12 @@
     </section>
 
     <section class="card stack" style="gap:12px">
+      <h2 style="margin:0"><%= t('Ada pertanyaan?') %></h2>
+      <p class="muted" style="margin:0"><%= t('Tanyakan langsung ke penyelenggara sebelum ikut atau berdonasi.') %></p>
+      <a class="btn ghost" href="<%= user ? `/pesan/${program.organizer_id}?tentang=${encodeURIComponent(program.title)}` : `/login?next=${encodeURIComponent('/pesan/' + program.organizer_id)}` %>">✉️ <%= t('Pesan penyelenggara') %></a>
+    </section>
+
+    <section class="card stack" style="gap:12px">
       <h2 style="margin:0"><%= t('Dukung dengan Benih') %></h2>
       <% if (user) { %>
         <form id="donate-form" class="stack" style="gap:8px">
@@ -126,4 +140,5 @@
   </aside>
 </div>
 <script src="/js/program.js"></script>
+<script src="/js/lightbox.js"></script>
 <%- include('partials/footer') %>

@@ -3,6 +3,20 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const { loadUser } = require('./middleware/auth');
 const i18n = require('./i18n');
+const { isConfigured } = require('./config/supabase');
+const { unreadCount } = require('./services/messages');
+
+// Lencana jumlah pesan belum dibaca di menu, hanya untuk halaman HTML.
+async function unreadMessages(req, res, next) {
+  res.locals.unread = 0;
+  if (!req.user || !isConfigured || req.method !== 'GET' || req.path.startsWith('/api/')) return next();
+  try {
+    res.locals.unread = await unreadCount(req.user.id);
+  } catch (err) {
+    console.error('[unread]', err.message);
+  }
+  next();
+}
 
 const app = express();
 const root = path.join(__dirname, '..');
@@ -17,6 +31,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(root, 'public')));
 app.use(i18n.middleware);
 app.use(loadUser);
+app.use(unreadMessages);
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
@@ -25,6 +40,7 @@ app.use('/', require('./routes/pages'));
 app.use('/api/programs', require('./routes/programs'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/wallet', require('./routes/wallet'));
+app.use('/api/messages', require('./routes/messages'));
 
 app.use((req, res) => {
   if (req.originalUrl.startsWith('/api/')) return res.status(404).json({ error: req.t('Tidak ditemukan.') });

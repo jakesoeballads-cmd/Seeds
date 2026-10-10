@@ -114,6 +114,24 @@ create table if not exists public.program_messages (
 );
 
 create index if not exists program_messages_thread_idx on public.program_messages (program_id, participant_id, created_at);
+-- Dibaca oleh penerima (bukan pengirim); null = belum dibaca.
+alter table public.program_messages add column if not exists read_at timestamptz;
+
+-- ---------------------------------------------------------------------------
+-- Pesan langsung antar-member (di luar percakapan kegiatan)
+-- ---------------------------------------------------------------------------
+create table if not exists public.direct_messages (
+  id           uuid primary key default gen_random_uuid(),
+  sender_id    uuid not null references public.profiles (id) on delete cascade,
+  recipient_id uuid not null references public.profiles (id) on delete cascade,
+  body         text not null check (char_length(body) between 1 and 2000),
+  read_at      timestamptz,
+  created_at   timestamptz not null default now(),
+  check (sender_id <> recipient_id)
+);
+
+create index if not exists direct_messages_sender_idx on public.direct_messages (sender_id, created_at desc);
+create index if not exists direct_messages_recipient_idx on public.direct_messages (recipient_id, created_at desc);
 
 -- Program dalam radius tertentu, diurutkan dari yang terdekat (rumus haversine).
 -- Untuk data besar, pertimbangkan ekstensi PostGIS.
@@ -297,6 +315,10 @@ create table if not exists public.transactions (
   gross_amount     bigint not null check (gross_amount > 0),   -- dalam Rupiah
   status           text not null default 'pending' check (status in ('pending', 'success', 'failed', 'refunded')),
   provider         text not null default 'midtrans',
+  -- PayPal: id order PayPal, mata uang, dan nominal yang ditagih (bukan Rupiah).
+  provider_order_id text,
+  currency         text not null default 'IDR',
+  provider_amount  numeric(14, 2),
   payment_type     text,
   snap_token       text,
   redirect_url     text,
@@ -311,6 +333,10 @@ create index if not exists transactions_user_id_idx on public.transactions (user
 -- Mencatat hasil pembayaran secara atomik dan idempoten.
 -- Saldo Benih hanya bertambah sekali, saat status pertama kali menjadi 'success'.
 -- Transaksi yang sudah final (success/refunded) tidak bisa kembali ke pending/failed.
+alter table public.transactions add column if not exists provider_order_id text;
+alter table public.transactions add column if not exists currency text not null default 'IDR';
+alter table public.transactions add column if not exists provider_amount numeric(14, 2);
+
 create or replace function public.settle_transaction(
   p_order_id text, p_status text, p_payment_type text, p_raw jsonb
 )
@@ -528,6 +554,7 @@ alter table public.transactions enable row level security;
 alter table public.donations enable row level security;
 alter table public.withdrawals enable row level security;
 alter table public.program_messages enable row level security;
+alter table public.direct_messages enable row level security;
 
 drop policy if exists "pengguna melihat profil sendiri" on public.profiles;
 create policy "pengguna melihat profil sendiri" on public.profiles
@@ -559,6 +586,10 @@ create policy "peserta dan penyelenggara melihat percakapan" on public.program_m
     auth.uid() = participant_id
     or auth.uid() = (select organizer_id from public.programs where id = program_id)
   );
+
+drop policy if exists "pengirim dan penerima melihat pesan langsung" on public.direct_messages;
+create policy "pengirim dan penerima melihat pesan langsung" on public.direct_messages
+  for select using (auth.uid() = sender_id or auth.uid() = recipient_id);
 
 -- ---------------------------------------------------------------------------
 -- Storage: foto kegiatan (publik untuk dibaca; unggah lewat server)

@@ -1,11 +1,12 @@
 // Percakapan penyelenggara <-> peserta. Pesan baru diambil ulang tiap 5 detik.
 (function () {
-  const root = document.querySelector('[data-participant-id]');
+  const root = document.querySelector('[data-chat]');
   const { programId, participantId, me } = root.dataset;
   const chat = document.getElementById('chat');
   const form = document.getElementById('chat-form');
   const errorEl = document.getElementById('chat-error');
-  const url = `/api/programs/${programId}/messages/${participantId}`;
+  // Pesan langsung memakai data-url; percakapan kegiatan memakai id kegiatan + peserta.
+  const url = root.dataset.url || `/api/programs/${programId}/messages/${participantId}`;
 
   function bubble(m) {
     const div = document.createElement('div');

@@ -14,6 +14,11 @@
         <p class="muted"><%= t('Mengadakan kegiatan sebagai') %>: <%= member.organizerNames.join(', ') %></p>
       <% } %>
     <% } %>
+    <% if (!member.isOwner && !member.locked) { %>
+      <div class="row">
+        <a class="btn small" href="<%= user ? '/pesan/' + member.id : '/login?next=' + encodeURIComponent('/pesan/' + member.id) %>">✉️ <%= t('Kirim pesan') %></a>
+      </div>
+    <% } %>
     <% if (member.isOwner) { %>
       <div class="row">
         <a class="btn small" href="/profil"><%= t('Ubah profil') %></a>

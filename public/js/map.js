@@ -76,6 +76,8 @@
           </div>
         </div>`;
       li.querySelector('[data-action="donate"]').addEventListener('click', (e) => donate(p.id, e.currentTarget));
+      // Klik foto/judul di daftar memusatkan peta ke kegiatan itu (tanpa API key).
+      if (embed) li.querySelector('.thumb').addEventListener('click', () => showEmbed(p, 15));
       listEl.appendChild(li);
 
       if (map) {
@@ -125,6 +127,14 @@
     return hit ? { lat: Number(hit.lat), lng: Number(hit.lon), name: hit.display_name.split(',').slice(0, 2).join(',') } : null;
   }
 
+  // Tanpa API key: iframe Google Maps biasa yang dipusatkan ke titik tertentu.
+  const embed = document.getElementById('map-embed');
+  function showEmbed(point, zoom) {
+    if (!embed) return;
+    const params = new URLSearchParams({ q: `${point.lat},${point.lng}`, z: String(zoom), output: 'embed', hl: window.BENIH_I18N.lang });
+    embed.src = `https://maps.google.com/maps?${params}`;
+  }
+
   function moveTo(point, name) {
     center = { lat: point.lat, lng: point.lng };
     placeName = name;
@@ -132,6 +142,7 @@
       map.setCenter(center);
       if (youMarker) youMarker.setVisible(!name);
     }
+    showEmbed(center, 11);
     load();
   }
 
@@ -165,6 +176,7 @@
   // API key belum diisi sehingga daftar tetap tampil tanpa peta.
   window.initMap = async function () {
     center = await locate();
+    showEmbed(center, 11);
     if (window.google && google.maps) {
       map = new google.maps.Map(document.getElementById('map'), { center, zoom: 11 });
       youMarker = new google.maps.Marker({

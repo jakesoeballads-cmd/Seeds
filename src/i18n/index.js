@@ -63,6 +63,12 @@ function formatters(lang) {
     date: (iso, style = 'medium') => (iso ? (style === 'full' ? dateFull : dateMedium).format(new Date(iso)) : ''),
     time: (iso) => (iso ? time.format(new Date(iso)) : ''),
     dateTime: (iso) => (iso ? short.format(new Date(iso)) : ''),
+    // Untuk daftar pesan: jam bila hari ini, selain itu tanggal saja.
+    when(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return dayKey.format(d) === dayKey.format(new Date()) ? time.format(d) : dateMedium.format(d);
+    },
     // "Sabtu, 15 Oktober 2026 · 08.00–11.00"; tanggal selesai ditulis bila berbeda hari.
     schedule(start, end, style = 'medium') {
       if (!start) return '';

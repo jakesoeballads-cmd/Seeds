@@ -5,6 +5,7 @@ const { supabase, supabaseAdmin } = require('../config/supabase');
 const { requireAuth, requireDatabase } = require('../middleware/auth');
 const { parseBenihAmount } = require('../services/benih');
 const svc = require('../services/programs');
+const { markProgramRead } = require('../services/messages');
 const { VOLUNTEER_POINTS_PER_EVENT } = require('../services/badges');
 
 const router = express.Router();
@@ -220,6 +221,7 @@ router.post('/:id/participants/:userId/pay', requireAuth, loadProgram, requireOr
 router.get('/:id/messages/:participantId', requireAuth, loadProgram, async (req, res, next) => {
   try {
     await svc.assertConversationAccess(req.program, req.params.participantId, req.user.id);
+    await markProgramRead(req.program.id, req.params.participantId, req.user.id);
     res.json({ messages: await svc.getMessages(req.program.id, req.params.participantId) });
   } catch (err) {
     next(err);

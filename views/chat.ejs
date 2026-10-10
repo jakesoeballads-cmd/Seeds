@@ -1,5 +1,5 @@
 <%- include('partials/header') %>
-<section class="card narrow stack" style="gap:12px;max-width:640px" data-program-id="<%= program.id %>" data-participant-id="<%= participantId %>" data-me="<%= user.id %>">
+<section class="card narrow stack" style="gap:12px;max-width:640px" data-chat data-program-id="<%= program.id %>" data-participant-id="<%= participantId %>" data-me="<%= user.id %>">
   <p style="margin:0"><a href="/kegiatan/<%= program.id %>">← <%= program.title %></a></p>
   <h1 style="margin:0"><%= t('Pesan dengan {name}', { name: otherName }) %></h1>
   <% if (participation.role === 'paid') { %>

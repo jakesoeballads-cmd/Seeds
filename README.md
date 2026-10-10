@@ -37,6 +37,20 @@ Instagram dan Threads tidak menyediakan login untuk aplikasi pihak ketiga, jadi 
 
 Checkout Midtrans Snap menampilkan QRIS di urutan pertama (`MIDTRANS_ENABLED_PAYMENTS`, kode `other_qris`). QRIS harus diaktifkan di Dashboard Midtrans agar muncul. Pengguna bisa memindai kode dengan aplikasi bank atau e-wallet apa pun.
 
+## Pembayaran dengan PayPal
+
+Di halaman Benih, pembeli bisa memilih Midtrans (QRIS, bank, e-wallet) atau PayPal. PayPal tidak menerima rupiah, jadi tagihan dikonversi ke `PAYPAL_CURRENCY` (bawaan USD) dengan kurs tetap `PAYPAL_IDR_RATE` (bawaan 16000) dan dibulatkan ke atas per sen. Jumlah Benih yang masuk tetap sesuai pesanan.
+
+Alurnya memakai PayPal Orders v2: server membuat order, pembeli menyetujui di PayPal, lalu kembali ke `/benih/paypal/kembali` dan server menangkap (capture) pembayaran serta memeriksa status, mata uang, nominal, dan id order sebelum Benih ditambahkan. Untuk mengaktifkan: buat aplikasi di developer.paypal.com, isi `PAYPAL_CLIENT_ID` dan `PAYPAL_CLIENT_SECRET`, dan pakai `PAYPAL_MODE=sandbox` sampai siap, lalu `live`. Tanpa kredensial, PayPal berjalan dalam mode simulasi.
+
+## Pesan antar-member
+
+Member bisa saling mengirim pesan langsung dari profil member (tombol "Kirim pesan") atau dari halaman kegiatan ("Pesan penyelenggara"). Kotak masuk di `/pesan` menggabungkan pesan langsung dan percakapan kegiatan dengan pelamar tenaga berbayar, dan jumlah pesan belum dibaca tampil di menu. Member yang mengunci profilnya hanya bisa dihubungi oleh orang yang pernah ia kirimi pesan, atau bila ia penyelenggara kegiatan yang sudah terbit.
+
+## Foto dan peta kegiatan
+
+Foto di halaman kegiatan bisa diklik untuk dilihat layar penuh (geser atau tombol panah untuk pindah foto, Esc untuk menutup). Lokasi kegiatan ditampilkan dengan Google Maps beserta tautan "Buka di Google Maps" dan "Petunjuk arah". Dengan `GOOGLE_MAPS_API_KEY`, aktifkan juga **Maps Embed API** pada kunci yang sama; tanpa kunci, peta tetap tampil memakai embed Google Maps biasa.
+
 ## Profil member
 
 Setiap member punya profil publik di `/member/:id`: nama, foto, kota, bio, badge, kegiatan yang diadakan, dan rekam jejak partisipasi. Nama penyelenggara di beranda dan halaman kegiatan membuka profil ini. Saldo Benih dan penarikan tidak pernah tampil di profil publik.
@@ -95,7 +109,7 @@ Jadwal kegiatan diisi sebagai tanggal + jam mulai + jam selesai, dan dibaca dala
 3. Buat project di [Supabase](https://supabase.com), buka **SQL Editor**, jalankan isi `supabase/schema.sql`.
 4. `npm run dev`, buka http://localhost:3000
 
-Tanpa `MIDTRANS_SERVER_KEY`, pembayaran berjalan dalam **mode simulasi**: setelah checkout kamu diarahkan ke halaman lokal untuk memilih "berhasil" atau "gagal", dan hasilnya diproses lewat alur yang sama dengan webhook Midtrans. Tanpa `GOOGLE_MAPS_API_KEY`, daftar program tetap tampil tanpa peta.
+Tanpa `MIDTRANS_SERVER_KEY`, pembayaran berjalan dalam **mode simulasi**: setelah checkout kamu diarahkan ke halaman lokal untuk memilih "berhasil" atau "gagal", dan hasilnya diproses lewat alur yang sama dengan webhook Midtrans. Tanpa `GOOGLE_MAPS_API_KEY`, peta memakai embed Google Maps tanpa kunci.
 
 ## API
 

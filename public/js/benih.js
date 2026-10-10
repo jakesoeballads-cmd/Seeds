@@ -9,8 +9,15 @@
 
   const statusLabel = { pending: t('Menunggu'), success: t('Berhasil'), failed: t('Gagal'), refunded: t('Dikembalikan') };
 
+  const paypalRate = Number(form.dataset.paypalRate);
+  const paypalCurrency = form.dataset.paypalCurrency;
+  // Sama dengan convertFromIdr di server: dibulatkan ke atas ke sen.
+  const toPaypal = (idr) => new Intl.NumberFormat(window.BENIH_I18N.locale, { style: 'currency', currency: paypalCurrency })
+    .format(Math.ceil((idr / paypalRate) * 100) / 100);
+
   function updateTotal() {
-    totalEl.textContent = rupiah((Number(form.benih_amount.value) || 0) * price);
+    const idr = (Number(form.benih_amount.value) || 0) * price;
+    totalEl.textContent = form.method.value === 'paypal' ? `${toPaypal(idr)} (≈ ${rupiah(idr)})` : rupiah(idr);
   }
 
   function showMessage(text, kind) {
@@ -30,25 +37,31 @@
     historyEl.innerHTML = data.transactions.length ? '' : `<li class="muted">${t('Belum ada transaksi.')}</li>`;
     data.transactions.forEach((trx) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span>${fmt.num(trx.benih_amount)} Benih · ${rupiah(trx.gross_amount)}</span>
+      const paid = trx.currency && trx.currency !== 'IDR'
+        ? new Intl.NumberFormat(window.BENIH_I18N.locale, { style: 'currency', currency: trx.currency }).format(trx.provider_amount)
+        : rupiah(trx.gross_amount);
+      const via = trx.provider && trx.provider.startsWith('paypal') ? 'PayPal · ' : '';
+      li.innerHTML = `<span>${fmt.num(trx.benih_amount)} Benih · ${via}${paid}</span>
         <span class="badge ${trx.status}">${statusLabel[trx.status] || trx.status}</span>`;
       historyEl.appendChild(li);
     });
   }
 
   form.benih_amount.addEventListener('input', updateTotal);
+  form.querySelectorAll('[name="method"]').forEach((el) => el.addEventListener('change', updateTotal));
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const res = await fetch('/api/payments/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ benih_amount: Number(form.benih_amount.value) }),
+      body: JSON.stringify({ benih_amount: Number(form.benih_amount.value), method: form.method.value }),
     });
     const data = await res.json();
     if (!res.ok) return showMessage(data.error, 'error');
 
-    if (data.simulated || !window.snap) {
+    // PayPal (dan mode simulasi): pindah ke halaman persetujuan pembayaran.
+    if (data.method === 'paypal' || data.simulated || !window.snap) {
       window.location.href = data.redirect_url;
       return;
     }

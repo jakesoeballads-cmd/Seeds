@@ -4,11 +4,18 @@
   <p class="balance"><%= t('Saldo Benih') %>: <strong><%= fmt.num(balance) %></strong> Benih
     (<%= fmt.rupiah(balance * price) %>)</p>
   <p class="muted"><%= t('Saldo bisa didonasikan ke kegiatan member lain atau ditarik ke rekening.') %></p>
-  <% if (simulated) { %>
+  <% if (simulated || paypal.simulated) { %>
     <p class="alert info"><%= t('Mode simulasi aktif: pembayaran tidak benar-benar diproses.') %></p>
   <% } %>
-  <form id="buy-form" data-price="<%= price %>" data-simulated="<%= simulated %>">
+  <form id="buy-form" data-price="<%= price %>" data-simulated="<%= simulated %>" data-paypal-rate="<%= paypal.idrRate %>" data-paypal-currency="<%= paypal.currency %>">
     <label><%= t('Jumlah Benih') %> <input type="number" name="benih_amount" min="1" max="100000" value="10" required></label>
+    <fieldset class="pay-methods">
+      <legend><%= t('Metode pembayaran') %></legend>
+      <label class="role-option"><input type="radio" name="method" value="midtrans" checked>
+        <strong><%= t('QRIS, e-wallet, atau transfer bank') %></strong><br><span class="muted"><%= t('Lewat Midtrans, dibayar dalam Rupiah.') %></span></label>
+      <label class="role-option"><input type="radio" name="method" value="paypal">
+        <strong>PayPal</strong><br><span class="muted"><%= t('Untuk kartu dan akun internasional. Dibayar dalam {currency} dengan kurs Rp{rate} = 1 {currency}.', { currency: paypal.currency, rate: fmt.num(paypal.idrRate) }) %></span></label>
+    </fieldset>
     <p class="muted"><%= t('Total') %>: <strong id="total">Rp0</strong> (<%= t('{price} per Benih', { price: fmt.rupiah(price) }) %>)</p>
     <button type="submit" class="btn"><%= t('Bayar') %></button>
   </form>

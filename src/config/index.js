@@ -26,6 +26,16 @@ const config = {
       .split(',').map((s) => s.trim()).filter(Boolean),
   },
 
+  // PayPal (Orders API v2). PayPal tidak mendukung Rupiah, jadi tagihan dibuat
+  // dalam PAYPAL_CURRENCY dengan kurs tetap PAYPAL_IDR_RATE (Rupiah per 1 unit).
+  paypal: {
+    mode: process.env.PAYPAL_MODE === 'live' ? 'live' : 'sandbox',
+    clientId: process.env.PAYPAL_CLIENT_ID || '',
+    clientSecret: process.env.PAYPAL_CLIENT_SECRET || '',
+    currency: (process.env.PAYPAL_CURRENCY || 'USD').toUpperCase(),
+    idrRate: Number(process.env.PAYPAL_IDR_RATE) || 16000,
+  },
+
   benihPriceIdr: Number(process.env.BENIH_PRICE_IDR) || 2000,
   // Potongan penarikan saldo untuk pengembangan platform, dalam basis poin (250 = 2,5%).
   withdrawalFeeBps: Math.round((Number(process.env.WITHDRAWAL_FEE_PERCENT) || 2.5) * 100),
@@ -34,5 +44,6 @@ const config = {
 config.isProduction = config.env === 'production';
 // Tanpa server key, pembayaran berjalan dalam mode simulasi.
 config.midtrans.simulated = !config.midtrans.serverKey;
+config.paypal.simulated = !config.paypal.clientId || !config.paypal.clientSecret;
 
 module.exports = config;

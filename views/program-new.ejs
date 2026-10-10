@@ -40,7 +40,10 @@
     <label><%= t('Target donasi (Benih, opsional)') %> <input type="number" name="benih_target" min="1"></label>
     <div class="full">
       <div id="picker-map" class="map small" data-maps-key="<%= mapsKey %>">
-        <% if (!mapsKey) { %><p class="muted"><%= t('Peta nonaktif. Isi koordinat secara manual.') %></p><% } %>
+        <% if (!mapsKey) { %>
+          <iframe id="picker-embed" class="map-embed fill" title="<%= t('Pratinjau lokasi di Google Maps') %>" loading="lazy" referrerpolicy="no-referrer-when-downgrade" hidden></iframe>
+          <p class="muted" id="picker-note"><%= t('Isi latitude dan longitude untuk melihat lokasinya di Google Maps.') %></p>
+        <% } %>
       </div>
     </div>
     <label><%= t('Latitude') %> <input type="number" name="lat" step="any" required></label>
