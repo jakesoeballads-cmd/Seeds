@@ -1,4 +1,17 @@
-export const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').trim().replace(/\/$/, '');
+/**
+ * Hanya bagian asal (https://xxxx.supabase.co) yang dipakai. Bila yang ditempel adalah
+ * alamat REST (…/rest/v1/), jalurnya dibuang agar tidak menjadi /rest/v1/rest/v1.
+ */
+function originOnly(raw: string) {
+  const v = raw.trim();
+  try {
+    return new URL(v).origin;
+  } catch {
+    return v.replace(/\/$/, '');
+  }
+}
+
+export const SUPABASE_URL = originOnly(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '');
 export const SUPABASE_ANON_KEY = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').trim();
 
 function validUrl(u: string) {
