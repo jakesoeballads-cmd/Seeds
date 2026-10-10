@@ -17,16 +17,7 @@
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  async function joinProgram(id, button) {
-    if (!window.BENIH.loggedIn) {
-      window.location.href = '/login?next=/';
-      return;
-    }
-    button.disabled = true;
-    const res = await fetch(`/api/programs/${id}/join`, { method: 'POST' });
-    const data = await res.json();
-    button.textContent = res.ok ? 'Terdaftar ✓' : data.error;
-  }
+  const ORGANIZER_TYPES = { perorangan: 'Perorangan', komunitas: 'Komunitas', organisasi: 'Organisasi', badan_usaha: 'Badan usaha' };
 
   async function donate(id, button) {
     if (!window.BENIH.loggedIn) {
@@ -64,16 +55,22 @@
 
     programs.forEach((p) => {
       const li = document.createElement('li');
+      const photo = (p.photo_urls || [])[0];
+      const url = `/kegiatan/${encodeURIComponent(p.id)}`;
       li.innerHTML = `
-        <h3>${escapeHtml(p.title)}</h3>
-        <p class="muted">${escapeHtml(p.location_name || '')} · ${p.distance_km.toFixed(1)} km</p>
-        <p class="muted">${formatDate(p.start_at)}</p>
-        <p class="muted">🌱 ${p.benih_collected} ${p.benih_target ? `/ ${p.benih_target} ` : ''}Benih terkumpul</p>
-        <div class="actions">
-          <button class="btn small" data-action="join">Ikuti</button>
-          <button class="btn small secondary" data-action="donate">Donasi Benih</button>
+        ${photo ? `<img class="thumb" src="${escapeHtml(photo)}" alt="" loading="lazy">` : '<div class="thumb" aria-hidden="true">🌱</div>'}
+        <div>
+          <h3><a href="${url}">${escapeHtml(p.title)}</a></h3>
+          <p class="org">oleh <strong>${escapeHtml(p.organizer_name)}</strong>
+            <span class="org-type">${ORGANIZER_TYPES[p.organizer_type] || ''}</span></p>
+          <p class="muted">${escapeHtml(p.location_name || '')} · ${p.distance_km.toFixed(1)} km</p>
+          <p class="muted">${formatDate(p.start_at)}</p>
+          <p class="muted">🌱 ${p.benih_collected} ${p.benih_target ? `/ ${p.benih_target} ` : ''}Benih terkumpul</p>
+          <div class="actions">
+            <a class="btn small" href="${url}">Ikuti</a>
+            <button class="btn small ghost" data-action="donate">Donasi Benih</button>
+          </div>
         </div>`;
-      li.querySelector('[data-action="join"]').addEventListener('click', (e) => joinProgram(p.id, e.currentTarget));
       li.querySelector('[data-action="donate"]').addEventListener('click', (e) => donate(p.id, e.currentTarget));
       listEl.appendChild(li);
 

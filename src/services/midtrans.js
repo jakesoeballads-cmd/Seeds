@@ -23,6 +23,7 @@ async function createSnapTransaction({ orderId, grossAmount, itemName, quantity,
   const body = {
     transaction_details: { order_id: orderId, gross_amount: grossAmount },
     item_details: [{ id: 'BENIH', name: itemName, price: unitPrice, quantity }],
+    enabled_payments: config.midtrans.enabledPayments,
     customer_details: customer,
     callbacks: { finish: `${config.appUrl}/benih/selesai` },
   };

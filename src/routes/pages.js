@@ -3,7 +3,14 @@ const config = require('../config');
 const { supabaseAdmin, isConfigured } = require('../config/supabase');
 const { requireAuth } = require('../middleware/auth');
 const { getDashboard } = require('../services/wallet');
-const { DONOR_BADGES } = require('../services/badges');
+const { DONOR_BADGES, VOLUNTEER_BADGES, VOLUNTEER_POINTS_PER_EVENT } = require('../services/badges');
+const programs = require('../services/programs');
+
+function needDatabase(res, title) {
+  if (isConfigured) return false;
+  res.status(503).render('error', { title, message: 'Database belum dikonfigurasi. Isi variabel SUPABASE_* di .env.' });
+  return true;
+}
 
 const router = express.Router();
 
@@ -12,7 +19,12 @@ router.get('/', (req, res) => {
 });
 
 router.get('/program/baru', requireAuth, (req, res) => {
-  res.render('program-new', { title: 'Buat Kegiatan', mapsKey: config.googleMapsApiKey });
+  const meta = req.user.user_metadata || {};
+  res.render('program-new', {
+    title: 'Buat Kegiatan',
+    mapsKey: config.googleMapsApiKey,
+    defaultOrganizer: meta.full_name || meta.name || '',
+  });
 });
 
 router.get('/benih', requireAuth, async (req, res, next) => {
@@ -45,20 +57,82 @@ router.get('/benih', requireAuth, async (req, res, next) => {
 
 router.get('/dashboard', requireAuth, async (req, res, next) => {
   try {
-    if (!isConfigured) {
-      return res.status(503).render('error', {
-        title: 'Dashboard',
-        message: 'Database belum dikonfigurasi. Isi variabel SUPABASE_* di .env.',
-      });
-    }
+    if (needDatabase(res, 'Dashboard')) return;
     const dashboard = await getDashboard(req.user.id);
     res.render('dashboard', {
       title: 'Dashboard',
       ...dashboard,
       price: config.benihPriceIdr,
       badges: DONOR_BADGES,
+      volunteerBadges: VOLUNTEER_BADGES,
+      pointsPerEvent: VOLUNTEER_POINTS_PER_EVENT,
     });
   } catch (err) {
+    next(err);
+  }
+});
+
+// Halaman detail kegiatan: terbuka untuk semua pengunjung.
+router.get('/kegiatan/:id', async (req, res, next) => {
+  try {
+    if (needDatabase(res, 'Kegiatan')) return;
+    const program = await programs.getProgram(req.params.id);
+    if (!program) return res.status(404).render('error', { title: 'Tidak ditemukan', message: 'Kegiatan tidak ditemukan.' });
+
+    const isOrganizer = Boolean(req.user && req.user.id === program.organizer_id);
+    const [participation, participants, participantCount] = await Promise.all([
+      req.user && !isOrganizer ? programs.getParticipation(program.id, req.user.id) : null,
+      isOrganizer ? programs.getParticipants(program.id) : null,
+      programs.countParticipants(program.id),
+    ]);
+
+    res.render('program', {
+      title: program.title,
+      program,
+      isOrganizer,
+      participation,
+      participants,
+      participantCount,
+      organizerTypes: programs.ORGANIZER_TYPES,
+      shareUrl: `${config.appUrl}/kegiatan/${program.id}`,
+      price: config.benihPriceIdr,
+      pointsPerEvent: VOLUNTEER_POINTS_PER_EVENT,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Percakapan peserta dengan penyelenggara. Peserta membuka /kegiatan/:id/pesan,
+// penyelenggara membuka /kegiatan/:id/pesan/:participantId.
+router.get(['/kegiatan/:id/pesan', '/kegiatan/:id/pesan/:participantId'], requireAuth, async (req, res, next) => {
+  try {
+    if (needDatabase(res, 'Pesan')) return;
+    const program = await programs.getProgram(req.params.id);
+    if (!program) return res.status(404).render('error', { title: 'Tidak ditemukan', message: 'Kegiatan tidak ditemukan.' });
+
+    const participantId = req.params.participantId || req.user.id;
+    const participation = await programs.assertConversationAccess(program, participantId, req.user.id);
+    const isOrganizer = req.user.id === program.organizer_id;
+    let otherName = program.organizer_name;
+    if (isOrganizer) {
+      const { data } = await supabaseAdmin.from('profiles').select('full_name').eq('id', participantId).maybeSingle();
+      otherName = (data && data.full_name) || 'Peserta';
+    }
+
+    res.render('chat', {
+      title: 'Pesan',
+      program,
+      participantId,
+      participation,
+      isOrganizer,
+      otherName,
+      messages: await programs.getMessages(program.id, participantId),
+    });
+  } catch (err) {
+    if (err.status === 403 || err.status === 404) {
+      return res.status(err.status).render('error', { title: 'Pesan', message: err.message });
+    }
     next(err);
   }
 });

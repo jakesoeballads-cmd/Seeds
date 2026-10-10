@@ -26,6 +26,20 @@ test('halaman dan endpoint dasar merespons', async (t) => {
   assert.strictEqual(benih.status, 302);
   assert.match(benih.headers.get('location'), /^\/login\?next=/);
 
+  const oauth = await fetch(`${base}/auth/google`, { redirect: 'manual' });
+  assert.strictEqual(oauth.status, 302);
+  assert.strictEqual(oauth.headers.get('location'), '/login');
+
+  const login = await (await fetch(`${base}/login`)).text();
+  assert.match(login, /\/auth\/google/);
+  assert.match(login, /\/auth\/facebook/);
+  assert.match(login, /\/auth\/x/);
+
+  const home = await (await fetch(`${base}/`)).text();
+  assert.match(home, /Selamat datang di Benih\./);
+
+  assert.strictEqual((await fetch(`${base}/kegiatan/abc`)).status, 503);
+
   const missing = await fetch(`${base}/api/tidak-ada`);
   assert.strictEqual(missing.status, 404);
 });

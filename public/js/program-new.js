@@ -24,25 +24,41 @@
     });
   };
 
+  // Pratinjau foto sebelum diunggah.
+  form.photos.addEventListener('change', () => {
+    const preview = document.getElementById('photo-preview');
+    preview.innerHTML = '';
+    Array.from(form.photos.files).slice(0, 5).forEach((file) => {
+      const img = document.createElement('img');
+      img.alt = file.name;
+      img.src = URL.createObjectURL(file);
+      preview.appendChild(img);
+    });
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const body = Object.fromEntries(new FormData(form));
+    const body = new FormData(form);
     // datetime-local tidak membawa zona waktu; ubah ke ISO dengan zona waktu browser.
     ['start_at', 'end_at'].forEach((k) => {
-      body[k] = body[k] ? new Date(body[k]).toISOString() : '';
+      const v = body.get(k);
+      body.set(k, v ? new Date(v).toISOString() : '');
     });
+    if (form.photos.files.length > 5) {
+      message.hidden = false;
+      message.className = 'alert error';
+      message.textContent = 'Maksimal 5 foto.';
+      return;
+    }
 
-    const res = await fetch('/api/programs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    // multipart/form-data: browser mengatur Content-Type beserta boundary.
+    const res = await fetch('/api/programs', { method: 'POST', body });
     const data = await res.json();
     message.hidden = false;
     if (res.ok) {
       message.className = 'alert success';
       message.textContent = 'Kegiatan berhasil dibuat.';
-      setTimeout(() => (window.location.href = '/'), 1000);
+      setTimeout(() => (window.location.href = `/kegiatan/${data.program.id}`), 1000);
     } else {
       message.className = 'alert error';
       message.textContent = data.error;

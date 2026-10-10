@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+<section class="card narrow stack" style="gap:12px;max-width:640px" data-program-id="<%= program.id %>" data-participant-id="<%= participantId %>" data-me="<%= user.id %>">
+  <p style="margin:0"><a href="/kegiatan/<%= program.id %>">← <%= program.title %></a></p>
+  <h1 style="margin:0">Pesan dengan <%= otherName %></h1>
+  <% if (participation.role === 'paid') { %>
+    <p class="alert info" style="margin:0">
+      <% if (participation.status === 'paid') { %>
+        Sudah dibayar <%= participation.agreed_benih %> Benih.
+      <% } else if (participation.agreed_benih) { %>
+        Kesepakatan: <strong><%= participation.agreed_benih %> Benih</strong>. <%= isOrganizer ? 'Bayar dari halaman kegiatan setelah pekerjaan selesai.' : 'Penyelenggara membayar setelah pekerjaan selesai.' %>
+      <% } else { %>
+        <%= isOrganizer ? 'Bicarakan tugas dan jumlah Benih, lalu catat kesepakatan di halaman kegiatan.' : 'Bicarakan tugas dan jumlah Benih yang akan kamu terima. Penyelenggara mencatat kesepakatannya.' %>
+      <% } %>
+    </p>
+  <% } %>
+  <div class="chat" id="chat" aria-live="polite">
+    <% if (!messages.length) { %><p class="muted" id="chat-empty">Belum ada pesan. Mulai percakapan di bawah.</p><% } %>
+    <% messages.forEach((m) => { %>
+      <div class="bubble <%= m.sender_id === user.id ? 'mine' : '' %>"><%= m.body %><time><%= new Date(m.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }) %></time></div>
+    <% }) %>
+  </div>
+  <form id="chat-form" class="row" style="flex-direction:row">
+    <input type="text" name="body" maxlength="2000" required placeholder="Tulis pesan…" style="flex:1;min-width:0" aria-label="Pesan" value="<%= !isOrganizer && !messages.length && participation.role === 'paid' ? 'Halo, saya tertarik ikut sebagai tenaga berbayar. Tugas apa yang dibutuhkan dan berapa imbal balik Benihnya?' : '' %>">
+    <button class="btn" type="submit">Kirim</button>
+  </form>
+  <p id="chat-error" class="alert error" hidden></p>
+</section>
+<script src="/js/chat.js"></script>
+<%- include('partials/footer') %>

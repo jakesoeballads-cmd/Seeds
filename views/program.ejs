@@ -1,0 +1,130 @@
+<%- include('partials/header') %>
+<% const tanggal = (iso) => new Date(iso).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' }); %>
+<% const statusLabel = { registered: 'Terdaftar', attended: 'Hadir', negotiating: 'Berdiskusi', agreed: 'Disepakati', paid: 'Dibayar', cancelled: 'Batal' }; %>
+<% const shareText = `Ayo dukung kegiatan "${program.title}" di Benih!`; %>
+<div class="program-layout" data-program-id="<%= program.id %>">
+  <article class="stack">
+    <% if (program.photo_urls && program.photo_urls.length) { %>
+      <div class="gallery">
+        <% program.photo_urls.forEach((url, i) => { %><img src="<%= url %>" alt="Foto kegiatan <%= i + 1 %>" loading="lazy"><% }) %>
+      </div>
+    <% } %>
+    <header>
+      <h1 style="margin-bottom:4px"><%= program.title %></h1>
+      <p style="margin:0">oleh <strong><%= program.organizer_name %></strong>
+        <span class="org-type"><%= organizerTypes[program.organizer_type] %></span></p>
+    </header>
+    <p class="muted" style="margin:0">📅 <%= tanggal(program.start_at) %><br>📍 <%= program.location_name || `${program.lat}, ${program.lng}` %>
+      <br>👥 <%= participantCount %><%= program.max_participants ? ` / ${program.max_participants}` : '' %> peserta</p>
+    <% if (program.description) { %><p style="white-space:pre-line;max-width:70ch"><%= program.description %></p><% } %>
+    <div>
+      <% if (program.benih_target) { %>
+        <div class="progress"><div style="width: <%= Math.min(100, Math.round(program.benih_collected / program.benih_target * 100)) %>%"></div></div>
+      <% } %>
+      <p class="muted">🌱 <strong><%= Number(program.benih_collected).toLocaleString('id-ID') %></strong><%= program.benih_target ? ` / ${program.benih_target.toLocaleString('id-ID')}` : '' %> Benih terkumpul</p>
+    </div>
+
+    <% if (isOrganizer) { %>
+      <section class="card">
+        <h2 style="margin-top:0">Peserta</h2>
+        <p class="muted">Konfirmasi kehadiran relawan agar mereka mendapat <%= pointsPerEvent %> poin relawan. Untuk tenaga berbayar, sepakati jumlah Benih lewat pesan, catat kesepakatannya, lalu bayar setelah kegiatan.</p>
+        <% if (!participants.length) { %>
+          <p class="muted">Belum ada peserta.</p>
+        <% } else { %>
+          <div class="table-wrap"><table class="table">
+            <thead><tr><th>Nama</th><th>Peran</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody>
+            <% participants.forEach((p) => { %>
+              <tr data-user="<%= p.user_id %>">
+                <td><%= (p.profile && p.profile.full_name) || 'Member' %></td>
+                <td><%= p.role === 'paid' ? 'Tenaga berbayar' : 'Relawan' %></td>
+                <td><span class="badge <%= p.status %>"><%= statusLabel[p.status] %></span><%= p.agreed_benih ? ` · ${p.agreed_benih} Benih` : '' %></td>
+                <td><div class="row">
+                  <% if (p.role === 'volunteer' && p.status === 'registered') { %>
+                    <button class="btn small" data-act="attended">Konfirmasi hadir</button>
+                  <% } %>
+                  <% if (p.role === 'paid') { %>
+                    <a class="btn small ghost" href="/kegiatan/<%= program.id %>/pesan/<%= p.user_id %>">Pesan</a>
+                    <% if (p.status === 'negotiating' || p.status === 'agreed') { %>
+                      <form class="row" data-act="agreement" style="display:flex;flex-direction:row;gap:6px">
+                        <input type="number" name="benih_amount" min="1" placeholder="Benih" value="<%= p.agreed_benih || '' %>" style="width:90px" aria-label="Benih yang disepakati">
+                        <button class="btn small ghost" type="submit">Simpan</button>
+                      </form>
+                    <% } %>
+                    <% if (p.status === 'agreed') { %>
+                      <button class="btn small" data-act="pay">Bayar <%= p.agreed_benih %> Benih</button>
+                    <% } %>
+                  <% } %>
+                </div></td>
+              </tr>
+            <% }) %>
+            </tbody>
+          </table></div>
+        <% } %>
+        <p id="manage-message" class="alert" hidden></p>
+      </section>
+    <% } %>
+  </article>
+
+  <aside class="stack">
+    <% if (!isOrganizer) { %>
+    <section class="card stack" style="gap:12px">
+      <h2 style="margin:0">Ikuti kegiatan</h2>
+      <% if (!user) { %>
+        <p class="muted" style="margin:0">Masuk untuk mengikuti kegiatan ini.</p>
+        <a class="btn" href="/login?next=/kegiatan/<%= program.id %>">Masuk atau daftar</a>
+      <% } else if (participation) { %>
+        <% if (participation.role === 'volunteer') { %>
+          <p class="alert success" style="margin:0">Kamu terdaftar sebagai <strong>relawan</strong> · <%= statusLabel[participation.status] %></p>
+          <p class="muted" style="margin:0"><%= participation.status === 'attended' ? `Kehadiranmu sudah dikonfirmasi: +${pointsPerEvent} poin relawan.` : `Kamu mendapat ${pointsPerEvent} poin relawan setelah penyelenggara mengonfirmasi kehadiranmu.` %></p>
+        <% } else { %>
+          <p class="alert info" style="margin:0">Kamu mendaftar sebagai <strong>tenaga berbayar</strong> · <%= statusLabel[participation.status] %><%= participation.agreed_benih ? ` · ${participation.agreed_benih} Benih` : '' %></p>
+          <a class="btn" href="/kegiatan/<%= program.id %>/pesan">Pesan penyelenggara</a>
+        <% } %>
+      <% } else { %>
+        <form id="join-form" class="stack" style="gap:12px">
+          <div class="role-options" role="radiogroup" aria-label="Ikut sebagai">
+            <label class="role-option"><input type="radio" name="role" value="volunteer" checked>
+              <strong>Relawan</strong><br><span class="muted">Tanpa imbal balik Benih. Kamu mendapat poin dan badge relawan.</span></label>
+            <label class="role-option"><input type="radio" name="role" value="paid">
+              <strong>Tenaga berbayar</strong><br><span class="muted">Dapat imbal balik Benih. Kamu akan diarahkan ke percakapan dengan penyelenggara untuk menyepakati jumlahnya.</span></label>
+          </div>
+          <button class="btn" type="submit">Ikuti kegiatan</button>
+        </form>
+      <% } %>
+      <p id="join-message" class="alert" hidden></p>
+    </section>
+
+    <section class="card stack" style="gap:12px">
+      <h2 style="margin:0">Dukung dengan Benih</h2>
+      <% if (user) { %>
+        <form id="donate-form" class="stack" style="gap:8px">
+          <label>Jumlah Benih <input type="number" name="benih_amount" min="1" value="10" required></label>
+          <label>Pesan (opsional) <input type="text" name="message" maxlength="280"></label>
+          <button class="btn" type="submit">Donasi</button>
+        </form>
+        <p id="donate-message" class="alert" hidden></p>
+      <% } else { %>
+        <a class="btn ghost" href="/login?next=/kegiatan/<%= program.id %>">Masuk untuk berdonasi</a>
+      <% } %>
+    </section>
+    <% } else { %>
+    <section class="card"><p class="alert success" style="margin:0">Ini kegiatan yang kamu adakan.</p></section>
+    <% } %>
+
+    <section class="card stack" style="gap:12px">
+      <h2 style="margin:0">Bagikan</h2>
+      <div class="share">
+        <a class="btn small ghost" target="_blank" rel="noopener" href="https://wa.me/?text=<%= encodeURIComponent(shareText + ' ' + shareUrl) %>">WhatsApp</a>
+        <a class="btn small ghost" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(shareUrl) %>">Facebook</a>
+        <a class="btn small ghost" target="_blank" rel="noopener" href="https://x.com/intent/post?text=<%= encodeURIComponent(shareText) %>&url=<%= encodeURIComponent(shareUrl) %>">X</a>
+        <a class="btn small ghost" target="_blank" rel="noopener" href="https://www.threads.net/intent/post?text=<%= encodeURIComponent(shareText + ' ' + shareUrl) %>">Threads</a>
+        <button class="btn small ghost" type="button" id="copy-link" data-url="<%= shareUrl %>">Salin tautan</button>
+        <button class="btn small ghost" type="button" id="native-share" data-url="<%= shareUrl %>" data-text="<%= shareText %>" hidden>Bagikan…</button>
+      </div>
+      <p class="muted" style="margin:0;font-size:.85rem">Untuk Instagram, salin tautan lalu tempel di story atau bio.</p>
+    </section>
+  </aside>
+</div>
+<script src="/js/program.js"></script>
+<%- include('partials/footer') %>

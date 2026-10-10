@@ -31,9 +31,11 @@ app.use((req, res) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  const status = err.status || 500;
+  // MulterError: unggahan foto terlalu besar atau terlalu banyak.
+  const status = err.status || (err.name === 'MulterError' ? 400 : 500);
   if (status >= 500) console.error(err);
-  const message = status >= 500 ? 'Terjadi kesalahan pada server.' : err.message;
+  const multerMessages = { LIMIT_FILE_SIZE: 'Ukuran foto maksimal 5 MB.', LIMIT_FILE_COUNT: 'Maksimal 5 foto.' };
+  const message = status >= 500 ? 'Terjadi kesalahan pada server.' : multerMessages[err.code] || err.message;
   if (req.originalUrl.startsWith('/api/')) return res.status(status).json({ error: message });
   res.status(status).render('error', { title: 'Kesalahan', message });
 });

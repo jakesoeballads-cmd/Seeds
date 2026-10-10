@@ -2,6 +2,7 @@
 <section class="card narrow">
   <h1>Masuk</h1>
   <% if (error) { %><p class="alert error"><%= error %></p><% } %>
+  <%- include('partials/social-login', { label: 'Masuk', next }) %>
   <form method="post" action="/login">
     <input type="hidden" name="next" value="<%= next %>">
     <label>Email <input type="email" name="email" value="<%= values.email || '' %>" required autocomplete="email"></label>

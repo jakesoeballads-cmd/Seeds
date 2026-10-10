@@ -14,6 +14,29 @@ Platform kegiatan pelestarian lingkungan. Member membuat kegiatan (reforestasi, 
 
 Stack: Node.js + Express, EJS, Supabase (database + auth), Google Maps JavaScript API, Midtrans Snap.
 
+## Kegiatan dan peserta
+
+- Kegiatan bisa dilihat semua pengunjung (member maupun bukan) di beranda dan di `/kegiatan/:id`, lengkap dengan nama penginisiasi (perorangan, komunitas, organisasi, atau badan usaha) dan foto.
+- Penyelenggara bisa mengunggah hingga 5 foto (JPG/PNG/WebP, maks. 5 MB) saat membuat kegiatan. Foto disimpan di bucket Supabase Storage `program-photos`.
+- Saat mengikuti kegiatan, member memilih:
+  - **Relawan**: tanpa imbal balik Benih. Setelah penyelenggara mengonfirmasi kehadiran, relawan mendapat 10 poin relawan. Poin menentukan **badge relawan**: 🤝 Relawan (10), 🙌 Relawan Aktif (50), 💪 Relawan Tangguh (150), 🦸 Pahlawan Lingkungan (300).
+  - **Tenaga berbayar**: diarahkan ke percakapan dengan penyelenggara (`/kegiatan/:id/pesan`) untuk menyepakati Benih. Penyelenggara mencatat kesepakatan, lalu membayar dari saldonya setelah pekerjaan selesai.
+- Kegiatan bisa dibagikan ke WhatsApp, Facebook, X, Threads, atau dengan menyalin tautan.
+- Dashboard menampilkan rekam jejak partisipasi beserta peran dan statusnya.
+
+## Masuk dengan akun sosial
+
+Tombol **Google**, **Facebook**, dan **X** memakai Supabase Auth (alur PKCE).
+
+1. Di Supabase Dashboard > Authentication > Providers, aktifkan Google, Facebook, dan Twitter (X), lalu isi Client ID/Secret dari masing-masing developer console.
+2. Di Authentication > URL Configuration, tambahkan `https://benih.earth/auth/callback` (dan `http://localhost:3000/auth/callback` untuk lokal) ke Redirect URLs.
+
+Instagram dan Threads tidak menyediakan login untuk aplikasi pihak ketiga, jadi belum bisa dipakai untuk masuk.
+
+## Pembayaran dengan QRIS
+
+Checkout Midtrans Snap menampilkan QRIS di urutan pertama (`MIDTRANS_ENABLED_PAYMENTS`, kode `other_qris`). QRIS harus diaktifkan di Dashboard Midtrans agar muncul. Pengguna bisa memindai kode dengan aplikasi bank atau e-wallet apa pun.
+
 ## Struktur folder
 
 ```
@@ -57,8 +80,13 @@ Tanpa `MIDTRANS_SERVER_KEY`, pembayaran berjalan dalam **mode simulasi**: setela
 | --- | --- | --- |
 | GET | `/api/programs?lat=&lng=&radius_km=` | Program di sekitar lokasi, terdekat dulu |
 | GET | `/api/programs/:id` | Detail program |
-| POST | `/api/programs` | Buat kegiatan (login) |
-| POST | `/api/programs/:id/join` | Ikuti kegiatan (login) |
+| POST | `/api/programs` | Buat kegiatan, multipart dengan field `photos` (login) |
+| POST | `/api/programs/:id/join` | Ikuti kegiatan, body `{ "role": "volunteer" \| "paid" }` (login) |
+| GET | `/api/programs/:id/participants` | Daftar peserta (penyelenggara) |
+| POST | `/api/programs/:id/participants/:userId/attended` | Konfirmasi kehadiran relawan, +10 poin (penyelenggara) |
+| POST | `/api/programs/:id/participants/:userId/agreement` | Catat Benih yang disepakati, body `{ "benih_amount": 150 }` (penyelenggara) |
+| POST | `/api/programs/:id/participants/:userId/pay` | Bayar tenaga berbayar dari saldo penyelenggara (penyelenggara) |
+| GET/POST | `/api/programs/:id/messages/:participantId` | Baca/kirim pesan antara peserta dan penyelenggara |
 | POST | `/api/programs/:id/donate` | Donasi Benih, body `{ "benih_amount": 10, "message": "..." }` (login) |
 | GET | `/api/wallet` | Data dashboard: saldo, total donasi + badge, Benih per event (login) |
 | POST | `/api/wallet/withdrawals` | Ajukan penarikan, body `{ benih_amount, bank_name, bank_account_number, bank_account_name }` (login) |

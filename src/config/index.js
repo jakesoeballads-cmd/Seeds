@@ -17,6 +17,11 @@ const config = {
     isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
     serverKey: process.env.MIDTRANS_SERVER_KEY || '',
     clientKey: process.env.MIDTRANS_CLIENT_KEY || '',
+    // Urutan metode di halaman Snap. QRIS di depan karena paling umum dipakai.
+    // Kanal harus aktif di Dashboard Midtrans agar tampil.
+    enabledPayments: (process.env.MIDTRANS_ENABLED_PAYMENTS ||
+      'other_qris,gopay,shopeepay,bca_va,bni_va,bri_va,permata_va,echannel,other_va,credit_card')
+      .split(',').map((s) => s.trim()).filter(Boolean),
   },
 
   benihPriceIdr: Number(process.env.BENIH_PRICE_IDR) || 2000,

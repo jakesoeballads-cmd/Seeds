@@ -4,6 +4,7 @@
   <p class="muted">Bergabung sebagai relawan atau donatur Benih.</p>
   <% if (error) { %><p class="alert error"><%= error %></p><% } %>
   <% if (typeof info !== 'undefined' && info) { %><p class="alert success"><%= info %></p><% } %>
+  <%- include('partials/social-login', { label: 'Daftar', next: '/dashboard' }) %>
   <form method="post" action="/register">
     <label>Nama lengkap <input type="text" name="full_name" value="<%= values.full_name || '' %>" required autocomplete="name"></label>
     <label>Email <input type="email" name="email" value="<%= values.email || '' %>" required autocomplete="email"></label>

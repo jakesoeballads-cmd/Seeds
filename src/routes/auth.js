@@ -1,4 +1,5 @@
 const express = require('express');
+const { createClient } = require('@supabase/supabase-js');
 const config = require('../config');
 const { supabase, isConfigured } = require('../config/supabase');
 const { setSessionCookies, clearSessionCookies } = require('../middleware/auth');
@@ -90,6 +91,79 @@ router.post('/login', async (req, res, next) => {
     }
     setSessionCookies(res, data.session);
     return res.redirect(redirectTo);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ---- Masuk/daftar dengan akun sosial (Supabase Auth OAuth, alur PKCE) ----
+// Aktifkan provider di Supabase Dashboard > Authentication > Providers, lalu
+// tambahkan `${APP_URL}/auth/callback` ke Redirect URLs.
+// Nama di URL -> nama provider di Supabase.
+const OAUTH_PROVIDERS = { google: 'google', facebook: 'facebook', x: 'twitter' };
+const VERIFIER_COOKIE = 'sb-oauth-verifier';
+const NEXT_COOKIE = 'sb-oauth-next';
+const STORAGE_KEY = 'benih-oauth';
+
+// Klien sekali pakai dengan penyimpanan di memori, supaya code verifier PKCE
+// bisa disimpan di cookie antara redirect ke provider dan callback.
+function pkceClient(initial = {}) {
+  const store = new Map(Object.entries(initial));
+  const client = createClient(config.supabase.url, config.supabase.anonKey, {
+    auth: {
+      flowType: 'pkce',
+      persistSession: true,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+      storageKey: STORAGE_KEY,
+      storage: {
+        getItem: (k) => (store.has(k) ? store.get(k) : null),
+        setItem: (k, v) => store.set(k, v),
+        removeItem: (k) => store.delete(k),
+      },
+    },
+  });
+  return { client, store };
+}
+
+const tempCookie = { httpOnly: true, sameSite: 'lax', secure: config.isProduction, maxAge: 10 * 60 * 1000, path: '/' };
+
+router.get('/auth/:provider', async (req, res, next) => {
+  const provider = OAUTH_PROVIDERS[req.params.provider];
+  if (!provider) return next();
+  if (!isConfigured) return res.redirect('/login');
+  try {
+    const { client, store } = pkceClient();
+    const { data, error } = await client.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${config.appUrl}/auth/callback`, skipBrowserRedirect: true },
+    });
+    if (error) throw error;
+    res.cookie(VERIFIER_COOKIE, store.get(`${STORAGE_KEY}-code-verifier`), tempCookie);
+    res.cookie(NEXT_COOKIE, safeNext(req.query.next), tempCookie);
+    res.redirect(data.url);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/auth/callback', async (req, res, next) => {
+  const verifier = req.cookies[VERIFIER_COOKIE];
+  const redirectTo = safeNext(req.cookies[NEXT_COOKIE]);
+  res.clearCookie(VERIFIER_COOKIE, tempCookie);
+  res.clearCookie(NEXT_COOKIE, tempCookie);
+
+  const renderError = (message) =>
+    res.status(400).render('login', { title: 'Masuk', error: message, values: {}, next: redirectTo });
+
+  if (req.query.error) return renderError('Masuk dengan akun sosial dibatalkan atau ditolak.');
+  if (!req.query.code || !verifier) return renderError('Sesi masuk kedaluwarsa. Silakan coba lagi.');
+  try {
+    const { client } = pkceClient({ [`${STORAGE_KEY}-code-verifier`]: verifier });
+    const { data, error } = await client.auth.exchangeCodeForSession(String(req.query.code));
+    if (error) return renderError('Gagal masuk dengan akun sosial. Silakan coba lagi.');
+    setSessionCookies(res, data.session);
+    res.redirect(redirectTo === '/' ? '/dashboard' : redirectTo);
   } catch (err) {
     next(err);
   }

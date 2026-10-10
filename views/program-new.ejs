@@ -5,6 +5,17 @@
   <p id="form-message" class="alert" hidden></p>
   <form id="program-form" class="grid-form">
     <label>Judul <input type="text" name="title" minlength="3" required></label>
+    <label>Nama penyelenggara
+      <input type="text" name="organizer_name" minlength="2" maxlength="120" required value="<%= defaultOrganizer %>" placeholder="Nama kamu, komunitas, organisasi, atau badan usaha">
+    </label>
+    <label>Jenis penyelenggara
+      <select name="organizer_type">
+        <option value="perorangan">Perorangan</option>
+        <option value="komunitas">Komunitas</option>
+        <option value="organisasi">Organisasi</option>
+        <option value="badan_usaha">Badan usaha</option>
+      </select>
+    </label>
     <label>Kategori
       <select name="category">
         <option value="reforestasi">Reforestasi</option>
@@ -15,6 +26,10 @@
       </select>
     </label>
     <label class="full">Deskripsi <textarea name="description" rows="4"></textarea></label>
+    <label class="full">Foto kegiatan (maks. 5, JPG/PNG/WebP, masing-masing maks. 5 MB)
+      <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple>
+    </label>
+    <div class="full gallery" id="photo-preview"></div>
     <label>Nama lokasi <input type="text" name="location_name" placeholder="cth. Hutan Kota Srengseng"></label>
     <label>Maks. peserta <input type="number" name="max_participants" min="1"></label>
     <label>Mulai <input type="datetime-local" name="start_at" required></label>

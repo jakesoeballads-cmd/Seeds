@@ -55,3 +55,11 @@ test('donorBadge memilih tingkatan berdasarkan total donasi', () => {
   assert.strictEqual(top.next, null);
   assert.strictEqual(top.progress, 1);
 });
+
+test('volunteerBadge memakai poin relawan', () => {
+  const { volunteerBadge } = require('../src/services/badges');
+  assert.strictEqual(volunteerBadge(0).current, null);
+  assert.strictEqual(volunteerBadge(10).current.key, 'relawan');
+  assert.strictEqual(volunteerBadge(40).remaining, 10);
+  assert.strictEqual(volunteerBadge(300).current.key, 'pahlawan-lingkungan');
+});
