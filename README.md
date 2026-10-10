@@ -37,6 +37,17 @@ Instagram dan Threads tidak menyediakan login untuk aplikasi pihak ketiga, jadi 
 
 Checkout Midtrans Snap menampilkan QRIS di urutan pertama (`MIDTRANS_ENABLED_PAYMENTS`, kode `other_qris`). QRIS harus diaktifkan di Dashboard Midtrans agar muncul. Pengguna bisa memindai kode dengan aplikasi bank atau e-wallet apa pun.
 
+## Bahasa
+
+Antarmuka tersedia dalam Bahasa Indonesia (bawaan), English, dan Deutsch. Pengunjung memilih lewat tombol ID / EN / DE di header (`?lang=en`, disimpan di cookie `lang`); tanpa pilihan, bahasa mengikuti `Accept-Language` browser.
+
+- Teks Indonesia di kode adalah kunci terjemahan: `t('Jam mulai')` di view EJS dan di `public/js`.
+- Terjemahan ada di `src/i18n/en.json` dan `src/i18n/de.json`. Bentuk jamak ditulis `{ "one": …, "other": … }`.
+- Pesan galat dari server dan dari fungsi SQL ikut diterjemahkan.
+- `npm test` gagal bila ada teks `t(...)` baru yang belum diterjemahkan.
+
+Jadwal kegiatan diisi sebagai tanggal + jam mulai + jam selesai, dan dibaca dalam zona waktu `TIME_ZONE` (bawaan `Asia/Jakarta`).
+
 ## Struktur folder
 
 ```

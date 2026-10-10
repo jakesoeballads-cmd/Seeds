@@ -12,14 +12,14 @@
     div.className = `bubble ${m.sender_id === me ? 'mine' : ''}`;
     div.textContent = m.body;
     const time = document.createElement('time');
-    time.textContent = new Date(m.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
+    time.textContent = fmt.dateTime(m.created_at);
     div.appendChild(time);
     return div;
   }
 
   function renderAll(messages) {
     chat.innerHTML = '';
-    if (!messages.length) chat.innerHTML = '<p class="muted">Belum ada pesan. Mulai percakapan di bawah.</p>';
+    if (!messages.length) chat.innerHTML = `<p class="muted">${t('Belum ada pesan. Mulai percakapan di bawah.')}</p>`;
     messages.forEach((m) => chat.appendChild(bubble(m)));
     chat.scrollTop = chat.scrollHeight;
   }

@@ -39,17 +39,22 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const body = new FormData(form);
-    // datetime-local tidak membawa zona waktu; ubah ke ISO dengan zona waktu browser.
-    ['start_at', 'end_at'].forEach((k) => {
-      const v = body.get(k);
-      body.set(k, v ? new Date(v).toISOString() : '');
-    });
-    if (form.photos.files.length > 5) {
+    const showError = (text) => {
       message.hidden = false;
       message.className = 'alert error';
-      message.textContent = 'Maksimal 5 foto.';
-      return;
-    }
+      message.textContent = text;
+    };
+    // Tanggal + jam mulai/selesai -> start_at/end_at tanpa zona waktu; server
+    // membacanya dalam zona waktu kegiatan (TIME_ZONE), bukan zona waktu browser.
+    const date = body.get('date');
+    const startTime = body.get('start_time');
+    const endTime = body.get('end_time');
+    if (!date || !startTime || !endTime) return showError(t('Isi tanggal, jam mulai, dan jam selesai.'));
+    if (endTime <= startTime) return showError(t('Jam selesai harus setelah jam mulai.'));
+    ['date', 'start_time', 'end_time'].forEach((k) => body.delete(k));
+    body.set('start_at', `${date}T${startTime}`);
+    body.set('end_at', `${date}T${endTime}`);
+    if (form.photos.files.length > 5) return showError(t('Maksimal {n} foto.', { n: 5 }));
 
     // multipart/form-data: browser mengatur Content-Type beserta boundary.
     const res = await fetch('/api/programs', { method: 'POST', body });
@@ -57,7 +62,7 @@
     message.hidden = false;
     if (res.ok) {
       message.className = 'alert success';
-      message.textContent = 'Kegiatan berhasil dibuat.';
+      message.textContent = t('Kegiatan berhasil dibuat.');
       setTimeout(() => (window.location.href = `/kegiatan/${data.program.id}`), 1000);
     } else {
       message.className = 'alert error';

@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const config = require('../config');
 const { supabase, supabaseAdmin } = require('../config/supabase');
 const { requireAuth, requireDatabase } = require('../middleware/auth');
 const { parseBenihAmount } = require('../services/benih');
@@ -19,7 +20,7 @@ const badRequest = (message) => svc.httpError(400, message);
 function parseCoordinate(value, min, max, name) {
   const n = Number(value);
   if (value === undefined || value === '' || !Number.isFinite(n) || n < min || n > max) {
-    throw badRequest(`${name} tidak valid.`);
+    throw svc.httpError(400, '{name} tidak valid.', { name });
   }
   return n;
 }
@@ -28,7 +29,7 @@ function parseCoordinate(value, min, max, name) {
 async function loadProgram(req, res, next) {
   try {
     req.program = await svc.getProgram(req.params.id);
-    if (!req.program) return res.status(404).json({ error: 'Program tidak ditemukan.' });
+    if (!req.program) return res.status(404).json({ error: req.t('Program tidak ditemukan.') });
     next();
   } catch (err) {
     next(err);
@@ -37,7 +38,7 @@ async function loadProgram(req, res, next) {
 
 function requireOrganizer(req, res, next) {
   if (req.program.organizer_id === req.user.id) return next();
-  return res.status(403).json({ error: 'Hanya penyelenggara kegiatan yang bisa melakukan ini.' });
+  return res.status(403).json({ error: req.t('Hanya penyelenggara kegiatan yang bisa melakukan ini.') });
 }
 
 const LIST_COLUMNS =
@@ -90,11 +91,11 @@ router.post('/', requireAuth, upload.array('photos', svc.MAX_PHOTOS), async (req
     if (organizerName.length < 2) throw badRequest('Isi nama penyelenggara (orang, komunitas, organisasi, atau badan usaha).');
     const organizerType = svc.ORGANIZER_TYPES[b.organizer_type] ? b.organizer_type : 'perorangan';
 
-    const startAt = new Date(b.start_at);
-    if (Number.isNaN(startAt.getTime())) throw badRequest('Tanggal mulai tidak valid.');
-    const endAt = b.end_at ? new Date(b.end_at) : null;
-    if (endAt && (Number.isNaN(endAt.getTime()) || endAt < startAt)) {
-      throw badRequest('Tanggal selesai harus setelah tanggal mulai.');
+    const startAt = svc.parseLocalDateTime(b.start_at, config.timeZone);
+    if (Number.isNaN(startAt.getTime())) throw badRequest('Tanggal atau jam mulai tidak valid.');
+    const endAt = b.end_at ? svc.parseLocalDateTime(b.end_at, config.timeZone) : null;
+    if (endAt && (Number.isNaN(endAt.getTime()) || endAt <= startAt)) {
+      throw badRequest('Jam selesai harus setelah jam mulai.');
     }
 
     const row = {

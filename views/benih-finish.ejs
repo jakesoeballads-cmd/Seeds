@@ -1,7 +1,8 @@
 <%- include('partials/header') %>
 <section class="card narrow">
-  <h1>Terima kasih</h1>
-  <p>Pembayaran <% if (orderId) { %>untuk order <code><%= orderId %></code> <% } %>sedang diproses. Saldo Benih bertambah setelah Midtrans mengonfirmasi pembayaran.</p>
-  <a href="/benih" class="btn">Lihat saldo</a>
+  <h1><%= t('Terima kasih') %></h1>
+  <p><% if (orderId) { %><%- t('Pembayaran untuk order {order} sedang diproses.', { order: '<code>' + esc(orderId) + '</code>' }) %><% } else { %><%= t('Pembayaran sedang diproses.') %><% } %>
+    <%= t('Saldo Benih bertambah setelah Midtrans mengonfirmasi pembayaran.') %></p>
+  <a href="/benih" class="btn"><%= t('Lihat saldo') %></a>
 </section>
 <%- include('partials/footer') %>

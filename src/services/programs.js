@@ -13,8 +13,30 @@ const PHOTO_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'we
 const MAX_PHOTOS = 5;
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 
-function httpError(status, message) {
-  return Object.assign(new Error(message), { status });
+// message adalah teks Indonesia (kunci terjemahan); vars mengisi {nama} di dalamnya.
+function httpError(status, message, vars) {
+  return Object.assign(new Error(message), { status, vars });
+}
+
+// "2026-10-15T08:00" (tanpa zona waktu) dibaca sebagai jam lokal di timeZone;
+// string ISO yang sudah berzona waktu dipakai apa adanya.
+function parseLocalDateTime(value, timeZone) {
+  const text = String(value || '');
+  const m = text.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if (!m) return new Date(text);
+  const asUtc = Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0));
+  const offsetAt = (ms) => {
+    const p = Object.fromEntries(
+      new Intl.DateTimeFormat('en-US', {
+        timeZone, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+      }).formatToParts(new Date(ms)).map((x) => [x.type, x.value])
+    );
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - ms;
+  };
+  let ms = asUtc - offsetAt(asUtc);
+  ms = asUtc - offsetAt(ms); // koreksi di sekitar pergantian jam musim panas
+  return new Date(ms);
 }
 
 // Memanggil fungsi SQL; pesan `raise exception` (P0001) diteruskan sebagai 400.
@@ -30,7 +52,7 @@ async function rpc(name, params) {
 
 // Mengunggah foto kegiatan ke Supabase Storage dan mengembalikan URL publiknya.
 async function uploadPhotos(files, userId) {
-  if (files.length > MAX_PHOTOS) throw httpError(400, `Maksimal ${MAX_PHOTOS} foto.`);
+  if (files.length > MAX_PHOTOS) throw httpError(400, 'Maksimal {n} foto.', { n: MAX_PHOTOS });
   const urls = [];
   for (const file of files) {
     const ext = PHOTO_TYPES[file.mimetype];
@@ -124,6 +146,7 @@ async function sendMessage(programId, participantId, senderId, body) {
 }
 
 module.exports = {
+  parseLocalDateTime,
   ORGANIZER_TYPES,
   MAX_PHOTOS,
   MAX_PHOTO_BYTES,

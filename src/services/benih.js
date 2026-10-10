@@ -9,7 +9,10 @@ const MAX_BENIH = 100000;
 function parseBenihAmount(value) {
   const amount = Number(value);
   if (!Number.isInteger(amount) || amount < MIN_BENIH || amount > MAX_BENIH) {
-    throw Object.assign(new Error(`Jumlah Benih harus bilangan bulat ${MIN_BENIH}-${MAX_BENIH}.`), { status: 400 });
+    throw Object.assign(new Error('Jumlah Benih harus bilangan bulat {min}-{max}.'), {
+      status: 400,
+      vars: { min: MIN_BENIH, max: MAX_BENIH },
+    });
   }
   return amount;
 }

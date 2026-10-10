@@ -4,6 +4,8 @@ const config = {
   port: Number(process.env.PORT) || 3000,
   env: process.env.NODE_ENV || 'development',
   appUrl: process.env.APP_URL || 'http://localhost:3000',
+  // Zona waktu untuk menampilkan tanggal dan jam kegiatan.
+  timeZone: process.env.TIME_ZONE || 'Asia/Jakarta',
 
   supabase: {
     url: process.env.SUPABASE_URL || '',

@@ -5,9 +5,9 @@
   const message = document.getElementById('buy-message');
   const historyEl = document.getElementById('history');
   const price = Number(form.dataset.price);
-  const rupiah = (n) => 'Rp' + Number(n).toLocaleString('id-ID');
+  const { rupiah } = fmt;
 
-  const statusLabel = { pending: 'Menunggu', success: 'Berhasil', failed: 'Gagal', refunded: 'Dikembalikan' };
+  const statusLabel = { pending: t('Menunggu'), success: t('Berhasil'), failed: t('Gagal'), refunded: t('Dikembalikan') };
 
   function updateTotal() {
     totalEl.textContent = rupiah((Number(form.benih_amount.value) || 0) * price);
@@ -23,14 +23,15 @@
     const res = await fetch('/api/payments/history');
     const data = await res.json();
     if (!res.ok) {
-      historyEl.innerHTML = `<li class="muted">${data.error}</li>`;
+      historyEl.innerHTML = '<li class="muted"></li>';
+      historyEl.firstChild.textContent = data.error;
       return;
     }
-    historyEl.innerHTML = data.transactions.length ? '' : '<li class="muted">Belum ada transaksi.</li>';
-    data.transactions.forEach((t) => {
+    historyEl.innerHTML = data.transactions.length ? '' : `<li class="muted">${t('Belum ada transaksi.')}</li>`;
+    data.transactions.forEach((trx) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span>${t.benih_amount} Benih · ${rupiah(t.gross_amount)}</span>
-        <span class="badge ${t.status}">${statusLabel[t.status] || t.status}</span>`;
+      li.innerHTML = `<span>${fmt.num(trx.benih_amount)} Benih · ${rupiah(trx.gross_amount)}</span>
+        <span class="badge ${trx.status}">${statusLabel[trx.status] || trx.status}</span>`;
       historyEl.appendChild(li);
     });
   }
@@ -53,9 +54,9 @@
     }
     // Popup Midtrans Snap. Status final tetap dicatat lewat webhook.
     window.snap.pay(data.snap_token, {
-      onSuccess: () => { showMessage('Pembayaran berhasil, saldo segera diperbarui.', 'success'); loadHistory(); },
-      onPending: () => { showMessage('Menunggu pembayaran.', 'info'); loadHistory(); },
-      onError: () => showMessage('Pembayaran gagal.', 'error'),
+      onSuccess: () => { showMessage(t('Pembayaran berhasil, saldo segera diperbarui.'), 'success'); loadHistory(); },
+      onPending: () => { showMessage(t('Menunggu pembayaran.'), 'info'); loadHistory(); },
+      onError: () => showMessage(t('Pembayaran gagal.'), 'error'),
       onClose: () => loadHistory(),
     });
   });
@@ -70,14 +71,14 @@
   const wList = document.getElementById('withdrawals');
   const wPrice = Number(wForm.dataset.price);
   const feeBps = Number(wForm.dataset.feeBps);
-  const wStatus = { pending: 'Diproses', paid: 'Dicairkan', rejected: 'Ditolak' };
+  const wStatus = { pending: t('Diproses'), paid: t('Dicairkan'), rejected: t('Ditolak') };
 
   function updateBreakdown() {
     const amount = Number(wForm.benih_amount.value) || 0;
     const gross = amount * wPrice;
     const fee = Math.round((gross * feeBps) / 10000);
     wBreakdown.textContent = amount
-      ? `Nilai ${rupiah(gross)} − potongan ${rupiah(fee)} = diterima ${rupiah(gross - fee)}`
+      ? t('Nilai {gross} − potongan {fee} = diterima {net}', { gross: rupiah(gross), fee: rupiah(fee), net: rupiah(gross - fee) })
       : '';
   }
 
@@ -89,10 +90,10 @@
       wList.firstChild.textContent = data.error;
       return;
     }
-    wList.innerHTML = data.withdrawals.length ? '' : '<li class="muted">Belum ada penarikan.</li>';
+    wList.innerHTML = data.withdrawals.length ? '' : `<li class="muted">${t('Belum ada penarikan.')}</li>`;
     data.withdrawals.forEach((w) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span>${w.benih_amount} Benih · diterima ${rupiah(w.net_idr)} (potongan ${rupiah(w.fee_idr)})</span>
+      li.innerHTML = `<span>${fmt.num(w.benih_amount)} Benih · ${t('diterima {net} (potongan {fee})', { net: rupiah(w.net_idr), fee: rupiah(w.fee_idr) })}</span>
         <span class="badge ${w.status}">${wStatus[w.status] || w.status}</span>`;
       wList.appendChild(li);
     });
@@ -110,7 +111,7 @@
     wMessage.hidden = false;
     wMessage.className = `alert ${res.ok ? 'success' : 'error'}`;
     wMessage.textContent = res.ok
-      ? `Penarikan diajukan. ${rupiah(data.withdrawal.net_idr)} akan ditransfer setelah diverifikasi.`
+      ? t('Penarikan diajukan. {net} akan ditransfer setelah diverifikasi.', { net: rupiah(data.withdrawal.net_idr) })
       : data.error;
     if (res.ok) setTimeout(() => window.location.reload(), 1500);
   });

@@ -6,22 +6,22 @@ const { getDashboard } = require('../services/wallet');
 const { DONOR_BADGES, VOLUNTEER_BADGES, VOLUNTEER_POINTS_PER_EVENT } = require('../services/badges');
 const programs = require('../services/programs');
 
-function needDatabase(res, title) {
+function needDatabase(req, res, title) {
   if (isConfigured) return false;
-  res.status(503).render('error', { title, message: 'Database belum dikonfigurasi. Isi variabel SUPABASE_* di .env.' });
+  res.status(503).render('error', { title: req.t(title), message: req.t('Database belum dikonfigurasi. Isi variabel SUPABASE_* di .env.') });
   return true;
 }
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Beranda', mapsKey: config.googleMapsApiKey });
+  res.render('index', { title: req.t('Beranda'), mapsKey: config.googleMapsApiKey });
 });
 
 router.get('/program/baru', requireAuth, (req, res) => {
   const meta = req.user.user_metadata || {};
   res.render('program-new', {
-    title: 'Buat Kegiatan',
+    title: req.t('Buat Kegiatan'),
     mapsKey: config.googleMapsApiKey,
     defaultOrganizer: meta.full_name || meta.name || '',
   });
@@ -39,7 +39,7 @@ router.get('/benih', requireAuth, async (req, res, next) => {
       balance = data ? data.benih_balance : 0;
     }
     res.render('benih', {
-      title: 'Beli & Tarik Benih',
+      title: req.t('Beli & Tarik Benih'),
       balance,
       price: config.benihPriceIdr,
       feePercent: config.withdrawalFeeBps / 100,
@@ -57,10 +57,10 @@ router.get('/benih', requireAuth, async (req, res, next) => {
 
 router.get('/dashboard', requireAuth, async (req, res, next) => {
   try {
-    if (needDatabase(res, 'Dashboard')) return;
+    if (needDatabase(req, res, 'Dashboard')) return;
     const dashboard = await getDashboard(req.user.id);
     res.render('dashboard', {
-      title: 'Dashboard',
+      title: req.t('Dashboard'),
       ...dashboard,
       price: config.benihPriceIdr,
       badges: DONOR_BADGES,
@@ -75,9 +75,9 @@ router.get('/dashboard', requireAuth, async (req, res, next) => {
 // Halaman detail kegiatan: terbuka untuk semua pengunjung.
 router.get('/kegiatan/:id', async (req, res, next) => {
   try {
-    if (needDatabase(res, 'Kegiatan')) return;
+    if (needDatabase(req, res, 'Kegiatan')) return;
     const program = await programs.getProgram(req.params.id);
-    if (!program) return res.status(404).render('error', { title: 'Tidak ditemukan', message: 'Kegiatan tidak ditemukan.' });
+    if (!program) return res.status(404).render('error', { title: req.t('Tidak ditemukan'), message: req.t('Kegiatan tidak ditemukan.') });
 
     const isOrganizer = Boolean(req.user && req.user.id === program.organizer_id);
     const [participation, participants, participantCount] = await Promise.all([
@@ -107,9 +107,9 @@ router.get('/kegiatan/:id', async (req, res, next) => {
 // penyelenggara membuka /kegiatan/:id/pesan/:participantId.
 router.get(['/kegiatan/:id/pesan', '/kegiatan/:id/pesan/:participantId'], requireAuth, async (req, res, next) => {
   try {
-    if (needDatabase(res, 'Pesan')) return;
+    if (needDatabase(req, res, 'Pesan')) return;
     const program = await programs.getProgram(req.params.id);
-    if (!program) return res.status(404).render('error', { title: 'Tidak ditemukan', message: 'Kegiatan tidak ditemukan.' });
+    if (!program) return res.status(404).render('error', { title: req.t('Tidak ditemukan'), message: req.t('Kegiatan tidak ditemukan.') });
 
     const participantId = req.params.participantId || req.user.id;
     const participation = await programs.assertConversationAccess(program, participantId, req.user.id);
@@ -117,11 +117,11 @@ router.get(['/kegiatan/:id/pesan', '/kegiatan/:id/pesan/:participantId'], requir
     let otherName = program.organizer_name;
     if (isOrganizer) {
       const { data } = await supabaseAdmin.from('profiles').select('full_name').eq('id', participantId).maybeSingle();
-      otherName = (data && data.full_name) || 'Peserta';
+      otherName = (data && data.full_name) || req.t('Peserta');
     }
 
     res.render('chat', {
-      title: 'Pesan',
+      title: req.t('Pesan'),
       program,
       participantId,
       participation,
@@ -131,7 +131,7 @@ router.get(['/kegiatan/:id/pesan', '/kegiatan/:id/pesan/:participantId'], requir
     });
   } catch (err) {
     if (err.status === 403 || err.status === 404) {
-      return res.status(err.status).render('error', { title: 'Pesan', message: err.message });
+      return res.status(err.status).render('error', { title: req.t('Pesan'), message: req.t(err.message, err.vars) });
     }
     next(err);
   }
@@ -139,11 +139,11 @@ router.get(['/kegiatan/:id/pesan', '/kegiatan/:id/pesan/:participantId'], requir
 
 router.get('/benih/simulasi/:orderId', requireAuth, (req, res) => {
   if (!config.midtrans.simulated) return res.redirect('/benih');
-  res.render('benih-simulate', { title: 'Simulasi Pembayaran', orderId: req.params.orderId });
+  res.render('benih-simulate', { title: req.t('Simulasi Pembayaran'), orderId: req.params.orderId });
 });
 
 router.get('/benih/selesai', requireAuth, (req, res) => {
-  res.render('benih-finish', { title: 'Pembayaran', orderId: req.query.order_id || null });
+  res.render('benih-finish', { title: req.t('Pembayaran'), orderId: req.query.order_id || null });
 });
 
 module.exports = router;

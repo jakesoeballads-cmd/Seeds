@@ -165,7 +165,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--green); out
 }
 .hero-photo .inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
 .hero-photo h1 { color: #fff; font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.12; margin: 0; }
-.hero-photo p { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.3rem); max-width: 40ch; }
+.hero-photo p { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.25rem); max-width: 52ch; }
 .hero-photo .tagline { font-family: var(--mono); font-size: 1rem; opacity: .95; }
 .band { background: var(--green-soft); padding: 48px 16px; }
 .band .inner { max-width: 1000px; margin: 0 auto; text-align: center; }
@@ -183,3 +183,11 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--green); out
   .feature h3 { font-size: 1.2rem; }
   .feature p { font-size: .95rem; }
 }
+.lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: var(--pill); overflow: hidden; font-size: .85rem; }
+.lang-switch a { padding: 3px 9px; color: var(--muted); text-decoration: none; font-weight: 700; }
+.lang-switch a + a { border-left: 1px solid var(--border); }
+.lang-switch a[aria-current] { background: var(--green); color: #fff; }
+.topbar nav .lang-switch a:hover { color: var(--green-dark); }
+.topbar nav .lang-switch a[aria-current]:hover { color: #fff; }
+.schedule-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .schedule-fields { grid-template-columns: 1fr 1fr; } .schedule-fields label:first-child { grid-column: 1 / -1; } }

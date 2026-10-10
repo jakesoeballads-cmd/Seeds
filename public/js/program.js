@@ -31,7 +31,7 @@
       if (data.chat_url) {
         window.location.href = data.chat_url;
       } else {
-        show(msg, 'Kamu terdaftar sebagai relawan. Sampai jumpa di lokasi!', 'success');
+        show(msg, t('Kamu terdaftar sebagai relawan. Sampai jumpa di lokasi!'), 'success');
         setTimeout(() => window.location.reload(), 1200);
       }
     });
@@ -46,12 +46,14 @@
       const { ok, data } = await post(`/api/programs/${programId}/donate`, body);
       const msg = document.getElementById('donate-message');
       if (ok) {
-        show(msg, `Terima kasih! ${body.benih_amount} Benih terkirim.`, 'success');
+        show(msg, t('Terima kasih! {n} Benih terkirim.', { n: fmt.num(body.benih_amount) }), 'success');
         setTimeout(() => window.location.reload(), 1200);
-      } else if (/tidak cukup/.test(data.error || '')) {
+      } else if (data.code === 'insufficient_balance') {
         msg.hidden = false;
         msg.className = 'alert error';
-        msg.innerHTML = 'Saldo Benih tidak cukup. <a href="/benih">Beli Benih</a>';
+        msg.textContent = `${data.error} `;
+        const link = Object.assign(document.createElement('a'), { href: '/benih', textContent: t('Beli Benih') });
+        msg.appendChild(link);
       } else {
         show(msg, data.error, 'error');
       }
@@ -63,9 +65,9 @@
   copyBtn.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(copyBtn.dataset.url);
-      copyBtn.textContent = 'Tautan disalin ✓';
+      copyBtn.textContent = t('Tautan disalin ✓');
     } catch {
-      window.prompt('Salin tautan ini:', copyBtn.dataset.url);
+      window.prompt(t('Salin tautan ini:'), copyBtn.dataset.url);
     }
   });
   const nativeBtn = document.getElementById('native-share');

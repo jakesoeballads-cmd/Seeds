@@ -9,10 +9,6 @@
   const listEl = document.getElementById('program-list');
   const radiusEl = document.getElementById('radius');
 
-  function formatDate(iso) {
-    return new Date(iso).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
-  }
-
   function escapeHtml(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
@@ -24,7 +20,7 @@
       window.location.href = '/login?next=/';
       return;
     }
-    const amount = Number(window.prompt('Berapa Benih yang ingin kamu donasikan?', '10'));
+    const amount = Number(window.prompt(t('Berapa Benih yang ingin kamu donasikan?'), '10'));
     if (!Number.isInteger(amount) || amount < 1) return;
     button.disabled = true;
     const res = await fetch(`/api/programs/${id}/donate`, {
@@ -35,10 +31,10 @@
     const data = await res.json();
     button.disabled = false;
     if (res.ok) {
-      window.alert(`Terima kasih! ${amount} Benih terkirim.`);
+      window.alert(t('Terima kasih! {n} Benih terkirim.', { n: fmt.num(amount) }));
       load();
-    } else if (res.status === 400 && /tidak cukup/.test(data.error)) {
-      if (window.confirm(`${data.error} Beli Benih sekarang?`)) window.location.href = '/benih';
+    } else if (data.code === 'insufficient_balance') {
+      if (window.confirm(`${data.error} ${t('Beli Benih sekarang?')}`)) window.location.href = '/benih';
     } else {
       window.alert(data.error);
     }
@@ -50,8 +46,8 @@
     listEl.innerHTML = '';
 
     statusEl.textContent = programs.length
-      ? `${programs.length} program dalam radius ${radiusEl.value} km`
-      : 'Belum ada program di sekitarmu. Jadilah yang pertama membuat kegiatan!';
+      ? t('{n} program dalam radius {km} km', { n: programs.length, km: radiusEl.value })
+      : t('Belum ada program di sekitarmu. Jadilah yang pertama membuat kegiatan!');
 
     programs.forEach((p) => {
       const li = document.createElement('li');
@@ -61,14 +57,14 @@
         ${photo ? `<img class="thumb" src="${escapeHtml(photo)}" alt="" loading="lazy">` : '<div class="thumb" aria-hidden="true">🌱</div>'}
         <div>
           <h3><a href="${url}">${escapeHtml(p.title)}</a></h3>
-          <p class="org">oleh <strong>${escapeHtml(p.organizer_name)}</strong>
-            <span class="org-type">${ORGANIZER_TYPES[p.organizer_type] || ''}</span></p>
-          <p class="muted">${escapeHtml(p.location_name || '')} · ${p.distance_km.toFixed(1)} km</p>
-          <p class="muted">${formatDate(p.start_at)}</p>
-          <p class="muted">🌱 ${p.benih_collected} ${p.benih_target ? `/ ${p.benih_target} ` : ''}Benih terkumpul</p>
+          <p class="org">${t('oleh {name}', { name: `<strong>${escapeHtml(p.organizer_name)}</strong>` })}
+            <span class="org-type">${ORGANIZER_TYPES[p.organizer_type] ? t(ORGANIZER_TYPES[p.organizer_type]) : ''}</span></p>
+          <p class="muted">${escapeHtml(p.location_name || '')} · ${p.distance_km.toLocaleString(window.BENIH_I18N.locale, { maximumFractionDigits: 1 })} km</p>
+          <p class="muted">${fmt.schedule(p.start_at, p.end_at)}</p>
+          <p class="muted">🌱 ${fmt.num(p.benih_collected)} ${p.benih_target ? `/ ${fmt.num(p.benih_target)} ` : ''}${t('Benih terkumpul')}</p>
           <div class="actions">
-            <a class="btn small" href="${url}">Ikuti</a>
-            <button class="btn small ghost" data-action="donate">Donasi Benih</button>
+            <a class="btn small" href="${url}">${t('Ikuti')}</a>
+            <button class="btn small ghost" data-action="donate">${t('Donasi Benih')}</button>
           </div>
         </div>`;
       li.querySelector('[data-action="donate"]').addEventListener('click', (e) => donate(p.id, e.currentTarget));
@@ -83,7 +79,7 @@
   }
 
   async function load() {
-    statusEl.textContent = 'Memuat program…';
+    statusEl.textContent = t('Memuat program…');
     try {
       const params = new URLSearchParams({ lat: center.lat, lng: center.lng, radius_km: radiusEl.value });
       const res = await fetch(`/api/programs?${params}`);
@@ -91,7 +87,7 @@
       if (!res.ok) throw new Error(data.error);
       render(data.programs);
     } catch (err) {
-      statusEl.textContent = `Gagal memuat program: ${err.message}`;
+      statusEl.textContent = t('Gagal memuat program: {error}', { error: err.message });
     }
   }
 
@@ -115,7 +111,7 @@
       new google.maps.Marker({
         map,
         position: center,
-        title: 'Lokasimu',
+        title: t('Lokasimu'),
         icon: { path: google.maps.SymbolPath.CIRCLE, scale: 7, fillColor: '#2563eb', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2 },
       });
     }

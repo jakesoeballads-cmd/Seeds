@@ -61,14 +61,14 @@ async function loadUser(req, res, next) {
 function requireAuth(req, res, next) {
   if (req.user) return next();
   if (req.originalUrl.startsWith('/api/')) {
-    return res.status(401).json({ error: 'Silakan login terlebih dahulu.' });
+    return res.status(401).json({ error: req.t('Silakan login terlebih dahulu.') });
   }
   return res.redirect(`/login?next=${encodeURIComponent(req.originalUrl)}`);
 }
 
 function requireDatabase(req, res, next) {
   if (isConfigured) return next();
-  return res.status(503).json({ error: 'Database belum dikonfigurasi. Isi variabel SUPABASE_* di .env.' });
+  return res.status(503).json({ error: req.t('Database belum dikonfigurasi. Isi variabel SUPABASE_* di .env.') });
 }
 
 module.exports = {

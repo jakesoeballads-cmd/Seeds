@@ -1,48 +1,51 @@
 <%- include('partials/header') %>
 <section class="card">
-  <h1>Buat Kegiatan</h1>
-  <p class="muted">Klik peta untuk menandai lokasi kegiatan.</p>
+  <h1><%= t('Buat Kegiatan') %></h1>
+  <p class="muted"><%= t('Klik peta untuk menandai lokasi kegiatan.') %></p>
   <p id="form-message" class="alert" hidden></p>
   <form id="program-form" class="grid-form">
-    <label>Judul <input type="text" name="title" minlength="3" required></label>
-    <label>Nama penyelenggara
-      <input type="text" name="organizer_name" minlength="2" maxlength="120" required value="<%= defaultOrganizer %>" placeholder="Nama kamu, komunitas, organisasi, atau badan usaha">
+    <label><%= t('Judul') %> <input type="text" name="title" minlength="3" required></label>
+    <label><%= t('Nama penyelenggara') %>
+      <input type="text" name="organizer_name" minlength="2" maxlength="120" required value="<%= defaultOrganizer %>" placeholder="<%= t('Nama kamu, komunitas, organisasi, atau badan usaha') %>">
     </label>
-    <label>Jenis penyelenggara
+    <label><%= t('Jenis penyelenggara') %>
       <select name="organizer_type">
-        <option value="perorangan">Perorangan</option>
-        <option value="komunitas">Komunitas</option>
-        <option value="organisasi">Organisasi</option>
-        <option value="badan_usaha">Badan usaha</option>
+        <option value="perorangan"><%= t('Perorangan') %></option>
+        <option value="komunitas"><%= t('Komunitas') %></option>
+        <option value="organisasi"><%= t('Organisasi') %></option>
+        <option value="badan_usaha"><%= t('Badan usaha') %></option>
       </select>
     </label>
-    <label>Kategori
+    <label><%= t('Kategori') %>
       <select name="category">
-        <option value="reforestasi">Reforestasi</option>
-        <option value="mangrove">Penanaman mangrove</option>
-        <option value="bersih-pantai">Bersih pantai</option>
-        <option value="edukasi">Edukasi lingkungan</option>
-        <option value="lainnya">Lainnya</option>
+        <option value="reforestasi"><%= t('Reforestasi') %></option>
+        <option value="mangrove"><%= t('Penanaman mangrove') %></option>
+        <option value="bersih-pantai"><%= t('Bersih pantai') %></option>
+        <option value="edukasi"><%= t('Edukasi lingkungan') %></option>
+        <option value="lainnya"><%= t('Lainnya') %></option>
       </select>
     </label>
-    <label class="full">Deskripsi <textarea name="description" rows="4"></textarea></label>
-    <label class="full">Foto kegiatan (maks. 5, JPG/PNG/WebP, masing-masing maks. 5 MB)
+    <label class="full"><%= t('Deskripsi') %> <textarea name="description" rows="4"></textarea></label>
+    <label class="full"><%= t('Foto kegiatan (maks. 5, JPG/PNG/WebP, masing-masing maks. 5 MB)') %>
       <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple>
     </label>
     <div class="full gallery" id="photo-preview"></div>
-    <label>Nama lokasi <input type="text" name="location_name" placeholder="cth. Hutan Kota Srengseng"></label>
-    <label>Maks. peserta <input type="number" name="max_participants" min="1"></label>
-    <label>Mulai <input type="datetime-local" name="start_at" required></label>
-    <label>Selesai <input type="datetime-local" name="end_at"></label>
-    <label>Target donasi (Benih, opsional) <input type="number" name="benih_target" min="1"></label>
+    <label><%= t('Nama lokasi') %> <input type="text" name="location_name" placeholder="<%= t('cth. Hutan Kota Srengseng') %>"></label>
+    <label><%= t('Maks. peserta') %> <input type="number" name="max_participants" min="1"></label>
+    <div class="full schedule-fields">
+      <label><%= t('Tanggal') %> <input type="date" name="date" required></label>
+      <label><%= t('Jam mulai') %> <input type="time" name="start_time" required></label>
+      <label><%= t('Jam selesai') %> <input type="time" name="end_time" required></label>
+    </div>
+    <label><%= t('Target donasi (Benih, opsional)') %> <input type="number" name="benih_target" min="1"></label>
     <div class="full">
       <div id="picker-map" class="map small" data-maps-key="<%= mapsKey %>">
-        <% if (!mapsKey) { %><p class="muted">Peta nonaktif. Isi koordinat secara manual.</p><% } %>
+        <% if (!mapsKey) { %><p class="muted"><%= t('Peta nonaktif. Isi koordinat secara manual.') %></p><% } %>
       </div>
     </div>
-    <label>Latitude <input type="number" name="lat" step="any" required></label>
-    <label>Longitude <input type="number" name="lng" step="any" required></label>
-    <div class="full"><button type="submit" class="btn">Simpan kegiatan</button></div>
+    <label><%= t('Latitude') %> <input type="number" name="lat" step="any" required></label>
+    <label><%= t('Longitude') %> <input type="number" name="lng" step="any" required></label>
+    <div class="full"><button type="submit" class="btn"><%= t('Simpan kegiatan') %></button></div>
   </form>
 </section>
 <script src="/js/program-new.js"></script>

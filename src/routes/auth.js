@@ -11,10 +11,10 @@ function safeNext(next) {
   return typeof next === 'string' && next.startsWith('/') && !next.startsWith('//') ? next : '/';
 }
 
-function notConfigured(res, view, extra = {}) {
+function notConfigured(req, res, view, extra = {}) {
   return res.status(503).render(view, {
-    title: view === 'register' ? 'Daftar' : 'Masuk',
-    error: 'Supabase belum dikonfigurasi. Isi variabel SUPABASE_* di .env.',
+    title: req.t(view === 'register' ? 'Daftar' : 'Masuk'),
+    error: req.t('Supabase belum dikonfigurasi. Isi variabel SUPABASE_* di .env.'),
     values: {},
     next: '/',
     ...extra,
@@ -23,18 +23,18 @@ function notConfigured(res, view, extra = {}) {
 
 router.get('/register', (req, res) => {
   if (req.user) return res.redirect('/');
-  res.render('register', { title: 'Daftar', error: null, info: null, values: {} });
+  res.render('register', { title: req.t('Daftar'), error: null, info: null, values: {} });
 });
 
 router.post('/register', async (req, res, next) => {
-  if (!isConfigured) return notConfigured(res, 'register', { info: null });
+  if (!isConfigured) return notConfigured(req, res, 'register', { info: null });
   const { full_name: fullName = '', email = '', password = '' } = req.body;
   const values = { full_name: fullName, email };
 
   if (!fullName.trim() || !email.trim() || password.length < 8) {
     return res.status(400).render('register', {
-      title: 'Daftar',
-      error: 'Nama dan email wajib diisi, kata sandi minimal 8 karakter.',
+      title: req.t('Daftar'),
+      error: req.t('Nama dan email wajib diisi, kata sandi minimal 8 karakter.'),
       info: null,
       values,
     });
@@ -50,7 +50,7 @@ router.post('/register', async (req, res, next) => {
       },
     });
     if (error) {
-      return res.status(400).render('register', { title: 'Daftar', error: error.message, info: null, values });
+      return res.status(400).render('register', { title: req.t('Daftar'), error: error.message, info: null, values });
     }
 
     // Jika konfirmasi email dimatikan di Supabase, sesi langsung tersedia.
@@ -59,9 +59,9 @@ router.post('/register', async (req, res, next) => {
       return res.redirect('/');
     }
     return res.render('register', {
-      title: 'Daftar',
+      title: req.t('Daftar'),
       error: null,
-      info: 'Pendaftaran berhasil. Cek email kamu untuk konfirmasi, lalu masuk.',
+      info: req.t('Pendaftaran berhasil. Cek email kamu untuk konfirmasi, lalu masuk.'),
       values: {},
     });
   } catch (err) {
@@ -71,20 +71,20 @@ router.post('/register', async (req, res, next) => {
 
 router.get('/login', (req, res) => {
   if (req.user) return res.redirect('/');
-  res.render('login', { title: 'Masuk', error: null, values: {}, next: safeNext(req.query.next) });
+  res.render('login', { title: req.t('Masuk'), error: null, values: {}, next: safeNext(req.query.next) });
 });
 
 router.post('/login', async (req, res, next) => {
   const redirectTo = safeNext(req.body.next);
-  if (!isConfigured) return notConfigured(res, 'login', { next: redirectTo });
+  if (!isConfigured) return notConfigured(req, res, 'login', { next: redirectTo });
   const { email = '', password = '' } = req.body;
 
   try {
     const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     if (error) {
       return res.status(401).render('login', {
-        title: 'Masuk',
-        error: 'Email atau kata sandi salah.',
+        title: req.t('Masuk'),
+        error: req.t('Email atau kata sandi salah.'),
         values: { email },
         next: redirectTo,
       });
@@ -154,14 +154,14 @@ router.get('/auth/callback', async (req, res, next) => {
   res.clearCookie(NEXT_COOKIE, tempCookie);
 
   const renderError = (message) =>
-    res.status(400).render('login', { title: 'Masuk', error: message, values: {}, next: redirectTo });
+    res.status(400).render('login', { title: req.t('Masuk'), error: message, values: {}, next: redirectTo });
 
-  if (req.query.error) return renderError('Masuk dengan akun sosial dibatalkan atau ditolak.');
-  if (!req.query.code || !verifier) return renderError('Sesi masuk kedaluwarsa. Silakan coba lagi.');
+  if (req.query.error) return renderError(req.t('Masuk dengan akun sosial dibatalkan atau ditolak.'));
+  if (!req.query.code || !verifier) return renderError(req.t('Sesi masuk kedaluwarsa. Silakan coba lagi.'));
   try {
     const { client } = pkceClient({ [`${STORAGE_KEY}-code-verifier`]: verifier });
     const { data, error } = await client.auth.exchangeCodeForSession(String(req.query.code));
-    if (error) return renderError('Gagal masuk dengan akun sosial. Silakan coba lagi.');
+    if (error) return renderError(req.t('Gagal masuk dengan akun sosial. Silakan coba lagi.'));
     setSessionCookies(res, data.session);
     res.redirect(redirectTo === '/' ? '/dashboard' : redirectTo);
   } catch (err) {

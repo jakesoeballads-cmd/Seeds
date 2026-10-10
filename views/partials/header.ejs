@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="<%= lang %>">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,23 +8,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Lato:wght@400;700;900&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
   <link rel="stylesheet" href="/css/style.css">
+  <script>window.BENIH_I18N = <%- JSON.stringify(clientI18n).replace(/</g, '\\u003c') %>;</script>
+  <script src="/js/i18n.js"></script>
 </head>
 <body>
   <header class="topbar">
-    <a href="/" class="brand" aria-label="Benih, beranda">
+    <a href="/" class="brand" aria-label="<%= t('Benih, beranda') %>">
       <svg viewBox="0 0 26 30" aria-hidden="true"><path d="M13 28V14" stroke="#74ac00" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M13 16C13 9 8 5 2 5c0 7 4 11 11 11Z" fill="#74ac00"/><path d="M13 13c0-6 4-10 11-10 0 6-4 10-11 10Z" fill="#4f7a00"/></svg>Benih</a>
     <nav>
       <% if (user) { %>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/program/baru">Buat Kegiatan</a>
-        <a href="/benih" class="pill"><span class="leaf">♥</span> Beli Benih</a>
+        <a href="/dashboard"><%= t('Dashboard') %></a>
+        <a href="/program/baru"><%= t('Buat Kegiatan') %></a>
+        <a href="/benih" class="pill"><span class="leaf">♥</span> <%= t('Beli Benih') %></a>
         <form action="/logout" method="post" class="inline">
-          <button type="submit" class="link">Keluar</button>
+          <button type="submit" class="link"><%= t('Keluar') %></button>
         </form>
       <% } else { %>
-        <a href="/benih" class="pill"><span class="leaf">♥</span> Donasi</a>
-        <a href="/login">Masuk atau Daftar</a>
+        <a href="/benih" class="pill"><span class="leaf">♥</span> <%= t('Donasi') %></a>
+        <a href="/login"><%= t('Masuk atau Daftar') %></a>
       <% } %>
+      <div class="lang-switch" role="group" aria-label="<%= t('Bahasa') %>">
+        <% Object.entries(languages).forEach(([code, l]) => { %>
+          <a href="<%= langHref(code) %>" lang="<%= code %>" hreflang="<%= code %>" title="<%= l.label %>" <%- code === lang ? 'aria-current="true"' : '' %>><%= l.short %></a>
+        <% }) %>
+      </div>
     </nav>
   </header>
   <main class="container">

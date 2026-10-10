@@ -32,10 +32,10 @@ router.post('/checkout', requireAuth, async (req, res, next) => {
 router.post('/notification', async (req, res, next) => {
   const notification = req.body || {};
   if (config.midtrans.simulated) {
-    return res.status(403).json({ error: 'Webhook nonaktif dalam mode simulasi.' });
+    return res.status(403).json({ error: req.t('Webhook nonaktif dalam mode simulasi.') });
   }
   if (!midtrans.verifySignature(notification)) {
-    return res.status(403).json({ error: 'Signature tidak valid.' });
+    return res.status(403).json({ error: req.t('Signature tidak valid.') });
   }
 
   try {
@@ -53,7 +53,7 @@ router.post('/notification', async (req, res, next) => {
 // agar pencatatan status dan penambahan saldo bisa diuji tanpa Midtrans.
 router.post('/simulate/:orderId', requireAuth, async (req, res, next) => {
   if (!config.midtrans.simulated) {
-    return res.status(404).json({ error: 'Tidak ditemukan.' });
+    return res.status(404).json({ error: req.t('Tidak ditemukan.') });
   }
   try {
     const { data: trx, error } = await supabaseAdmin
@@ -63,7 +63,7 @@ router.post('/simulate/:orderId', requireAuth, async (req, res, next) => {
       .maybeSingle();
     if (error) throw error;
     if (!trx || trx.user_id !== req.user.id) {
-      return res.status(404).json({ error: 'Transaksi tidak ditemukan.' });
+      return res.status(404).json({ error: req.t('Transaksi tidak ditemukan.') });
     }
 
     const success = req.body.result !== 'failed';

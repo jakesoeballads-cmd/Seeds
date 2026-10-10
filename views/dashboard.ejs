@@ -1,70 +1,67 @@
 <%- include('partials/header') %>
-<% const rupiah = (n) => 'Rp' + Number(n).toLocaleString('id-ID'); %>
-<% const tanggal = (iso) => new Date(iso).toLocaleDateString('id-ID', { dateStyle: 'medium' }); %>
 <% const statusLabel = { registered: 'Terdaftar', attended: 'Hadir', negotiating: 'Berdiskusi', agreed: 'Disepakati', paid: 'Dibayar', cancelled: 'Batal' }; %>
 <% const badgeTile = (b, unit) => { %>
     <% if (b.current) { %>
-      <span class="badge-donor"><%= b.current.icon %> <%= b.current.name %></span>
+      <span class="badge-donor"><%= b.current.icon %> <%= t(b.current.name) %></span>
     <% } else { %>
-      <span class="muted">Belum ada badge</span>
+      <span class="muted"><%= t('Belum ada badge') %></span>
     <% } %>
     <% if (b.next) { %>
       <div class="progress" role="progressbar" aria-valuenow="<%= Math.round(b.progress * 100) %>" aria-valuemin="0" aria-valuemax="100">
         <div style="width: <%= Math.round(b.progress * 100) %>%"></div>
       </div>
-      <span class="muted"><%= b.remaining.toLocaleString('id-ID') %> <%= unit %> lagi menuju <%= b.next.icon %> <%= b.next.name %></span>
+      <span class="muted"><%= t('{n} {unit} lagi menuju {badge}', { n: fmt.num(b.remaining), unit, badge: `${b.next.icon} ${t(b.next.name)}` }) %></span>
     <% } else { %>
-      <span class="muted">Tingkat badge tertinggi tercapai. Terima kasih!</span>
+      <span class="muted"><%= t('Tingkat badge tertinggi tercapai. Terima kasih!') %></span>
     <% } %>
 <% } %>
-<h1>Halo, <%= fullName || 'Member' %></h1>
+<h1><%= t('Halo, {name}', { name: fullName || t('Member') }) %></h1>
 
 <div class="stats">
   <div class="stat">
-    <span class="stat-label">Benih dimiliki</span>
-    <span class="stat-value">🌱 <%= balance.toLocaleString('id-ID') %></span>
-    <span class="muted"><%= rupiah(balanceIdr) %></span>
-    <a href="/benih" class="btn small">Beli / Tarik</a>
+    <span class="stat-label"><%= t('Benih dimiliki') %></span>
+    <span class="stat-value">🌱 <%= fmt.num(balance) %></span>
+    <a href="/benih" class="btn small"><%= t('Beli / Tarik') %></a>
   </div>
 
   <div class="stat">
-    <span class="stat-label">Benih disumbangkan</span>
-    <span class="stat-value">💚 <%= donated.toLocaleString('id-ID') %></span>
+    <span class="stat-label"><%= t('Benih disumbangkan') %></span>
+    <span class="stat-value">💚 <%= fmt.num(donated) %></span>
     <% badgeTile(badge, 'Benih') %>
   </div>
 
   <div class="stat">
-    <span class="stat-label">Poin relawan</span>
-    <span class="stat-value">🤝 <%= volunteerPoints.toLocaleString('id-ID') %></span>
-    <% badgeTile(volunteerBadge, 'poin') %>
-    <span class="muted"><%= volunteerEvents %> kegiatan sebagai relawan · <%= pointsPerEvent %> poin per kegiatan</span>
+    <span class="stat-label"><%= t('Poin relawan') %></span>
+    <span class="stat-value">🤝 <%= fmt.num(volunteerPoints) %></span>
+    <% badgeTile(volunteerBadge, t('poin')) %>
+    <span class="muted"><%= t('{n} kegiatan sebagai relawan · {points} poin per kegiatan', { n: volunteerEvents, points: pointsPerEvent }) %></span>
   </div>
 
   <div class="stat">
-    <span class="stat-label">Benih didapat dari event</span>
-    <span class="stat-value">🌳 <%= totalReceived.toLocaleString('id-ID') %></span>
-    <span class="muted">dari <%= programs.length %> kegiatan yang kamu adakan</span>
-    <a href="/program/baru" class="btn small">Buat kegiatan</a>
+    <span class="stat-label"><%= t('Benih didapat dari event') %></span>
+    <span class="stat-value">🌳 <%= fmt.num(totalReceived) %></span>
+    <span class="muted"><%= t('dari {n} kegiatan yang kamu adakan', { n: programs.length }) %></span>
+    <a href="/program/baru" class="btn small"><%= t('Buat kegiatan') %></a>
   </div>
 </div>
 
 <section class="card">
-  <h2>Rekam jejak partisipasi</h2>
+  <h2><%= t('Rekam jejak partisipasi') %></h2>
   <% if (!participations.length) { %>
-    <p class="muted">Kamu belum mengikuti kegiatan. Cari kegiatan di <a href="/">beranda</a>.</p>
+    <p class="muted"><%= t('Kamu belum mengikuti kegiatan.') %> <a href="/"><%= t('Cari kegiatan di beranda') %></a>.</p>
   <% } else { %>
     <div class="table-wrap"><table class="table">
-      <thead><tr><th>Kegiatan</th><th>Tanggal</th><th>Peran</th><th>Status</th></tr></thead>
+      <thead><tr><th><%= t('Kegiatan') %></th><th><%= t('Jadwal') %></th><th><%= t('Peran') %></th><th><%= t('Status') %></th></tr></thead>
       <tbody>
         <% participations.forEach((x) => { const p = x.program || {}; %>
           <tr>
-            <td><a href="/kegiatan/<%= p.id %>"><%= p.title %></a><br><span class="muted">oleh <%= p.organizer_name %></span></td>
-            <td><%= p.start_at ? tanggal(p.start_at) : '' %></td>
-            <td><%= x.role === 'paid' ? 'Tenaga berbayar' : 'Relawan' %></td>
-            <td><span class="badge <%= x.status %>"><%= statusLabel[x.status] %></span>
-              <% if (x.role === 'volunteer' && x.status === 'attended') { %><br><span class="muted">+<%= pointsPerEvent %> poin</span><% } %>
-              <% if (x.role === 'paid' && x.agreed_benih) { %><br><span class="muted"><%= x.agreed_benih %> Benih</span><% } %>
-              <% if (x.role === 'paid' && x.status !== 'paid') { %><br><a href="/kegiatan/<%= p.id %>/pesan">Pesan</a><% } %>
+            <td><a href="/kegiatan/<%= p.id %>"><%= p.title %></a><br><span class="muted"><%= t('oleh {name}', { name: p.organizer_name }) %></span></td>
+            <td><%= fmt.schedule(p.start_at, p.end_at) %></td>
+            <td><%= x.role === 'paid' ? t('Tenaga berbayar') : t('Relawan') %></td>
+            <td><span class="badge <%= x.status %>"><%= t(statusLabel[x.status]) %></span>
+              <% if (x.role === 'volunteer' && x.status === 'attended') { %><br><span class="muted"><%= t('+{n} poin', { n: pointsPerEvent }) %></span><% } %>
+              <% if (x.role === 'paid' && x.agreed_benih) { %><br><span class="muted"><%= fmt.num(x.agreed_benih) %> Benih</span><% } %>
+              <% if (x.role === 'paid' && x.status !== 'paid') { %><br><a href="/kegiatan/<%= p.id %>/pesan"><%= t('Pesan') %></a><% } %>
             </td>
           </tr>
         <% }) %>
@@ -74,36 +71,36 @@
 </section>
 
 <section class="card">
-  <h2>Kegiatan yang kamu adakan</h2>
+  <h2><%= t('Kegiatan yang kamu adakan') %></h2>
   <% if (!programs.length) { %>
-    <p class="muted">Belum ada kegiatan. <a href="/program/baru">Buat kegiatan pertamamu</a>.</p>
+    <p class="muted"><%= t('Belum ada kegiatan.') %> <a href="/program/baru"><%= t('Buat kegiatan pertamamu') %></a>.</p>
   <% } else { %>
-    <table class="table">
-      <thead><tr><th>Kegiatan</th><th>Tanggal</th><th>Benih terkumpul</th></tr></thead>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th><%= t('Kegiatan') %></th><th><%= t('Jadwal') %></th><th><%= t('Benih terkumpul') %></th></tr></thead>
       <tbody>
         <% programs.forEach((p) => { %>
           <tr>
             <td><a href="/kegiatan/<%= p.id %>"><%= p.title %></a><% if (p.location_name) { %><br><span class="muted"><%= p.location_name %></span><% } %></td>
-            <td><%= tanggal(p.start_at) %></td>
+            <td><%= fmt.schedule(p.start_at, p.end_at) %></td>
             <td>
-              <strong><%= Number(p.benih_collected).toLocaleString('id-ID') %></strong><% if (p.benih_target) { %> / <%= p.benih_target.toLocaleString('id-ID') %><% } %>
-              <br><span class="muted"><%= rupiah(p.benih_collected * price) %></span>
+              <strong><%= fmt.num(p.benih_collected) %></strong><% if (p.benih_target) { %> / <%= fmt.num(p.benih_target) %><% } %>
+              <br><span class="muted"><%= fmt.rupiah(p.benih_collected * price) %></span>
             </td>
           </tr>
         <% }) %>
       </tbody>
-    </table>
+    </table></div>
   <% } %>
 </section>
 
 <section class="card">
-  <h2>Donasi terakhirmu</h2>
+  <h2><%= t('Donasi terakhirmu') %></h2>
   <% if (!recentDonations.length) { %>
-    <p class="muted">Belum ada donasi. Cari kegiatan di <a href="/">beranda</a>.</p>
+    <p class="muted"><%= t('Belum ada donasi.') %> <a href="/"><%= t('Cari kegiatan di beranda') %></a>.</p>
   <% } else { %>
     <ul class="history">
       <% recentDonations.forEach((d) => { %>
-        <li><span><%= d.program ? d.program.title : 'Kegiatan' %> · <%= tanggal(d.created_at) %></span><strong><%= d.benih_amount %> Benih</strong></li>
+        <li><span><%= d.program ? d.program.title : t('Kegiatan') %> · <%= fmt.date(d.created_at) %></span><strong><%= fmt.num(d.benih_amount) %> Benih</strong></li>
       <% }) %>
     </ul>
   <% } %>
@@ -111,18 +108,18 @@
 
 <div class="badge-columns">
 <section class="card">
-  <h2>Badge donatur</h2>
+  <h2><%= t('Badge donatur') %></h2>
   <ul class="badge-list">
     <% badges.forEach((b) => { %>
-      <li class="<%= donated >= b.min ? 'earned' : '' %>"><%= b.icon %> <strong><%= b.name %></strong> <span class="muted">≥ <%= b.min.toLocaleString('id-ID') %> Benih disumbangkan</span></li>
+      <li class="<%= donated >= b.min ? 'earned' : '' %>"><%= b.icon %> <strong><%= t(b.name) %></strong> <span class="muted"><%= t('≥ {n} Benih disumbangkan', { n: fmt.num(b.min) }) %></span></li>
     <% }) %>
   </ul>
 </section>
 <section class="card">
-  <h2>Badge relawan</h2>
+  <h2><%= t('Badge relawan') %></h2>
   <ul class="badge-list">
     <% volunteerBadges.forEach((b) => { %>
-      <li class="<%= volunteerPoints >= b.min ? 'earned' : '' %>"><%= b.icon %> <strong><%= b.name %></strong> <span class="muted">≥ <%= b.min.toLocaleString('id-ID') %> poin (<%= b.min / pointsPerEvent %> kegiatan)</span></li>
+      <li class="<%= volunteerPoints >= b.min ? 'earned' : '' %>"><%= b.icon %> <strong><%= t(b.name) %></strong> <span class="muted"><%= t('≥ {points} poin ({n} kegiatan)', { points: fmt.num(b.min), n: b.min / pointsPerEvent }) %></span></li>
     <% }) %>
   </ul>
 </section>

@@ -21,7 +21,7 @@ async function getDashboard(userId) {
       .maybeSingle(),
     supabaseAdmin
       .from('programs')
-      .select('id, title, location_name, start_at, status, benih_collected, benih_target')
+      .select('id, title, location_name, start_at, end_at, status, benih_collected, benih_target')
       .eq('organizer_id', userId)
       .order('start_at', { ascending: false })
       .limit(100),
@@ -34,7 +34,7 @@ async function getDashboard(userId) {
     // Rekam jejak partisipasi kegiatan.
     supabaseAdmin
       .from('program_participants')
-      .select('role, status, agreed_benih, joined_at, program:programs(id, title, organizer_name, location_name, start_at)')
+      .select('role, status, agreed_benih, joined_at, program:programs(id, title, organizer_name, location_name, start_at, end_at)')
       .eq('user_id', userId)
       .order('joined_at', { ascending: false })
       .limit(100),

@@ -1,39 +1,39 @@
 <%- include('partials/header') %>
 <section class="card narrow">
-  <h1>Beli & Tarik Benih</h1>
-  <p class="balance">Saldo Benih: <strong><%= balance %></strong> Benih
-    (Rp<%= (balance * price).toLocaleString('id-ID') %>)</p>
-  <p class="muted">Saldo bisa didonasikan ke kegiatan member lain atau ditarik ke rekening.</p>
+  <h1><%= t('Beli & Tarik Benih') %></h1>
+  <p class="balance"><%= t('Saldo Benih') %>: <strong><%= fmt.num(balance) %></strong> Benih
+    (<%= fmt.rupiah(balance * price) %>)</p>
+  <p class="muted"><%= t('Saldo bisa didonasikan ke kegiatan member lain atau ditarik ke rekening.') %></p>
   <% if (simulated) { %>
-    <p class="alert info">Mode simulasi aktif: pembayaran tidak benar-benar diproses.</p>
+    <p class="alert info"><%= t('Mode simulasi aktif: pembayaran tidak benar-benar diproses.') %></p>
   <% } %>
   <form id="buy-form" data-price="<%= price %>" data-simulated="<%= simulated %>">
-    <label>Jumlah Benih <input type="number" name="benih_amount" min="1" max="100000" value="10" required></label>
-    <p class="muted">Total: <strong id="total">Rp0</strong> (Rp<%= price.toLocaleString('id-ID') %> per Benih)</p>
-    <button type="submit" class="btn">Bayar</button>
+    <label><%= t('Jumlah Benih') %> <input type="number" name="benih_amount" min="1" max="100000" value="10" required></label>
+    <p class="muted"><%= t('Total') %>: <strong id="total">Rp0</strong> (<%= t('{price} per Benih', { price: fmt.rupiah(price) }) %>)</p>
+    <button type="submit" class="btn"><%= t('Bayar') %></button>
   </form>
   <p id="buy-message" class="alert" hidden></p>
 </section>
 
 <section class="card narrow">
-  <h2>Tarik saldo</h2>
-  <p class="muted">Penarikan dipotong <%= feePercent.toLocaleString('id-ID') %>% untuk pengembangan platform.</p>
+  <h2><%= t('Tarik saldo') %></h2>
+  <p class="muted"><%= t('Penarikan dipotong {fee}% untuk pengembangan platform.', { fee: fmt.num(feePercent) }) %></p>
   <form id="withdraw-form" data-price="<%= price %>" data-fee-bps="<%= feeBps %>">
-    <label>Jumlah Benih <input type="number" name="benih_amount" min="1" max="<%= balance %>" required <%= balance < 1 ? 'disabled' : '' %>></label>
-    <label>Nama bank <input type="text" name="bank_name" placeholder="cth. BCA" required></label>
-    <label>Nomor rekening <input type="text" name="bank_account_number" inputmode="numeric" required></label>
-    <label>Nama pemilik rekening <input type="text" name="bank_account_name" required></label>
+    <label><%= t('Jumlah Benih') %> <input type="number" name="benih_amount" min="1" max="<%= balance %>" required <%= balance < 1 ? 'disabled' : '' %>></label>
+    <label><%= t('Nama bank') %> <input type="text" name="bank_name" placeholder="<%= t('cth. BCA') %>" required></label>
+    <label><%= t('Nomor rekening') %> <input type="text" name="bank_account_number" inputmode="numeric" required></label>
+    <label><%= t('Nama pemilik rekening') %> <input type="text" name="bank_account_name" required></label>
     <p class="muted" id="withdraw-breakdown"></p>
-    <button type="submit" class="btn" <%= balance < 1 ? 'disabled' : '' %>>Ajukan penarikan</button>
+    <button type="submit" class="btn" <%= balance < 1 ? 'disabled' : '' %>><%= t('Ajukan penarikan') %></button>
   </form>
   <p id="withdraw-message" class="alert" hidden></p>
-  <h3>Riwayat penarikan</h3>
-  <ul id="withdrawals" class="history"><li class="muted">Memuat…</li></ul>
+  <h3><%= t('Riwayat penarikan') %></h3>
+  <ul id="withdrawals" class="history"><li class="muted"><%= t('Memuat…') %></li></ul>
 </section>
 
 <section class="card narrow">
-  <h2>Riwayat transaksi</h2>
-  <ul id="history" class="history"><li class="muted">Memuat…</li></ul>
+  <h2><%= t('Riwayat transaksi') %></h2>
+  <ul id="history" class="history"><li class="muted"><%= t('Memuat…') %></li></ul>
 </section>
 
 <% if (!simulated && clientKey) { %>
