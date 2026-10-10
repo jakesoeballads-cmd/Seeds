@@ -46,6 +46,8 @@ export function ActivityMap({ center, pins = [], activeId, onSelect, picking, pi
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(m);
+      // Prefix teks saja: ikon bendera bawaan Leaflet ikut membesar oleh gaya halaman.
+      m.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
       m.on('click', (e: Leaflet.LeafletMouseEvent) => {
         if (picking) handlers.current.onPick?.({ lat: e.latlng.lat, lng: e.latlng.lng });
       });

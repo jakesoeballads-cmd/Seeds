@@ -100,11 +100,6 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--bo
 .map-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
 .map-layout > * { min-width: 0; }
 .map { border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; background: var(--map-land); }
-.map svg { display: block; width: 100%; height: auto; }
-.map .pin { cursor: pointer; }
-.map .pin path { fill: var(--pin); transition: transform .15s; transform-box: fill-box; transform-origin: 50% 100%; }
-.map .pin.active path { transform: scale(1.3); }
-.map text { fill: var(--text); font-size: 13px; font-family: var(--font); }
 .map-note { font-size: .8rem; padding: 8px 12px; border-top: 1px solid var(--border); background: var(--card); }
 .list-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .list-header h2 { margin: 0; }
@@ -196,3 +191,6 @@ a.btn { color: var(--on-action); }
 a.btn.ghost { color: var(--action); }
 a.btn.light { color: #454545; }
 .navlink { text-decoration: none; display: inline-block; }
+/* Ikon SVG di dalam peta Leaflet (pin, kontrol) memakai ukurannya sendiri. */
+.leaflet-container svg { max-width: none; }
+.leaflet-marker-icon svg { display: block; }
