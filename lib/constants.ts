@@ -31,6 +31,8 @@ export const DEFAULT_CENTER = { lat: -6.2, lng: 106.8167 };
 
 export const MAX_PHOTOS = 5;
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+/** Ukuran foto asli yang boleh dipilih; foto dikompres di browser sebelum diunggah. */
+export const MAX_PHOTO_INPUT_BYTES = 25 * 1024 * 1024;
 export const PHOTO_BUCKET = 'activity-photos';
 
 export function badgeInfo(tiers: Badge[], total: number) {

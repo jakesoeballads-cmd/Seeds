@@ -191,7 +191,7 @@
   "f.orgPh": "Dein Name, deine Community, Organisation oder dein Unternehmen",
   "f.type": "Art der Veranstaltenden",
   "f.desc": "Beschreibung",
-  "f.photos": "Aktionsfotos (max. 5, JPG/PNG/WebP, je max. 5 MB)",
+  "f.photos": "Fotos der Aktion (max. 5, je bis 25 MB; werden vor dem Hochladen automatisch verkleinert)",
   "f.loc": "Ort",
   "f.target": "Spendenziel (Benih, optional)",
   "f.date": "Datum",
@@ -374,5 +374,8 @@
   "err.amountMismatch": "Der Zahlungsbetrag stimmt nicht überein.",
   "donate.login": "Melde dich an, um diese Aktion mit Benih zu unterstützen.",
   "dash.recentDonations": "Deine letzten Spenden",
-  "dash.noDonations": "Du hast noch nicht gespendet."
+  "dash.noDonations": "Du hast noch nicht gespendet.",
+  "f.compressing": "Fotos werden verkleinert und hochgeladen …",
+  "toast.photoTooBig": "Ein Foto war zu groß (max. 25 MB) und wurde übersprungen.",
+  "toast.photoUnreadable": "Ein Foto konnte nicht gelesen werden. Bitte wähle ein JPG- oder PNG-Foto."
 }
