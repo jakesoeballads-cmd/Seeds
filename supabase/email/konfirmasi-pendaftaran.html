@@ -1,0 +1,44 @@
+<!-- Template email "Confirm signup" untuk Supabase.
+     Subjek yang disarankan: Konfirmasi akun Benih kamu 🌱
+     Tempel isi file ini di Supabase: Authentication → Email Templates → Confirm signup → Message body. -->
+<div style="margin:0;padding:24px 12px;background:#f4f6f0;font-family:Lato,Helvetica,Arial,sans-serif;color:#454545;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;border:1px solid #dcdfd6;">
+    <tr>
+      <td style="padding:28px 28px 8px;text-align:center;">
+        <div style="font-size:28px;font-weight:900;color:#111111;letter-spacing:-0.5px;">🌱 Benih</div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:8px 28px 0;">
+        <h1 style="font-family:Georgia,serif;font-size:22px;font-weight:600;color:#111111;margin:12px 0;">Selamat datang di Benih!</h1>
+        <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">
+          Terima kasih sudah bergabung bersama para environmentalist yang saling mendukung untuk pelestarian lingkungan.
+          Ketuk tombol di bawah untuk mengonfirmasi email kamu dan mulai berkontribusi.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:8px 28px 20px;text-align:center;">
+        <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#74ac00;color:#ffffff;text-decoration:none;font-weight:700;font-size:16px;padding:12px 28px;border-radius:999px;">Konfirmasi email</a>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:0 28px 24px;">
+        <p style="font-size:13px;line-height:1.6;color:#6f706c;margin:0 0 12px;">
+          Kalau tombol di atas tidak berfungsi, salin tautan ini ke browser:<br>
+          <a href="{{ .ConfirmationURL }}" style="color:#4f7a00;word-break:break-all;">{{ .ConfirmationURL }}</a>
+        </p>
+        <p style="font-size:13px;line-height:1.6;color:#6f706c;margin:0;">
+          Tidak merasa mendaftar di Benih? Abaikan saja email ini.<br>
+          <span style="font-style:italic;">Didn’t sign up for Benih? You can safely ignore this email.</span>
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:16px 28px;border-top:1px solid #dcdfd6;text-align:center;font-size:12px;color:#6f706c;">
+        Setiap kepedulian kecil berdampak.<br>
+        © PT Daya Reforestasi Indonesia · <a href="https://benih.earth" style="color:#4f7a00;">benih.earth</a>
+      </td>
+    </tr>
+  </table>
+</div>

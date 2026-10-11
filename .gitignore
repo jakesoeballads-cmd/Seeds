@@ -1,5 +1,9 @@
 node_modules/
+.next/
+out/
 .env
 .env.local
-npm-debug.log*
+.env.*.local
+*.tsbuildinfo
 .DS_Store
+npm-debug.log*
