@@ -194,3 +194,7 @@ a.btn.light { color: #454545; }
 /* Ikon SVG di dalam peta Leaflet (pin, kontrol) memakai ukurannya sendiri. */
 .leaflet-container svg { max-width: none; }
 .leaflet-marker-icon svg { display: block; }
+
+/* ───────────── Tahap 2: dompet & pembayaran ───────────── */
+.role-option[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
