@@ -194,7 +194,7 @@
   "f.orgPh": "Your name, community, organisation or business",
   "f.type": "Organiser type",
   "f.desc": "Description",
-  "f.photos": "Activity photos (max. 5, JPG/PNG/WebP, max. 5 MB each)",
+  "f.photos": "Activity photos (max. 5, up to 25 MB each; automatically resized before upload)",
   "f.loc": "Location name",
   "f.target": "Donation target (Benih, optional)",
   "f.date": "Date",
@@ -377,5 +377,8 @@
   "err.amountMismatch": "The payment amount doesn’t match.",
   "donate.login": "Log in to support this activity with Benih.",
   "dash.recentDonations": "Your recent donations",
-  "dash.noDonations": "You haven’t donated yet."
+  "dash.noDonations": "You haven’t donated yet.",
+  "f.compressing": "Resizing and uploading photos…",
+  "toast.photoTooBig": "A photo was too large (max. 25 MB) and was skipped.",
+  "toast.photoUnreadable": "A photo couldn't be read. Try choosing a JPG or PNG photo."
 }

@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { CATEGORIES, DEFAULT_CENTER, MAX_PHOTOS, MAX_PHOTO_BYTES, ORG_TYPES, PHOTO_BUCKET } from '@/lib/constants';
+import { compressPhoto } from '@/lib/compress';
+import { CATEGORIES, DEFAULT_CENTER, MAX_PHOTOS, MAX_PHOTO_INPUT_BYTES, ORG_TYPES, PHOTO_BUCKET } from '@/lib/constants';
 import { getBrowserClient } from '@/lib/supabase/client';
 import { ActivityMap } from './ActivityMap';
 import { useI18n } from './I18nProvider';
@@ -38,8 +39,9 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
 
   function onFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const all = Array.from(e.target.files ?? []);
-    const ok = all.filter((x) => /^image\/(jpeg|png|webp)$/.test(x.type) && x.size <= MAX_PHOTO_BYTES).slice(0, MAX_PHOTOS);
-    setError(all.length > MAX_PHOTOS ? t('toast.max5') : null);
+    const images = all.filter((x) => x.type.startsWith('image/'));
+    const ok = images.filter((x) => x.size <= MAX_PHOTO_INPUT_BYTES).slice(0, MAX_PHOTOS);
+    setError(all.length > MAX_PHOTOS ? t('toast.max5') : ok.length < Math.min(images.length, MAX_PHOTOS) ? t('toast.photoTooBig') : null);
     setFiles(ok);
     setPreviews(ok.map((x) => URL.createObjectURL(x)));
   }
@@ -61,8 +63,12 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
     try {
       // 1. Unggah foto ke folder milik pengguna.
       const urls: string[] = [];
-      if (files.length) setStatus(t('f.uploading'));
-      for (const file of files) {
+      if (files.length) setStatus(t('f.compressing'));
+      for (const original of files) {
+        // Foto diperkecil dulu di browser agar hemat penyimpanan dan cepat dibuka.
+        const file = await compressPhoto(original).catch((err: Error) => {
+          throw new Error(t(err.message === 'photo-too-large' ? 'toast.photoTooBig' : 'toast.photoUnreadable'));
+        });
         const ext = file.type.split('/')[1].replace('jpeg', 'jpg');
         const path = `${userId}/${crypto.randomUUID()}.${ext}`;
         const { error } = await supabase.storage.from(PHOTO_BUCKET).upload(path, file, { contentType: file.type });
@@ -142,7 +148,7 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
         </label>
         <label className="full">
           {t('f.photos')}
-          <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={onFiles} />
+          <input type="file" accept="image/*" multiple onChange={onFiles} />
         </label>
         {previews.length > 0 && (
           <div className="full photo-preview">

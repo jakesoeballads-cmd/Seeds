@@ -179,7 +179,7 @@
   "f.orgPh": "Nama kamu, komunitas, organisasi, atau badan usaha",
   "f.type": "Jenis penyelenggara",
   "f.desc": "Deskripsi",
-  "f.photos": "Foto kegiatan (maks. 5, JPG/PNG/WebP, masing-masing maks. 5 MB)",
+  "f.photos": "Foto kegiatan (maks. 5, masing-masing maks. 25 MB; diperkecil otomatis sebelum diunggah)",
   "f.loc": "Nama lokasi",
   "f.target": "Target donasi (Benih, opsional)",
   "f.date": "Tanggal",
@@ -356,5 +356,8 @@
   "err.amountMismatch": "Nominal pembayaran tidak cocok.",
   "donate.login": "Masuk untuk mendukung kegiatan ini dengan Benih.",
   "dash.recentDonations": "Donasi terakhirmu",
-  "dash.noDonations": "Kamu belum berdonasi."
+  "dash.noDonations": "Kamu belum berdonasi.",
+  "f.compressing": "Memperkecil dan mengunggah foto…",
+  "toast.photoTooBig": "Ada foto yang terlalu besar (maks. 25 MB) sehingga dilewati.",
+  "toast.photoUnreadable": "Ada foto yang tidak bisa dibaca. Coba pilih foto JPG atau PNG."
 }
