@@ -15,10 +15,14 @@ Dibangun dengan **Next.js** (App Router), **Supabase** (akun, database, foto), d
 - Daftar & masuk dengan email atau Google
 - Dashboard: poin relawan, badge, riwayat kegiatan, kegiatan yang kamu adakan
 
-**Tahap 2 (berikutnya)**
-- Beli Benih dan donasi lewat Midtrans (QRIS, e-wallet, VA), dicatat lewat webhook
-- Tarik saldo ke rekening (potongan 2,5%)
-- Pesan antara penyelenggara dan tenaga berbayar
+**Tahap 2 sosial (sudah ada)**
+- Profil member publik (`/member/[id]`) yang bisa dikunci, dan ubah profil di `/profil`
+- Pesan langsung (`/pesan`) dan percakapan negosiasi penyelenggara ↔ tenaga berbayar (`/kegiatan/[id]/pesan`)
+- Foto layar penuh di galeri kegiatan, peta Google Maps + cari lokasi kota lain, menu bawah melayang di ponsel
+**Tahap 2: Benih & pembayaran**
+- Beli Benih lewat Midtrans (QRIS, e-wallet, VA; dicatat lewat webhook) atau PayPal (USD)
+- Donasi Benih ke kegiatan, bayar tenaga berbayar yang sudah disepakati
+- Tarik saldo ke rekening (potongan 2,5%), riwayat pembelian & penarikan di halaman Dompet
 
 Tanpa variabel Supabase, aplikasi tetap berjalan dalam **mode contoh** (data contoh, login nonaktif), jadi tampilannya bisa dicek dulu.
 
@@ -26,11 +30,18 @@ Tanpa variabel Supabase, aplikasi tetap berjalan dalam **mode contoh** (data con
 
 1. Buat proyek di [supabase.com](https://supabase.com) (region Singapore paling dekat).
 2. Buka **SQL Editor → New query**, tempel seluruh isi [`supabase/schema.sql`](supabase/schema.sql), lalu **Run**.
-3. **Authentication → URL Configuration**:
+3. Lalu jalankan juga [`supabase/tahap2-sosial.sql`](supabase/tahap2-sosial.sql) dengan cara yang sama (profil member + pesan). Aman dijalankan ulang.
+4. **Authentication → URL Configuration**:
    - Site URL: `https://domain-benih-anda.com`
    - Redirect URLs: tambahkan `https://domain-benih-anda.com/auth/callback` (dan `http://localhost:3000/auth/callback` untuk lokal)
-4. Login Google (opsional): **Authentication → Providers → Google**, isi Client ID & Secret dari Google Cloud Console.
-5. Catat **Project URL** dan **anon public key** dari **Project Settings → API**.
+5. Login Google (opsional): **Authentication → Providers → Google**, isi Client ID & Secret dari Google Cloud Console.
+6. Catat **Project URL** dan **anon public key** dari **Project Settings → API**.
+
+### Google Maps (opsional)
+
+Isi `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` agar peta beranda dan formulir buat kegiatan memakai Google Maps, dan pencarian lokasi memakai Google Geocoder.
+Di [Google Cloud Console](https://console.cloud.google.com/google/maps-apis) aktifkan **Maps JavaScript API**, **Maps Embed API**, dan **Geocoding API** untuk kunci tersebut, lalu batasi kuncinya ke domain Benih.
+Tanpa kunci, peta memakai Leaflet + OpenStreetMap, pencarian memakai OpenStreetMap Nominatim, dan bagian "Lokasi" di halaman kegiatan memakai embed Google Maps biasa.
 
 ## 2. Jalankan di komputer (opsional)
 
@@ -47,9 +58,25 @@ npm run dev                  # buka http://localhost:3000
    - Node.js: 20 atau lebih baru
    - Build command: `npm run build`
    - Start command: `npm start`
-3. **Environment variables**: isi `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, dan `NEXT_PUBLIC_SITE_URL` (lihat `.env.example`).
+3. **Environment variables**: isi `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, dan `NEXT_PUBLIC_SITE_URL` (lihat `.env.example`), serta `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` bila memakai Google Maps.
 4. Deploy. Setiap push ke `main` akan memicu build ulang.
 5. Hubungkan domain Benih di hPanel, lalu arahkan nameserver domain di Namecheap ke Hostinger.
+
+## Tahap 2: Benih & pembayaran
+
+1. Supabase → **SQL Editor → New query**: tempel seluruh isi [`supabase/tahap2-benih.sql`](supabase/tahap2-benih.sql) lalu **Run** (setelah `schema.sql`; aman dijalankan ulang).
+2. Hostinger → **Environment variables**, tambahkan (lihat penjelasan di `.env.example`):
+   - `SUPABASE_SERVICE_ROLE_KEY` (rahasia, dari Supabase → Project Settings → API)
+   - Midtrans: `MIDTRANS_SERVER_KEY`, `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY`, `MIDTRANS_IS_PRODUCTION`
+   - PayPal: `PAYPAL_MODE`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_CURRENCY` (USD), `PAYPAL_IDR_RATE` (16000)
+   - `PAYMENT_SIMULATION=false` (isi `true` hanya untuk uji coba tanpa kunci Midtrans/PayPal)
+3. Dashboard Midtrans → **Settings → Payment → Notification URL**: `https://<domain>/api/payments/notification`.
+   Aktifkan juga kanal QRIS/e-wallet/VA yang diinginkan di Dashboard Midtrans.
+4. Deploy ulang. Metode yang kuncinya belum diisi tampil sebagai "belum tersedia".
+5. Penarikan dicairkan manual oleh admin: lihat tabel `withdrawals` di Supabase, transfer ke rekening,
+   lalu ubah `status` menjadi `paid`. Untuk menolak (saldo kembali): `select reject_withdrawal('<id>', 'alasan');`
+
+Uji fungsi PayPal: `npm test`.
 
 ## Struktur
 
@@ -58,7 +85,8 @@ app/            halaman (beranda, kegiatan/[id], buat, dashboard, masuk, daftar,
 components/     komponen UI (peta, formulir, kotak ikut kegiatan, dll.)
 lib/            i18n, konstanta (harga, poin, badge), data, klien Supabase
 messages/       teks UI: id.json, en.json, de.json
-supabase/       skema database + aturan keamanan (RLS)
+supabase/       skema database + aturan keamanan (RLS); tahap2-benih.sql untuk saldo & pembayaran
+tests/          tes kecil (node --test)
 ```
 
 ## Aturan penting
