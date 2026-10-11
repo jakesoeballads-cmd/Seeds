@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { POINTS } from '@/lib/constants';
+import { rpcErrorText } from '@/lib/rpc-errors';
 import { getBrowserClient } from '@/lib/supabase/client';
 import type { Participant } from '@/lib/types';
 import { useI18n } from './I18nProvider';
@@ -25,6 +26,19 @@ export function ManageParticipants({ participants }: { participants: Participant
   }
 
   const name = (p: Participant) => p.profile?.full_name || '—';
+
+  // Membayar tenaga berbayar yang sudah disepakati (fungsi SQL pay_participant).
+  async function pay(p: Participant) {
+    const supabase = getBrowserClient();
+    if (!supabase || !p.agreed_benih) return;
+    if (!window.confirm(t('pay.confirm', { n: f.num(p.agreed_benih), name: name(p) }))) return;
+    setBusyId(p.id);
+    const { error } = await supabase.rpc('pay_participant', { p_participant_id: p.id });
+    setBusyId(null);
+    if (error) return setMsg({ ok: false, text: error.hint === 'balance' ? t('toast.payLow') : rpcErrorText(t, error) });
+    setMsg({ ok: true, text: t('toast.paidTo', { n: f.num(p.agreed_benih), name: name(p) }) });
+    router.refresh();
+  }
 
   return (
     <section className="card stack tight">
@@ -80,6 +94,11 @@ export function ManageParticipants({ participants }: { participants: Participant
                           💬 {t('chat.open')}
                         </Link>
                       )}
+                      {p.role === 'paid' && p.status === 'agreed' && p.agreed_benih ? (
+                        <button className="btn small" type="button" disabled={busyId === p.id} onClick={() => pay(p)}>
+                          {t('btn.payN', { n: f.num(p.agreed_benih) })}
+                        </button>
+                      ) : null}
                       {p.role === 'paid' && p.status !== 'paid' && (
                         <form
                           className="row"

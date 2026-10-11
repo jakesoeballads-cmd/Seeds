@@ -301,3 +301,6 @@ body.lightbox-open .topbar nav.bottom-nav { display: none; }
   .profile-head { flex-direction: column; align-items: center; text-align: center; }
   .profile-head .row { justify-content: center; }
 }
+/* ───────────── Tahap 2: dompet & pembayaran ───────────── */
+.role-option[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+fieldset.role-options legend { padding: 0; margin-bottom: 4px; }

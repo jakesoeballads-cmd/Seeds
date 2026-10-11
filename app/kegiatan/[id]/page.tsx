@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ProgressBar, when } from '@/components/ActivityBits';
 import { Gallery } from '@/components/Gallery';
+import { DonateBox } from '@/components/DonateBox';
 import { JoinBox } from '@/components/JoinBox';
 import { ManageParticipants } from '@/components/ManageParticipants';
 import { ShareBox } from '@/components/ShareBox';
@@ -13,6 +14,7 @@ import { photosOf } from '@/lib/scene';
 import { SITE_URL } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Participant } from '@/lib/types';
+import { getWallet } from '@/lib/wallet';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +45,9 @@ export default async function ActivityPage({ params }: Props) {
       myJoin = (data as unknown as Participant | null) ?? null;
     }
   }
+
+  // Saldo hanya untuk kotak donasi (bukan pemilik kegiatan).
+  const wallet = user && !own ? await getWallet(supabase, user.id) : null;
 
   const photos = photosOf(a);
   const shareUrl = `${SITE_URL}/kegiatan/${a.id}`;
@@ -129,10 +134,16 @@ export default async function ActivityPage({ params }: Props) {
         {!own && (
           <section className="card stack tight">
             <h2>{t('support.title')}</h2>
-            <p className="muted">{t('soon.text')}</p>
-            <button className="btn" disabled>
-              {t('btn.donate')} · {t('soon.title')}
-            </button>
+            {wallet ? (
+              <DonateBox activityId={a.id} balance={wallet.balance} />
+            ) : (
+              <>
+                <p className="muted">{t('donate.login')}</p>
+                <Link className="btn" href={`/masuk?next=/kegiatan/${a.id}`}>
+                  {t('join.loginBtn')}
+                </Link>
+              </>
+            )}
           </section>
         )}
         <ShareBox title={a.title} url={shareUrl} />

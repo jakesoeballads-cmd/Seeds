@@ -8,6 +8,7 @@ import { getI18n } from '@/lib/i18n-server';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Activity, JoinWithActivity } from '@/lib/types';
+import { getWallet } from '@/lib/wallet';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 export const dynamic = 'force-dynamic';
@@ -18,7 +19,7 @@ export default async function DashboardPage() {
   const { supabase, user } = await getUser();
   if (!user || !supabase) redirect('/masuk?next=/dashboard');
 
-  const [{ data: profile }, { data: joinsData }, { data: mineData }] = await Promise.all([
+  const [{ data: profile }, { data: joinsData }, { data: mineData }, wallet, { data: donationsData }] = await Promise.all([
     supabase.from('profiles').select('full_name').eq('id', user.id).maybeSingle(),
     supabase
       .from('participants')
@@ -30,14 +31,21 @@ export default async function DashboardPage() {
       .select('id, title, location_name, date, start_time, end_time, participant_count, collected_benih, target_benih')
       .eq('owner_id', user.id)
       .order('date', { ascending: false }),
+    getWallet(supabase, user.id),
+    supabase
+      .from('donations')
+      .select('id, amount, message, created_at, activity:activities(id, title)')
+      .eq('donor_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(5),
   ]);
 
   const joins = (joinsData ?? []) as unknown as JoinWithActivity[];
   const mine = (mineData ?? []) as unknown as Activity[];
   const attended = joins.filter((j) => j.role === 'volunteer' && j.status === 'attended').length;
   const points = attended * POINTS;
-  const donated = 0; // Donasi aktif di tahap pembayaran.
-  const balance = 0;
+  const { balance, donated } = wallet;
+  const donations = (donationsData ?? []) as unknown as RecentDonation[];
   const received = mine.reduce((s, a) => s + a.collected_benih, 0);
   const db = badgeInfo(DONOR_BADGES, donated);
   const vb = badgeInfo(VOLUNTEER_BADGES, points);
@@ -170,6 +178,34 @@ export default async function DashboardPage() {
         )}
       </section>
 
+      <section className="card stack tight">
+        <h2>{t('dash.recentDonations')}</h2>
+        {donations.length === 0 ? (
+          <p className="muted">
+            {t('dash.noDonations')} <Link href="/">{t('nav.explore')}</Link>
+          </p>
+        ) : (
+          <ul className="history">
+            {donations.map((d) => (
+              <li key={d.id}>
+                <span>
+                  {d.activity ? <Link href={`/kegiatan/${d.activity.id}`}>{d.activity.title}</Link> : '—'}
+                  {d.message && (
+                    <>
+                      <br />
+                      <span className="muted">“{d.message}”</span>
+                    </>
+                  )}
+                  <br />
+                  <span className="muted">{f.date(d.created_at)}</span>
+                </span>
+                <strong>💚 {f.num(d.amount)} Benih</strong>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <div className="badge-columns">
         <section className="card stack tight">
           <h2>{t('dash.donorBadges')}</h2>
@@ -183,6 +219,8 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
+type RecentDonation = { id: string; amount: number; message: string | null; created_at: string; activity: { id: string; title: string } | null };
 
 function BadgeTile({ t, b, unit, num }: { t: T; b: ReturnType<typeof badgeInfo>; unit: string; num: (n: number) => string }) {
   return (
