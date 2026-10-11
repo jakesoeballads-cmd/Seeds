@@ -304,3 +304,22 @@ body.lightbox-open .topbar nav.bottom-nav { display: none; }
 /* ───────────── Tahap 2: dompet & pembayaran ───────────── */
 .role-option[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
+
+/* ───────── Tahap 3: panel admin ───────── */
+.btn.danger { background: var(--danger); color: var(--card); }
+.btn.danger:hover { background: var(--danger); filter: brightness(1.1); }
+.link-btn { background: none; border: 0; padding: 0; color: var(--action); cursor: pointer; font-weight: 700; font-size: .85rem; }
+.admin-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.admin-item { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; display: grid; gap: 8px; }
+.admin-item-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.admin-amount { margin: 0; font-size: 1.3rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.admin-amount .muted { font-size: .85rem; font-weight: 400; }
+.admin-bank { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 0; font-size: .95rem; }
+.admin-bank dt { color: var(--muted); }
+.admin-bank dd { margin: 0; overflow-wrap: anywhere; }
+.admin-bank code { font-family: var(--mono); font-size: 1rem; }
+.admin-activity { grid-template-columns: 1fr auto; align-items: start; }
+@media (max-width: 560px) { .admin-activity { grid-template-columns: 1fr; } }
+.admin-search { flex-direction: row; flex-wrap: nowrap; }
+.admin-search input { flex: 1; min-width: 0; }
+.history li > .badge { align-self: flex-start; }

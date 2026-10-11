@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getI18n } from '@/lib/i18n-server';
+import { isAdmin } from '@/lib/admin';
 import { getUnreadCount } from '@/lib/social';
 import { getUser } from '@/lib/supabase/server';
 import { BottomNav } from './BottomNav';
@@ -24,7 +25,7 @@ export async function Nav() {
     );
   }
 
-  const unread = await getUnreadCount(supabase);
+  const [unread, admin] = await Promise.all([getUnreadCount(supabase), isAdmin(supabase)]);
 
   return (
     <>
@@ -36,6 +37,7 @@ export async function Nav() {
       <Link className="navlink nav-badge" href="/pesan">
         {t('nav.messages')} <UnreadBadge initial={unread} />
       </Link>
+      {admin && <Link className="navlink" href="/admin">{t('nav.admin')}</Link>}
       <Link className="pill" href="/dompet">
         <span className="leaf">♥</span> {t('nav.buy')}
       </Link>
