@@ -2,11 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ProgressBar, when } from '@/components/ActivityBits';
+import { AdminDeleteActivity } from '@/components/AdminDeleteActivity';
 import { Gallery } from '@/components/Gallery';
 import { DonateBox } from '@/components/DonateBox';
 import { JoinBox } from '@/components/JoinBox';
 import { ManageParticipants } from '@/components/ManageParticipants';
 import { ShareBox } from '@/components/ShareBox';
+import { isAdmin } from '@/lib/admin';
 import { getActivity } from '@/lib/data';
 import { getI18n } from '@/lib/i18n-server';
 import { directionsUrl, embedUrl, openUrl } from '@/lib/maps';
@@ -32,6 +34,7 @@ export default async function ActivityPage({ params }: Props) {
   const { t, f, lang } = await getI18n();
   const [a, { supabase, user }] = await Promise.all([getActivity(id), getUser()]);
   if (!a) notFound();
+  const admin = user ? await isAdmin(supabase) : false;
 
   const own = !!user && user.id === a.owner_id;
   let myJoin: Participant | null = null;
@@ -147,6 +150,12 @@ export default async function ActivityPage({ params }: Props) {
           </section>
         )}
         <ShareBox title={a.title} url={shareUrl} />
+        {admin && (
+          <section className="card stack tight">
+            <h2>{t('admin.adminBox')}</h2>
+            <div><AdminDeleteActivity id={a.id} title={a.title} after="/admin#kegiatan" /></div>
+          </section>
+        )}
       </aside>
     </div>
   );

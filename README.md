@@ -78,6 +78,19 @@ npm run dev                  # buka http://localhost:3000
 
 Uji fungsi PayPal: `npm test`.
 
+## Tahap 3: panel admin
+
+1. Supabase → **SQL Editor → New query**: tempel seluruh isi [`supabase/tahap3-admin.sql`](supabase/tahap3-admin.sql) lalu **Run** (setelah file tahap 2; aman dijalankan ulang).
+2. Jadikan akunmu admin (ganti emailnya), lalu **Run**:
+   ```sql
+   insert into public.admins (user_id)
+   select id from auth.users where email = 'email-kamu@contoh.com'
+   on conflict do nothing;
+   ```
+3. Masuk ke benih.earth: menu **Admin** muncul di atas, dan halamannya ada di `/admin`.
+
+Di panel admin kamu bisa memproses penarikan saldo (transfer manual lewat bank, lalu "Sudah ditransfer", atau "Tolak" agar saldo Benih kembali ke member) dan menghapus kegiatan beserta fotonya. Tombol "Hapus kegiatan" juga muncul di halaman kegiatan untuk admin. Menghapus foto dari Storage butuh `SUPABASE_SERVICE_ROLE_KEY`.
+
 ## Struktur
 
 ```
