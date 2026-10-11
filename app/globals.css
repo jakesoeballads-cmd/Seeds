@@ -194,3 +194,110 @@ a.btn.light { color: #454545; }
 /* Ikon SVG di dalam peta Leaflet (pin, kontrol) memakai ukurannya sendiri. */
 .leaflet-container svg { max-width: none; }
 .leaflet-marker-icon svg { display: block; }
+
+/* ───────── Tahap 2 sosial: profil member, pesan, lightbox, Google Maps, menu bawah, ikon fitur ───────── */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.org-link { color: inherit; text-decoration: none; }
+.org-link:hover { color: var(--action); text-decoration: underline; }
+
+/* Profil member */
+.avatar { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: var(--soft); color: var(--action); font-weight: 900; flex: none; }
+.avatar.large { width: 96px; height: 96px; font-size: 2rem; }
+.profile-head { display: flex; gap: 20px; align-items: flex-start; }
+.profile-head h1 { margin: 0 0 4px; }
+.profile-head p { margin: 4px 0; }
+.profile-head .bio { max-width: 60ch; white-space: pre-line; }
+.profile-head .row { margin-top: 12px; }
+.locked { text-align: center; align-items: center; }
+.lock-big { font-size: 2.5rem; }
+.activity-list { list-style: none; margin: 0; padding: 0; }
+.activity-list li { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.activity-list li:last-child { border-bottom: 0; }
+label.check { flex-direction: row; gap: 10px; align-items: flex-start; font-weight: 400; }
+label.check input { width: auto; margin-top: 4px; }
+
+/* Pesan */
+.inbox { list-style: none; margin: 0; padding: 0; }
+.inbox li a { display: flex; gap: 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--border); color: inherit; text-decoration: none; border-radius: var(--radius); }
+.inbox li:last-child a { border-bottom: 0; }
+.inbox li a:hover { background: var(--soft); }
+.inbox-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.inbox-top { display: flex; justify-content: space-between; gap: 8px; }
+.inbox-top strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inbox-top time { color: var(--muted); font-size: .8rem; white-space: nowrap; flex: none; }
+.inbox-tag { font-size: .8rem; color: var(--action); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inbox-preview { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inbox li.unread .inbox-preview { color: var(--text); font-weight: 700; }
+.unread-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--you); flex: none; }
+.count-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #d93025; color: #fff; font-size: .72rem; font-weight: 700; line-height: 1; }
+.nav-badge { display: inline-flex; align-items: center; gap: 4px; }
+.chat-head { display: flex; align-items: center; gap: 12px; }
+.chat-head h1 { margin: 0; font-size: 1.4rem; }
+.bubble { white-space: pre-wrap; }
+.chat-form { flex-direction: row; align-items: flex-end; gap: 8px; }
+.chat-form textarea { flex: 1; min-width: 0; resize: vertical; min-height: 44px; }
+.chat-hint { font-size: .8rem; }
+.agree-form { gap: 8px; }
+
+/* Galeri + foto layar penuh */
+.gallery-item { display: block; position: relative; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: var(--radius); width: 100%; height: 100%; }
+.gallery-more { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, .5); color: #fff; font-size: 1.8rem; font-weight: 900; border-radius: var(--radius); }
+.lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(0, 0, 0, .92); display: flex; align-items: center; justify-content: center; }
+.lightbox:focus { outline: none; }
+.lightbox figure { margin: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: calc(56px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+.lightbox img { max-width: 100%; max-height: calc(100% - 32px); object-fit: contain; border-radius: 4px; }
+.lightbox figcaption { color: #ddd; margin-top: 10px; font-size: .9rem; }
+.lightbox button { position: absolute; background: rgba(255, 255, 255, .15); color: #fff; border: 0; border-radius: 50%; width: 44px; height: 44px; font-size: 1.8rem; line-height: 1; cursor: pointer; }
+.lightbox button:hover { background: rgba(255, 255, 255, .3); }
+.lb-close { top: calc(12px + env(safe-area-inset-top, 0px)); right: 12px; }
+.lb-prev { left: 12px; top: 50%; transform: translateY(-50%); }
+.lb-next { right: 12px; top: 50%; transform: translateY(-50%); }
+body.lightbox-open { overflow: hidden; }
+body.lightbox-open .topbar nav.bottom-nav { display: none; }
+
+/* Google Maps */
+.google-map { height: 440px; width: 100%; }
+@media (max-width: 800px) { .google-map { height: 320px; } }
+.map-embed { width: 100%; height: 280px; border: 0; border-radius: var(--radius); display: block; background: var(--map-land); }
+.search-bar { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
+.search-bar input { flex: 1 1 220px; width: auto; border-radius: 999px; padding: 10px 16px; }
+.search-bar .btn { flex: none; }
+
+/* Ikon fitur dinamis (kelas "play" dari PlayOnView) */
+.feature svg { transition: transform .3s ease; }
+.feature:hover svg { transform: translateY(-4px); }
+.band.play .anim-draw { stroke-dasharray: 1; animation: draw 2.4s ease-in-out infinite; }
+.band.play .anim-grow { transform-box: fill-box; transform-origin: 50% 100%; animation: grow 2.4s ease-in-out .3s infinite; }
+.band.play .anim-pulse { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-in-out .6s infinite; }
+.band.play .anim-twinkle { transform-box: fill-box; transform-origin: center; animation: twinkle 2.4s ease-in-out .9s infinite; }
+@keyframes draw { 0% { stroke-dashoffset: 1; } 40%, 80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+@keyframes grow { 0%, 100% { transform: scale(.6); opacity: .5; } 45%, 75% { transform: scale(1); opacity: 1; } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.25); } 60% { transform: scale(.95); } }
+@keyframes twinkle { 0%, 100% { transform: rotate(0) scale(1); } 30% { transform: rotate(72deg) scale(1.2); } 60% { transform: rotate(144deg) scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .band.play .anim-draw, .band.play .anim-grow, .band.play .anim-pulse, .band.play .anim-twinkle { animation: none; }
+  .feature:hover svg { transform: none; }
+}
+
+/* Menu bawah melayang ala Threads (ponsel). Ada di dalam .topbar, jadi selektornya dibuat lebih spesifik. */
+.topbar nav.bottom-nav { display: none; }
+@media (max-width: 760px) {
+  .topbar nav.main-nav { display: none; }
+  .topbar { flex-wrap: nowrap; }
+  body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .toast { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .topbar nav.bottom-nav {
+    display: flex; flex-wrap: nowrap; justify-content: space-around; align-items: center; gap: 0; width: auto; margin: 0;
+    position: fixed; z-index: 50; left: calc(12px + env(safe-area-inset-left, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in srgb, var(--card) 94%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 6px 24px rgba(0, 0, 0, .16); padding: 6px 4px;
+  }
+  .bottom-nav a { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 56px; padding: 6px 4px; color: var(--muted); text-decoration: none; font-size: .72rem; font-weight: 700; border-radius: 14px; }
+  .bottom-nav svg { width: 28px; height: 28px; padding: 2px; }
+  .bottom-nav a[aria-current] { color: var(--text); }
+  .bottom-nav a[aria-current] svg { stroke-width: 2.6; }
+  .bottom-nav a.create svg { background: var(--brand); color: var(--on-action); border-radius: 10px; width: 44px; padding: 3px 11px; }
+  .bottom-nav a .count-badge { position: absolute; top: 0; right: 10px; }
+  .profile-head { flex-direction: column; align-items: center; text-align: center; }
+  .profile-head .row { justify-content: center; }
+}

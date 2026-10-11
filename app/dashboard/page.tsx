@@ -46,6 +46,10 @@ export default async function DashboardPage() {
   return (
     <div className="stack">
       <h1>{t('dash.hello', { name })}</h1>
+      <div className="row">
+        <Link className="btn small ghost" href={`/member/${user.id}`}>{t('profile.viewPublic')}</Link>
+        <Link className="btn small ghost" href="/profil">{t('member.edit')}</Link>
+      </div>
       <div className="stats">
         <div className="stat">
           <span className="stat-label">{t('dash.owned')}</span>

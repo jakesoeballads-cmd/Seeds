@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { POINTS } from '@/lib/constants';
@@ -60,7 +61,9 @@ export function JoinBox({ activityId, join, full }: { activityId: string; join: 
               <Rich text={t('join.asPaid', { status: t('st.' + join.status) })} />
               {join.agreed_benih ? ` · ${f.num(join.agreed_benih)} Benih` : ''}
             </p>
-            <p className="muted" style={{ fontSize: '.9rem' }}>{t('chat.soon')}</p>
+            <Link className="btn small" href={`/kegiatan/${activityId}/pesan`}>
+              💬 {t('chat.open')}
+            </Link>
           </>
         )}
         {canCancel && (

@@ -2,11 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ProgressBar, when } from '@/components/ActivityBits';
+import { Gallery } from '@/components/Gallery';
 import { JoinBox } from '@/components/JoinBox';
 import { ManageParticipants } from '@/components/ManageParticipants';
 import { ShareBox } from '@/components/ShareBox';
 import { getActivity } from '@/lib/data';
 import { getI18n } from '@/lib/i18n-server';
+import { directionsUrl, embedUrl, openUrl } from '@/lib/maps';
 import { photosOf } from '@/lib/scene';
 import { SITE_URL } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
@@ -25,7 +27,7 @@ const PARTICIPANT_COLUMNS = 'id, activity_id, user_id, role, status, agreed_beni
 
 export default async function ActivityPage({ params }: Props) {
   const { id } = await params;
-  const { t, f } = await getI18n();
+  const { t, f, lang } = await getI18n();
   const [a, { supabase, user }] = await Promise.all([getActivity(id), getUser()]);
   if (!a) notFound();
 
@@ -49,28 +51,15 @@ export default async function ActivityPage({ params }: Props) {
   return (
     <div className="program-layout">
       <article className="stack">
-        {photos.length > 1 ? (
-          <div className="gallery">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photos[0]} alt={t('photo.n', { n: 1 })} />
-            <div className="side">
-              {photos.slice(1, 3).map((s, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={i} src={s} alt={t('photo.n', { n: i + 2 })} loading="lazy" />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="gallery single">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photos[0]} alt={t('photo.one')} />
-          </div>
-        )}
+        <Gallery photos={photos} />
         <div className="stack tight">
           <h1>{a.title}</h1>
           <p>
             {t('by', { name: '' })}
-            <strong>{own ? t('me.you') : a.org_name}</strong> <span className="org-type">{t('org.' + a.org_type)}</span>
+            <Link className="org-link" href={`/member/${a.owner_id}`}>
+              <strong>{own ? t('me.you') : a.org_name}</strong>
+            </Link>{' '}
+            <span className="org-type">{t('org.' + a.org_type)}</span>
           </p>
           <p className="muted">
             📅 {when(t, f, a, true)}
@@ -90,6 +79,26 @@ export default async function ActivityPage({ params }: Props) {
             </p>
           </div>
         </div>
+        <section className="card stack tight">
+          <h2>{t('loc.title')}</h2>
+          <p className="muted">📍 {a.location_name}</p>
+          <iframe
+            className="map-embed"
+            src={embedUrl(a.lat, a.lng, { lang })}
+            title={t('loc.mapTitle')}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+          <div className="row">
+            <a className="btn small ghost" href={openUrl(a.lat, a.lng)} target="_blank" rel="noopener noreferrer">
+              {t('loc.open')}
+            </a>
+            <a className="btn small ghost" href={directionsUrl(a.lat, a.lng)} target="_blank" rel="noopener noreferrer">
+              {t('loc.directions')}
+            </a>
+          </div>
+        </section>
         {own && <ManageParticipants participants={participants} />}
       </article>
       <aside className="stack">
@@ -108,6 +117,15 @@ export default async function ActivityPage({ params }: Props) {
             <JoinBox activityId={a.id} join={myJoin} full={full} />
           )}
         </section>
+        {!own && user && (
+          <section className="card stack tight">
+            <h2>{t('join.msgOrg')}</h2>
+            <p className="muted">{t('msg.askOrg')}</p>
+            <Link className="btn ghost" href={`/pesan/${a.owner_id}?tentang=${encodeURIComponent(a.title)}`}>
+              ✉️ {t('join.msgOrg')}
+            </Link>
+          </section>
+        )}
         {!own && (
           <section className="card stack tight">
             <h2>{t('support.title')}</h2>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { POINTS } from '@/lib/constants';
@@ -50,7 +51,9 @@ export function ManageParticipants({ participants }: { participants: Participant
             <tbody>
               {participants.map((p) => (
                 <tr key={p.id}>
-                  <td>{name(p)}</td>
+                  <td>
+                    <Link href={`/member/${p.user_id}`}>{name(p)}</Link>
+                  </td>
                   <td>{p.role === 'paid' ? t('role.paid') : t('role.vol')}</td>
                   <td>
                     <span className={`badge ${p.status}`}>{t('st.' + p.status)}</span>
@@ -71,6 +74,11 @@ export function ManageParticipants({ participants }: { participants: Participant
                         >
                           {t('btn.confirmAttend')}
                         </button>
+                      )}
+                      {p.role === 'paid' && (
+                        <Link className="btn small ghost" href={`/kegiatan/${p.activity_id}/pesan/${p.user_id}`}>
+                          💬 {t('chat.open')}
+                        </Link>
                       )}
                       {p.role === 'paid' && p.status !== 'paid' && (
                         <form
