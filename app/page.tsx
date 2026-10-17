@@ -28,7 +28,7 @@ export default async function HomePage() {
         <div className="inner">
           <h2>{t('home.nearTitle')}</h2>
           <p className="welcome-text">{t('home.nearText')}</p>
-          <Features t={t} rp={f.rp} />
+          <Features t={t} />
         </div>
       </PlayOnView>
       <h2 style={{ margin: '16px 0 0' }}>{t('home.programs')}</h2>
