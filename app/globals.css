@@ -5,7 +5,7 @@
   --bg: #ffffff; --card: #ffffff; --text: #454545; --muted: #6f706c; --border: #dcdfd6;
   --map-land: #eef0ea; --map-water: #c6dfee; --map-road: #ffffff; --map-park: #d9e9c6;
   --danger: #8a1c13; --danger-soft: #fdecea; --info: #1a3d8f; --info-soft: #e8f0fe; --warn: #8a5a00; --warn-soft: #fff4e5;
-  --pin: #d93025; --you: #2563eb; --overlay: rgba(20, 30, 20, .45);
+  --pin: #d93025; --you: #2563eb; --overlay: rgba(20, 30, 20, .45); --chat-mine: #d9fdd3;
   --radius: 8px; --shadow: 0 2px 8px rgba(0, 0, 0, .12);
   --serif: "Source Serif 4", Georgia, serif; --mono: "Courier Prime", "Courier New", monospace;
   --font: "Lato", "Helvetica Neue", Arial, sans-serif;
@@ -15,13 +15,13 @@
   --bg: #151813; --card: #1e221b; --text: #e6e9e2; --muted: #a2a99c; --border: #33392f;
   --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
-  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); color-scheme: dark; } }
+  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #144d37; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --brand: #8fc31f; --action: #8fc31f; --action-hover: #a5d63a; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: #8fc31f;
   --bg: #151813; --card: #1e221b; --text: #e6e9e2; --muted: #a2a99c; --border: #33392f;
   --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
-  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); color-scheme: dark; }
+  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #144d37; color-scheme: dark; }
 
 * { box-sizing: border-box; }
 body { margin: 0; font-family: var(--font); font-size: 15px; background: var(--bg); color: var(--text); line-height: 1.5; overflow-x: clip; }
@@ -55,12 +55,16 @@ button { font: inherit; }
 .band .inner { max-width: 1000px; margin: 0 auto; text-align: center; }
 .band h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0 0 8px; }
 .band .welcome-text { max-width: 62ch; margin: 0 auto 28px; font-size: 1.08rem; }
-.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 28px 24px; }
+.features { display: grid; grid-template-columns: 1.4fr 1fr 1fr; align-items: center; gap: 28px 24px; }
+.feature.big svg { width: 128px; height: 128px; }
+.feature.big h3 { font-size: 2.1rem; }
+.feature.big p { font-size: 1.1rem; max-width: 26ch; }
 .feature { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text); }
 .feature svg { width: 88px; height: 88px; }
 .feature h3 { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; margin: 8px 0 0; }
 .feature p { margin: 0; max-width: 22ch; }
-@media (max-width: 560px) { .features { grid-template-columns: 1fr 1fr; gap: 22px 12px; } .feature svg { width: 60px; height: 60px; } .feature h3 { font-size: 1.15rem; } .feature p { font-size: .9rem; } }
+@media (max-width: 800px) { .features { grid-template-columns: 1fr 1fr; } .feature.big { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .features { gap: 22px 12px; } .feature svg { width: 60px; height: 60px; } .feature h3 { font-size: 1.15rem; } .feature p { font-size: .9rem; } .feature.big svg { width: 96px; height: 96px; } .feature.big h3 { font-size: 1.6rem; } .feature.big p { font-size: 1rem; } }
 .wallet-chip { font-size: .85rem; background: var(--soft); color: var(--action); border-radius: 999px; padding: 2px 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
@@ -154,10 +158,12 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--bo
 .divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: .85rem; }
 .divider::before, .divider::after { content: ""; flex: 1; border-top: 1px solid var(--border); }
 
-.chat { display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; padding: 8px 0; }
-.bubble { max-width: 80%; padding: 8px 12px; border-radius: 12px; background: var(--bg); align-self: flex-start; overflow-wrap: anywhere; }
-.bubble.mine { background: var(--soft); align-self: flex-end; }
-.bubble time { display: block; font-size: .75rem; color: var(--muted); }
+/* Chat ala WhatsApp: pesan saya bergelembung hijau di kanan, balasan lawan bicara tanpa latar di kiri. */
+.chat { display: flex; flex-direction: column; gap: 6px; max-height: 60vh; min-height: 240px; overflow-y: auto; padding: 8px 2px; }
+.bubble { max-width: 80%; padding: 4px 2px; align-self: flex-start; overflow-wrap: anywhere; background: none; }
+.bubble.mine { padding: 6px 10px; background: var(--chat-mine); align-self: flex-end; border-radius: 10px 10px 2px 10px; box-shadow: 0 1px .5px rgba(0, 0, 0, .13); }
+.bubble time { display: block; text-align: right; font-size: .7rem; color: var(--muted); margin-top: 2px; white-space: nowrap; }
+.bubble:not(.mine) time { text-align: left; }
 
 .qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); }
 .qr-wrap svg { width: 200px; height: 200px; background: #fff; padding: 10px; border-radius: var(--radius); }
@@ -182,18 +188,12 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--bo
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 /* Tambahan untuk aplikasi Next.js */
-.leaflet-map { height: 440px; width: 100%; }
-.map .leaflet-container { font-family: var(--font); background: var(--map-land); }
-@media (max-width: 800px) { .leaflet-map { height: 320px; } }
 .notice { background: var(--warn-soft); color: var(--warn); font-size: .85rem; padding: 6px 16px; text-align: center; }
 .empty { padding: 24px; text-align: center; }
 a.btn { color: var(--on-action); }
 a.btn.ghost { color: var(--action); }
 a.btn.light { color: #454545; }
 .navlink { text-decoration: none; display: inline-block; }
-/* Ikon SVG di dalam peta Leaflet (pin, kontrol) memakai ukurannya sendiri. */
-.leaflet-container svg { max-width: none; }
-.leaflet-marker-icon svg { display: block; }
 
 /* ───────── Tahap 2 sosial: profil member, pesan, lightbox, Google Maps, menu bawah, ikon fitur ───────── */
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -203,6 +203,13 @@ a.btn.light { color: #454545; }
 /* Profil member */
 .avatar { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: var(--soft); color: var(--action); font-weight: 900; flex: none; }
 .avatar.large { width: 96px; height: 96px; font-size: 2rem; }
+img.avatar { object-fit: cover; background: var(--soft); }
+.avatar-edit { display: flex; gap: 16px; align-items: center; }
+.avatar-edit .alert { margin: 0; }
+.btn.disabled { opacity: .55; pointer-events: none; }
+label.btn { display: inline-flex; flex-direction: row; position: relative; }
+label.btn:focus-within { outline: 2px solid var(--action); outline-offset: 2px; }
+.member-type { display: inline-block; margin: 2px 0 4px; font-size: .8rem; padding: 2px 10px; border-radius: 999px; background: var(--soft); color: var(--action); font-weight: 700; }
 .profile-head { display: flex; gap: 20px; align-items: flex-start; }
 .profile-head h1 { margin: 0 0 4px; }
 .profile-head p { margin: 4px 0; }
@@ -257,6 +264,7 @@ body.lightbox-open .topbar nav.bottom-nav { display: none; }
 
 /* Google Maps */
 .google-map { height: 440px; width: 100%; }
+iframe.google-map { display: block; border: 0; }
 @media (max-width: 800px) { .google-map { height: 320px; } }
 .map-embed { width: 100%; height: 280px; border: 0; border-radius: var(--radius); display: block; background: var(--map-land); }
 .search-bar { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }

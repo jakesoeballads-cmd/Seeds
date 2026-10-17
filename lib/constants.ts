@@ -23,6 +23,8 @@ export const VOLUNTEER_BADGES: Badge[] = [
 ];
 
 export const ORG_TYPES = ['perorangan', 'komunitas', 'organisasi', 'badan_usaha'] as const;
+/** Jenis member, dipilih saat mendaftar dan tampil di profil publik. */
+export const MEMBER_TYPES = ['perorangan', 'yayasan_ngo', 'badan_usaha'] as const;
 export const CATEGORIES = ['reforest', 'mangrove', 'beach', 'edu'] as const;
 export const RADII = [10, 25, 50] as const;
 
@@ -34,6 +36,7 @@ export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 /** Ukuran foto asli yang boleh dipilih; foto dikompres di browser sebelum diunggah. */
 export const MAX_PHOTO_INPUT_BYTES = 25 * 1024 * 1024;
 export const PHOTO_BUCKET = 'activity-photos';
+export const AVATAR_BUCKET = 'avatars';
 
 export function badgeInfo(tiers: Badge[], total: number) {
   let current: Badge | null = null;

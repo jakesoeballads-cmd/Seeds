@@ -20,7 +20,7 @@ export default async function DashboardPage() {
   if (!user || !supabase) redirect('/masuk?next=/dashboard');
 
   const [{ data: profile }, { data: joinsData }, { data: mineData }, wallet, { data: donationsData }] = await Promise.all([
-    supabase.from('profiles').select('full_name').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
     supabase
       .from('participants')
       .select('id, activity_id, user_id, role, status, agreed_benih, created_at, activity:activities(id, title, org_name, date, start_time, end_time)')
@@ -54,6 +54,12 @@ export default async function DashboardPage() {
   return (
     <div className="stack">
       <h1>{t('dash.hello', { name })}</h1>
+      {/* Pendaftar lewat Google belum memilih jenis member. */}
+      {profile && 'member_type' in profile && !profile.member_type && (
+        <p className="alert info">
+          {t('profile.typeMissing')} <Link href="/profil">{t('member.edit')}</Link>
+        </p>
+      )}
       <div className="row">
         <Link className="btn small ghost" href={`/member/${user.id}`}>{t('profile.viewPublic')}</Link>
         <Link className="btn small ghost" href="/profil">{t('member.edit')}</Link>

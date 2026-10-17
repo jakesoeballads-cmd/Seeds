@@ -3,7 +3,7 @@
 Tempat bagi para environmentalist untuk berkontribusi dan saling mendukung untuk pelestarian lingkungan.
 Sebuah proyek PT Daya Reforestasi Indonesia (Dareindo).
 
-Dibangun dengan **Next.js** (App Router), **Supabase** (akun, database, foto), dan **Leaflet + OpenStreetMap** (peta). Tersedia dalam Bahasa Indonesia, English, dan Deutsch.
+Dibangun dengan **Next.js** (App Router), **Supabase** (akun, database, foto), dan **Google Maps** (peta). Tersedia dalam Bahasa Indonesia, English, dan Deutsch.
 
 ## Status
 
@@ -30,18 +30,19 @@ Tanpa variabel Supabase, aplikasi tetap berjalan dalam **mode contoh** (data con
 
 1. Buat proyek di [supabase.com](https://supabase.com) (region Singapore paling dekat).
 2. Buka **SQL Editor → New query**, tempel seluruh isi [`supabase/schema.sql`](supabase/schema.sql), lalu **Run**.
-3. Lalu jalankan juga [`supabase/tahap2-sosial.sql`](supabase/tahap2-sosial.sql) dengan cara yang sama (profil member + pesan). Aman dijalankan ulang.
+3. Lalu jalankan juga [`supabase/tahap2-sosial.sql`](supabase/tahap2-sosial.sql) (profil member + pesan) dan [`supabase/tahap4-profil.sql`](supabase/tahap4-profil.sql) (jenis member + foto profil) dengan cara yang sama. Aman dijalankan ulang.
 4. **Authentication → URL Configuration**:
    - Site URL: `https://domain-benih-anda.com`
    - Redirect URLs: tambahkan `https://domain-benih-anda.com/auth/callback` (dan `http://localhost:3000/auth/callback` untuk lokal)
 5. Login Google (opsional): **Authentication → Providers → Google**, isi Client ID & Secret dari Google Cloud Console.
 6. Catat **Project URL** dan **anon public key** dari **Project Settings → API**.
 
-### Google Maps (opsional)
+### Google Maps
 
-Isi `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` agar peta beranda dan formulir buat kegiatan memakai Google Maps, dan pencarian lokasi memakai Google Geocoder.
+Semua peta memakai Google Maps. Isi `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` agar peta beranda interaktif (semua pin kegiatan) dan lokasi kegiatan bisa dipilih dengan klik di peta, serta pencarian lokasi memakai Google Geocoder.
+Karena namanya diawali `NEXT_PUBLIC_`, kunci ikut dibangun ke aplikasi: setelah menambah atau mengganti kunci di Hostinger, jalankan deploy/build ulang.
 Di [Google Cloud Console](https://console.cloud.google.com/google/maps-apis) aktifkan **Maps JavaScript API**, **Maps Embed API**, dan **Geocoding API** untuk kunci tersebut, lalu batasi kuncinya ke domain Benih.
-Tanpa kunci, peta memakai Leaflet + OpenStreetMap, pencarian memakai OpenStreetMap Nominatim, dan bagian "Lokasi" di halaman kegiatan memakai embed Google Maps biasa.
+Tanpa kunci, peta memakai embed Google Maps biasa yang hanya menampilkan satu titik (lokasi pilihan dicari lewat alamat atau lokasi perangkat), dan pencarian alamat memakai OpenStreetMap Nominatim.
 
 ## 2. Jalankan di komputer (opsional)
 

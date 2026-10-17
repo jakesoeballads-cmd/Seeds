@@ -38,7 +38,7 @@ export default async function InboxPage() {
           {list.map((c) => (
             <li key={c.url} className={c.unread ? 'unread' : ''}>
               <Link href={c.url}>
-                <Avatar name={c.otherName} />
+                <Avatar name={c.otherName} src={c.otherAvatar} />
                 <span className="inbox-text">
                   <span className="inbox-top">
                     <strong>{c.otherName || t('member.title')}</strong>

@@ -25,7 +25,7 @@ export default async function DirectMessagePage({ params, searchParams }: Props)
   if (userId === user.id) redirect('/pesan');
 
   const [{ data: other }, { data: msgs }, { data: canSend }] = await Promise.all([
-    supabase.from('profiles').select('id, full_name').eq('id', userId).maybeSingle(),
+    supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
     supabase
       .from('direct_messages')
       .select('id, sender_id, body, created_at, read_at')
@@ -47,7 +47,7 @@ export default async function DirectMessagePage({ params, searchParams }: Props)
         <Link href="/pesan">← {t('msg.all')}</Link>
       </p>
       <div className="chat-head">
-        <Avatar name={name} />
+        <Avatar name={name} src={other.avatar_url} />
         <h1>
           <Link className="org-link" href={`/member/${other.id}`}>
             {name}

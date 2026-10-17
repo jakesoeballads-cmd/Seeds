@@ -34,7 +34,7 @@ export type Participant = {
   status: ParticipantStatus;
   agreed_benih: number | null;
   created_at: string;
-  profile?: { full_name: string | null } | null;
+  profile?: { full_name: string | null; avatar_url?: string | null } | null;
 };
 
 export type JoinWithActivity = Participant & {
@@ -51,6 +51,8 @@ export type Member = {
   bio: string | null;
   city: string | null;
   attended: number;
+  member_type: string | null;
+  avatar_url: string | null;
 };
 
 export type ChatMessage = { id: string; sender_id: string; body: string; created_at: string; read_at?: string | null };
@@ -59,6 +61,7 @@ export type Conversation = {
   kind: 'direct' | 'activity';
   otherId: string;
   otherName: string;
+  otherAvatar: string | null;
   activityTitle: string | null;
   url: string;
   lastBody: string;

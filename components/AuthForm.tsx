@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { getBrowserClient } from '@/lib/supabase/client';
 import { GOOGLE_LOGIN_ENABLED } from '@/lib/supabase/config';
 import { useI18n } from './I18nProvider';
+import { MemberTypeSelect } from './ProfileForm';
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
@@ -60,7 +61,7 @@ export function AuthForm({ mode, next }: { mode: 'login' | 'register'; next?: st
           email,
           password,
           options: {
-            data: { full_name: fullName },
+            data: { full_name: fullName, member_type: String(fd.get('member_type') ?? '') },
             emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(target)}`,
           },
         });
@@ -104,6 +105,7 @@ export function AuthForm({ mode, next }: { mode: 'login' | 'register'; next?: st
             <input name="name" required autoComplete="name" />
           </label>
         )}
+        {!isLogin && <MemberTypeSelect />}
         <label>
           {t('auth.email')}
           <input name="email" type="email" required autoComplete="email" />

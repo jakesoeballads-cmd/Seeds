@@ -1,4 +1,7 @@
-/** Kunci Google Maps (opsional). Tanpa kunci, peta memakai Leaflet + OpenStreetMap. */
+/**
+ * Kunci Google Maps (NEXT_PUBLIC_GOOGLE_MAPS_API_KEY). Dengan kunci, peta interaktif (Maps JavaScript API)
+ * menampilkan semua pin kegiatan. Tanpa kunci dipakai embed Google Maps publik yang hanya bisa menampilkan satu titik.
+ */
 export const GOOGLE_MAPS_KEY = (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '').trim();
 
 /**
@@ -10,6 +13,22 @@ export function embedUrl(lat: number, lng: number, { key = GOOGLE_MAPS_KEY, zoom
   if (key) return `https://www.google.com/maps/embed/v1/place?${new URLSearchParams({ key, q, zoom: String(zoom), language: lang })}`;
   return `https://maps.google.com/maps?${new URLSearchParams({ q, z: String(zoom), output: 'embed', hl: lang })}`;
 }
+
+export type Point = { lat: number; lng: number };
+export type Pin = Point & { id: string; title: string };
+
+export type MapProps = {
+  center: Point;
+  pins?: Pin[];
+  activeId?: string | null;
+  onSelect?: (id: string) => void;
+  /** Mode memilih lokasi: klik peta untuk menaruh pin. */
+  picking?: boolean;
+  pick?: Point | null;
+  onPick?: (p: Point) => void;
+  showYou?: boolean;
+  zoom?: number;
+};
 
 export const openUrl = (lat: number, lng: number) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lng}`)}`;
 export const directionsUrl = (lat: number, lng: number) =>
