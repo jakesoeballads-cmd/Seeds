@@ -115,6 +115,11 @@ export function AuthForm({ mode, next }: { mode: 'login' | 'register'; next?: st
           {isLogin ? '' : t('auth.passMin')}
           <input name="password" type="password" minLength={8} required autoComplete={isLogin ? 'current-password' : 'new-password'} />
         </label>
+        {isLogin && (
+          <p className="forgot">
+            <Link href="/lupa-password">{t('pw.forgotLink')}</Link>
+          </p>
+        )}
         {error && <p className="alert error" role="alert">{error}</p>}
         {info && <p className="alert success" role="status">{info}</p>}
         <button className="btn" type="submit" disabled={busy}>
