@@ -40,7 +40,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <header className="topbar">
             <Link className="brand" href="/" aria-label={t('brand.label')}>
               <Logo />
-              Benih
             </Link>
             <Nav />
             <LangSelect />

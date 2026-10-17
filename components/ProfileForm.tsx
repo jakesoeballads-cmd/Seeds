@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { AVATAR_SIDE, compressPhoto } from '@/lib/compress';
 import { AVATAR_BUCKET, MAX_PHOTO_INPUT_BYTES, MEMBER_TYPES } from '@/lib/constants';
 import { getBrowserClient } from '@/lib/supabase/client';
 import { Avatar } from './Avatar';
+import { AvatarCropper } from './AvatarCropper';
 import { useI18n } from './I18nProvider';
 
 type Values = { full_name: string; member_type: string; avatar_url: string | null; bio: string; city: string; is_private: boolean };
@@ -23,21 +23,25 @@ export function ProfileForm({ userId, initial }: { userId: string; initial: Valu
   const [avatar, setAvatar] = useState(initial.avatar_url);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [photoMsg, setPhotoMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [cropFile, setCropFile] = useState<File | null>(null);
 
-  /** Ganti (file) atau hapus (null) foto profil. Foto langsung tersimpan; file lama dihapus dari Storage. */
-  async function setPhoto(file: File | null) {
+  /** Foto dipilih: buka jendela potong dulu. */
+  function pickPhoto(file: File) {
+    if (!file.type.startsWith('image/') || file.size > MAX_PHOTO_INPUT_BYTES) return setPhotoMsg({ ok: false, text: t('toast.photoTooBig') });
+    setPhotoMsg(null);
+    setCropFile(file);
+  }
+
+  /** Simpan foto hasil potong (blob) atau hapus foto (null). Foto langsung tersimpan; file lama dihapus dari Storage. */
+  async function setPhoto(blob: Blob | null) {
+    setCropFile(null);
     const supabase = getBrowserClient();
     if (!supabase) return setPhotoMsg({ ok: false, text: t('err.needSupabase') });
-    if (file && (!file.type.startsWith('image/') || file.size > MAX_PHOTO_INPUT_BYTES)) return setPhotoMsg({ ok: false, text: t('toast.photoTooBig') });
     setPhotoBusy(true);
-    setPhotoMsg(file ? { ok: true, text: t('f.compressing') } : null);
+    setPhotoMsg(null);
     try {
       let url: string | null = null;
-      if (file) {
-        // Dipotong persegi dan diperkecil di browser agar ringan (±20–60 KB).
-        const blob = await compressPhoto(file, { square: AVATAR_SIDE }).catch((err: Error) => {
-          throw new Error(t(err.message === 'photo-too-large' ? 'toast.photoTooBig' : 'toast.photoUnreadable'));
-        });
+      if (blob) {
         const ext = blob.type.split('/')[1].replace('jpeg', 'jpg');
         const path = `${userId}/${crypto.randomUUID()}.${ext}`;
         const up = await supabase.storage.from(AVATAR_BUCKET).upload(path, blob, { contentType: blob.type, cacheControl: '31536000' });
@@ -87,6 +91,7 @@ export function ProfileForm({ userId, initial }: { userId: string; initial: Valu
   return (
     <section className="card narrow stack tight">
       <h1>{t('profile.title')}</h1>
+      {cropFile && <AvatarCropper file={cropFile} onCancel={() => setCropFile(null)} onDone={setPhoto} />}
       <div className="avatar-edit">
         <Avatar name={initial.full_name} src={avatar} large />
         <div className="stack tight">
@@ -102,7 +107,7 @@ export function ProfileForm({ userId, initial }: { userId: string; initial: Valu
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   e.target.value = '';
-                  if (file) setPhoto(file);
+                  if (file) pickPhoto(file);
                 }}
               />
             </label>

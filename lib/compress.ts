@@ -9,19 +9,21 @@ function toBlob(canvas: HTMLCanvasElement, type: string): Promise<Blob | null> {
   return new Promise((resolve) => canvas.toBlob(resolve, type, QUALITY));
 }
 
-/** Foto profil: dipotong persegi di tengah, 512 × 512 px (±20–60 KB). */
+/** Foto profil: dipotong persegi (bagian yang dipilih member, atau tengah foto), 512 × 512 px (±20–60 KB). */
 export const AVATAR_SIDE = 512;
 /** Batas bucket "avatars" (lihat supabase/tahap4-profil.sql). */
 const AVATAR_MAX_BYTES = 1024 * 1024;
 
 /**
  * Memperkecil foto di browser sebelum diunggah: sisi terpanjang maks. 1600 px
- * (atau persegi `square` px untuk foto profil),
+ * (atau persegi `square` px untuk foto profil, dari kotak `crop` dalam piksel foto asli),
  * WebP (atau JPEG bila browser tidak bisa membuat WebP), arah foto mengikuti EXIF.
  * Foto ponsel ±3 MB biasanya menjadi ±200–400 KB. Bila hasilnya tidak lebih kecil,
  * file asli dipakai (asal formatnya diterima penyimpanan).
  */
-export async function compressPhoto(file: File, { square }: { square?: number } = {}): Promise<Blob> {
+export type Crop = { x: number; y: number; size: number };
+
+export async function compressPhoto(file: File, { square, crop }: { square?: number; crop?: Crop } = {}): Promise<Blob> {
   let bitmap: ImageBitmap;
   try {
     bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
@@ -34,8 +36,9 @@ export async function compressPhoto(file: File, { square }: { square?: number } 
   if (!ctx) throw new Error('photo-unreadable');
   if (square) {
     const side = Math.min(bitmap.width, bitmap.height);
-    canvas.width = canvas.height = Math.min(square, side);
-    ctx.drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, canvas.width, canvas.height);
+    const c = crop ?? { x: (bitmap.width - side) / 2, y: (bitmap.height - side) / 2, size: side };
+    canvas.width = canvas.height = Math.round(Math.min(square, c.size));
+    ctx.drawImage(bitmap, c.x, c.y, c.size, c.size, 0, 0, canvas.width, canvas.height);
   } else {
     const scale = Math.min(1, PHOTO_MAX_SIDE / Math.max(bitmap.width, bitmap.height));
     canvas.width = Math.round(bitmap.width * scale);

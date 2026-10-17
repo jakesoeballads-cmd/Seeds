@@ -15,7 +15,6 @@ export async function Nav() {
       <>
       <BottomNav userId={null} unread={0} />
       <nav className="main-nav">
-        <Link className="navlink" href="/">{t('nav.explore')}</Link>
         <Link className="pill" href="/masuk">
           <span className="leaf">♥</span> {t('nav.donate')}
         </Link>
@@ -31,7 +30,6 @@ export async function Nav() {
     <>
     <BottomNav userId={user.id} unread={unread} />
     <nav className="main-nav">
-      <Link className="navlink" href="/">{t('nav.explore')}</Link>
       <Link className="navlink" href="/dashboard">{t('nav.dashboard')}</Link>
       <Link className="navlink" href="/buat">{t('nav.create')}</Link>
       <Link className="navlink nav-badge" href="/pesan">

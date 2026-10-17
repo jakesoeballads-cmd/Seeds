@@ -1,4 +1,4 @@
-import { PRICE } from '@/lib/constants';
+import Link from 'next/link';
 import type { T } from '@/lib/i18n';
 
 // Ikon fitur. Bagian hijau bergerak (anim-*) saat pita fitur terlihat; lihat PlayOnView.
@@ -9,22 +9,22 @@ const icons = [
   <svg key="3" viewBox="0 0 96 96" aria-hidden="true" fill="none" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"><rect x="16" y="22" width="64" height="56" rx="8" stroke="currentColor" /><path d="M16 38h64M32 14v14M64 14v14" stroke="currentColor" /><path className="anim-pulse" d="M48 48v20M38 58h20" stroke="#74ac00" strokeWidth="6" /></svg>,
 ];
 
-// Urutan tampil: buat kegiatan (paling menonjol), ikuti kegiatan, kumpulkan & donasikan Benih.
+// Urutan tampil: buat kegiatan, ikuti kegiatan, kumpulkan & donasikan Benih. Ketiganya sama besar dan bisa diklik.
 const items = [
-  { key: 'feat3', icon: 2, big: true },
-  { key: 'feat1', icon: 0 },
-  { key: 'feat2', icon: 1 },
+  { key: 'feat3', icon: 2, href: '/buat' },
+  { key: 'feat1', icon: 0, href: '/#cari' },
+  { key: 'feat2', icon: 1, href: '/dompet' },
 ];
 
-export function Features({ t, rp }: { t: T; rp: (n: number) => string }) {
+export function Features({ t }: { t: T }) {
   return (
     <div className="features">
-      {items.map(({ key, icon, big }) => (
-        <div className={`feature${big ? ' big' : ''}`} key={key}>
+      {items.map(({ key, icon, href }) => (
+        <Link className="feature" href={href} key={key}>
           {icons[icon]}
           <h3>{t(`${key}.t`)}</h3>
-          <p>{t(`${key}.d`, { price: rp(PRICE) })}</p>
-        </div>
+          <p>{t(`${key}.d`)}</p>
+        </Link>
       ))}
     </div>
   );
