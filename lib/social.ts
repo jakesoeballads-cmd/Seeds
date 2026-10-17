@@ -11,14 +11,15 @@ export async function getMember(supabase: Supa | null, id: string): Promise<{ me
   if (!supabase) {
     if (id !== 'sample') return null;
     return {
-      member: { id, full_name: null, created_at: null, locked: false, is_private: false, bio: null, city: 'Jakarta', attended: 3 },
+      member: { id, full_name: null, created_at: null, locked: false, is_private: false, bio: null, city: 'Jakarta', attended: 3, member_type: 'perorangan', avatar_url: null },
       activities: sampleActivities(),
     };
   }
   if (!UUID_RE.test(id)) return null;
   try {
     const [{ data: profile }, { data: pub }] = await Promise.all([
-      supabase.from('profiles').select('id, full_name, created_at').eq('id', id).maybeSingle(),
+      // "*" agar halaman tetap jalan sebelum kolom member_type/avatar_url (tahap4-profil.sql) dibuat.
+      supabase.from('profiles').select('*').eq('id', id).maybeSingle(),
       supabase.rpc('member_public', { p_user: id }).maybeSingle(),
     ]);
     if (!profile) return null;
@@ -32,6 +33,8 @@ export async function getMember(supabase: Supa | null, id: string): Promise<{ me
       bio: p.bio ?? null,
       city: p.city ?? null,
       attended: p.attended_count ?? 0,
+      member_type: profile.member_type ?? null,
+      avatar_url: profile.avatar_url ?? null,
     };
     if (member.locked) return { member, activities: [] };
     const { data } = await supabase
@@ -74,7 +77,7 @@ export async function getConversations(supabase: Supa, me: string): Promise<Conv
       .limit(500),
   ]);
 
-  const threads = new Map<string, Omit<Conversation, 'otherName'> & { orgName?: string }>();
+  const threads = new Map<string, Omit<Conversation, 'otherName' | 'otherAvatar'> & { orgName?: string }>();
   const add = (key: string, m: { sender_id: string; body: string; read_at: string | null; created_at: string }, base: Pick<Conversation, 'kind' | 'otherId' | 'url' | 'activityTitle'> & { orgName?: string }) => {
     const unread = m.sender_id !== me && !m.read_at ? 1 : 0;
     const t = threads.get(key);
@@ -104,11 +107,15 @@ export async function getConversations(supabase: Supa, me: string): Promise<Conv
   const list = [...threads.values()].sort((a, b) => (a.lastAt < b.lastAt ? 1 : -1));
   const ids = [...new Set(list.map((c) => c.otherId))];
   const names = new Map<string, string>();
+  const avatars = new Map<string, string>();
   if (ids.length) {
-    const { data } = await supabase.from('profiles').select('id, full_name').in('id', ids);
-    for (const p of data ?? []) names.set(p.id, p.full_name ?? '');
+    const { data } = await supabase.from('profiles').select('*').in('id', ids);
+    for (const p of data ?? []) {
+      names.set(p.id, p.full_name ?? '');
+      if (p.avatar_url) avatars.set(p.id, p.avatar_url);
+    }
   }
-  return list.map(({ orgName, ...c }) => ({ ...c, otherName: names.get(c.otherId) || orgName || '' }));
+  return list.map(({ orgName, ...c }) => ({ ...c, otherName: names.get(c.otherId) || orgName || '', otherAvatar: avatars.get(c.otherId) ?? null }));
 }
 
 /** Jumlah pesan belum dibaca untuk lencana menu. 0 bila tabel pesan belum ada. */

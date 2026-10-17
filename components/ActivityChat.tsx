@@ -14,12 +14,13 @@ type Props = {
   me: string;
   otherId: string;
   otherName: string;
+  otherAvatar?: string | null;
   organizer: boolean;
   messages: ChatMessage[];
 };
 
 /** Percakapan negosiasi antara penyelenggara dan tenaga berbayar. */
-export function ActivityChat({ t, num, activity, join, me, otherId, otherName, organizer, messages }: Props) {
+export function ActivityChat({ t, num, activity, join, me, otherId, otherName, otherAvatar, organizer, messages }: Props) {
   let note: string;
   if (join.status === 'paid') note = t('chat.paid', { n: num(join.agreed_benih ?? 0) });
   else if (join.agreed_benih) note = `${t('chat.agreed', { n: num(join.agreed_benih) })} ${organizer ? t('chat.agreedOwn') : t('chat.agreedOther')}`;
@@ -31,7 +32,7 @@ export function ActivityChat({ t, num, activity, join, me, otherId, otherName, o
         <Link href={`/kegiatan/${activity.id}`}>← {activity.title}</Link>
       </p>
       <div className="chat-head">
-        <Avatar name={otherName} />
+        <Avatar name={otherName} src={otherAvatar} />
         <h1>
           <Link className="org-link" href={`/member/${otherId}`}>
             {t('chat.title', { name: otherName })}

@@ -1,5 +1,8 @@
-/** Lingkaran inisial nama member. */
-export function Avatar({ name, large }: { name: string | null | undefined; large?: boolean }) {
+/** Foto profil member, atau lingkaran inisial nama bila belum ada foto. */
+export function Avatar({ name, src, large }: { name: string | null | undefined; src?: string | null; large?: boolean }) {
+  const cls = `avatar${large ? ' large' : ''}`;
+  // eslint-disable-next-line @next/next/no-img-element
+  if (src) return <img className={cls} src={src} alt="" loading="lazy" />;
   const initials =
     String(name || '?')
       .trim()
@@ -9,7 +12,7 @@ export function Avatar({ name, large }: { name: string | null | undefined; large
       .join('')
       .toUpperCase() || '?';
   return (
-    <span className={`avatar${large ? ' large' : ''}`} aria-hidden="true">
+    <span className={cls} aria-hidden="true">
       {initials}
     </span>
   );

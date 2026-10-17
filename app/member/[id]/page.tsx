@@ -37,7 +37,7 @@ export default async function MemberPage({ params }: Props) {
   return (
     <div className="stack">
       <section className="profile-head">
-        <Avatar name={name} large />
+        <Avatar name={name} src={m.avatar_url} large />
         <div>
           <h1>
             {name}
@@ -50,6 +50,7 @@ export default async function MemberPage({ params }: Props) {
           </h1>
           {!m.locked && (
             <>
+              {m.member_type && <span className="member-type">{t('mt.' + m.member_type)}</span>}
               <p className="muted">
                 {m.city && <>📍 {m.city} · </>}
                 {m.created_at ? t('member.since', { date: f.date(m.created_at) }) : t('member.sample')}

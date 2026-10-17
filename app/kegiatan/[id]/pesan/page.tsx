@@ -31,7 +31,7 @@ export default async function ParticipantChatPage({ params }: Props) {
       .eq('participant_id', user.id)
       .order('created_at', { ascending: true })
       .limit(500),
-    supabase.from('profiles').select('full_name').eq('id', a.owner_id).maybeSingle(),
+    supabase.from('profiles').select('*').eq('id', a.owner_id).maybeSingle(),
   ]);
 
   const p = join as Participant | null;
@@ -54,6 +54,7 @@ export default async function ParticipantChatPage({ params }: Props) {
       me={user.id}
       otherId={a.owner_id}
       otherName={owner?.full_name || a.org_name}
+      otherAvatar={owner?.avatar_url}
       organizer={false}
       messages={(msgs ?? []) as ChatMessage[]}
     />

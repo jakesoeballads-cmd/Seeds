@@ -29,7 +29,7 @@ export default async function OrganizerChatPage({ params }: Props) {
   const [{ data: join }, { data: msgs }] = await Promise.all([
     supabase
       .from('participants')
-      .select('id, activity_id, user_id, role, status, agreed_benih, created_at, profile:profiles(full_name)')
+      .select('id, activity_id, user_id, role, status, agreed_benih, created_at, profile:profiles(*)')
       .eq('activity_id', a.id)
       .eq('user_id', participantId)
       .maybeSingle(),
@@ -54,6 +54,7 @@ export default async function OrganizerChatPage({ params }: Props) {
       me={user.id}
       otherId={participantId}
       otherName={p.profile?.full_name || t('member.title')}
+      otherAvatar={p.profile?.avatar_url}
       organizer
       messages={(msgs ?? []) as ChatMessage[]}
     />

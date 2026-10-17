@@ -15,7 +15,7 @@ export default async function ProfilePage() {
   if (!user || !supabase) redirect('/masuk?next=/profil');
 
   const [{ data: profile }, { data: details }] = await Promise.all([
-    supabase.from('profiles').select('full_name').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
     supabase.from('profile_details').select('bio, city, is_private').eq('user_id', user.id).maybeSingle(),
   ]);
 
@@ -24,6 +24,8 @@ export default async function ProfilePage() {
       userId={user.id}
       initial={{
         full_name: profile?.full_name ?? '',
+        member_type: profile?.member_type ?? '',
+        avatar_url: profile?.avatar_url ?? null,
         bio: details?.bio ?? '',
         city: details?.city ?? '',
         is_private: !!details?.is_private,

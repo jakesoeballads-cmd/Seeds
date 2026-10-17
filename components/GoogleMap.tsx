@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { loadGoogleMaps, type GoogleNs } from '@/lib/maps';
+import { loadGoogleMaps, type GoogleNs, type MapProps } from '@/lib/maps';
 import { useI18n } from './I18nProvider';
-import type { MapProps } from './LeafletMap';
 
 const PIN = '#d93025';
 const pinIcon = (g: GoogleNs, active: boolean) => {
@@ -13,7 +12,7 @@ const pinIcon = (g: GoogleNs, active: boolean) => {
   return { url: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg), scaledSize: new g.maps.Size(w, h), anchor: new g.maps.Point(w / 2, h) };
 };
 
-/** Peta Google Maps (Maps JavaScript API) dengan props yang sama seperti peta Leaflet. */
+/** Peta Google Maps interaktif (Maps JavaScript API): semua pin kegiatan, klik untuk memilih lokasi. */
 export function GoogleMap({ center, pins = [], activeId, onSelect, picking, pick, onPick, showYou, zoom = 11 }: MapProps) {
   const { t, lang } = useI18n();
   const el = useRef<HTMLDivElement>(null);
