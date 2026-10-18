@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { getBrowserClient } from '@/lib/supabase/client';
+import { RECOVERY_COOKIE } from '@/lib/constants';
 import { useI18n } from './I18nProvider';
 
 type Msg = { ok: boolean; text: string } | null;
@@ -21,6 +22,9 @@ export function ForgotPasswordForm() {
     const email = String(new FormData(e.currentTarget).get('email') ?? '').trim();
     setBusy(true);
     setMsg(null);
+    // Penanda di browser ini: bila Supabase mengarahkan tautan ke beranda (Redirect URL belum diizinkan),
+    // middleware tetap meneruskannya ke halaman ganti password.
+    document.cookie = `${RECOVERY_COOKIE}=1; Max-Age=3600; Path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent('/atur-password')}`,
     });

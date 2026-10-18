@@ -61,3 +61,6 @@ export function distanceKm(a: { lat: number; lng: number }, b: { lat: number; ln
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
+
+/** Cookie penanda permintaan reset password dari browser ini (lihat middleware.ts). */
+export const RECOVERY_COOKIE = 'benih_recovery';

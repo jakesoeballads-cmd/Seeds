@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { SITE_URL } from '@/lib/supabase/config';
+import { RECOVERY_COOKIE } from '@/lib/constants';
 
 /** Tujuan kembali setelah login Google atau konfirmasi email. */
 export async function GET(request: NextRequest) {
@@ -15,7 +16,11 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient();
   if (code && supabase) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) return NextResponse.redirect(new URL(next, origin));
+    if (!error) {
+      const res = NextResponse.redirect(new URL(next, origin));
+      if (next === '/atur-password') res.cookies.delete(RECOVERY_COOKIE);
+      return res;
+    }
   }
-  return NextResponse.redirect(new URL('/masuk', origin));
+  return NextResponse.redirect(new URL(next === '/atur-password' ? '/atur-password' : '/masuk', origin));
 }
