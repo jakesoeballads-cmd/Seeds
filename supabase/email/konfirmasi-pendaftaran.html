@@ -1,6 +1,7 @@
 <!-- Template email "Confirm signup" untuk Supabase.
      Subjek yang disarankan: Konfirmasi akun Benih kamu 🌱
-     Tempel isi file ini di Supabase: Authentication → Email Templates → Confirm signup → Message body. -->
+     Tempel isi file ini di Supabase: Authentication → Email Templates → Confirm signup → Message body.
+     Tautan memakai /auth/confirm (token_hash) agar tetap jalan bila email dibuka di perangkat lain. -->
 <div style="margin:0;padding:24px 12px;background:#f4f6f0;font-family:Lato,Helvetica,Arial,sans-serif;color:#454545;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;border:1px solid #dcdfd6;">
     <tr>
@@ -19,14 +20,14 @@
     </tr>
     <tr>
       <td style="padding:8px 28px 20px;text-align:center;">
-        <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#74ac00;color:#ffffff;text-decoration:none;font-weight:700;font-size:16px;padding:12px 28px;border-radius:999px;">Konfirmasi email</a>
+        <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email&amp;next=/dashboard" style="display:inline-block;background:#74ac00;color:#ffffff;text-decoration:none;font-weight:700;font-size:16px;padding:12px 28px;border-radius:999px;">Konfirmasi email</a>
       </td>
     </tr>
     <tr>
       <td style="padding:0 28px 24px;">
         <p style="font-size:13px;line-height:1.6;color:#6f706c;margin:0 0 12px;">
           Kalau tombol di atas tidak berfungsi, salin tautan ini ke browser:<br>
-          <a href="{{ .ConfirmationURL }}" style="color:#4f7a00;word-break:break-all;">{{ .ConfirmationURL }}</a>
+          <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email&amp;next=/dashboard" style="color:#4f7a00;word-break:break-all;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email&amp;next=/dashboard</a>
         </p>
         <p style="font-size:13px;line-height:1.6;color:#6f706c;margin:0;">
           Tidak merasa mendaftar di Benih? Abaikan saja email ini.<br>
