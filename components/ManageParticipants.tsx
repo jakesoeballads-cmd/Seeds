@@ -41,7 +41,7 @@ export function ManageParticipants({ participants }: { participants: Participant
   }
 
   return (
-    <section className="card stack tight">
+    <section id="kelola-peserta" className="card stack tight manage-card">
       <h2>{t('manage.title')}</h2>
       <p className="muted">{t('manage.help', { n: POINTS })}</p>
       {msg && (
@@ -53,7 +53,7 @@ export function ManageParticipants({ participants }: { participants: Participant
         <p className="muted">—</p>
       ) : (
         <div className="table-wrap">
-          <table className="table">
+          <table className="table manage-table">
             <thead>
               <tr>
                 <th>{t('th.name')}</th>
@@ -65,11 +65,11 @@ export function ManageParticipants({ participants }: { participants: Participant
             <tbody>
               {participants.map((p) => (
                 <tr key={p.id}>
-                  <td>
+                  <td className="manage-name">
                     <Link href={`/member/${p.user_id}`}>{name(p)}</Link>
                   </td>
-                  <td>{p.role === 'paid' ? t('role.paid') : t('role.vol')}</td>
-                  <td>
+                  <td data-label={t('th.role')}>{p.role === 'paid' ? t('role.paid') : t('role.vol')}</td>
+                  <td data-label={t('th.status')}>
                     <span className={`badge ${p.status}`}>{t('st.' + p.status)}</span>
                     {p.agreed_benih ? (
                       <>
@@ -78,7 +78,7 @@ export function ManageParticipants({ participants }: { participants: Participant
                       </>
                     ) : null}
                   </td>
-                  <td>
+                  <td className="manage-actions">
                     <div className="row">
                       {p.role === 'volunteer' && p.status === 'registered' && (
                         <button
