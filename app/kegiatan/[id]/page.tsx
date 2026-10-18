@@ -87,7 +87,7 @@ export default async function ActivityPage({ params }: Props) {
             </p>
           </div>
         </div>
-        <section className="card stack tight">
+        <section className="card stack tight loc-card">
           <h2>{t('loc.title')}</h2>
           <p className="muted">📍 {a.location_name}</p>
           <iframe
@@ -113,7 +113,12 @@ export default async function ActivityPage({ params }: Props) {
         <section className="card stack tight">
           <h2>{t('join.title')}</h2>
           {own ? (
-            <p className="alert success">{t('join.own')}</p>
+            <>
+              <p className="alert success">{t('join.own')}</p>
+              <a className="btn" href="#kelola-peserta">
+                👥 {t('manage.open', { count: f.num(participants.length) })}
+              </a>
+            </>
           ) : !user ? (
             <>
               <p className="muted">{t('join.loginPrompt')}</p>

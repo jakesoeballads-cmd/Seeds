@@ -339,3 +339,26 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 .admin-search { flex-direction: row; flex-wrap: nowrap; }
 .admin-search input { flex: 1; min-width: 0; }
 .history li > .badge { align-self: flex-start; }
+
+/* Kelola peserta: di ponsel, daftar peserta muncul tepat setelah deskripsi dan tabelnya jadi kartu. */
+.manage-card { scroll-margin-top: 16px; }
+@media (max-width: 800px) {
+  .program-layout .loc-card { order: 1; }
+}
+@media (max-width: 640px) {
+  .manage-card { padding: 16px; }
+  .manage-table thead { display: none; }
+  .manage-table, .manage-table tbody, .manage-table tr, .manage-table td { display: block; width: 100%; }
+  .manage-table tr { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; }
+  .manage-table td { border: 0; padding: 4px 0; }
+  .manage-table td[data-label] { display: flex; gap: 6px; align-items: baseline; }
+  .manage-table td[data-label]::before { content: attr(data-label); color: var(--muted); font-size: .85rem; margin-right: auto; }
+  .manage-table td[data-label] br { display: none; }
+  .manage-name { font-weight: 700; font-size: 1.05rem; }
+  .manage-actions { padding-top: 10px !important; }
+  .manage-actions > .row > .btn, .manage-actions > .row > form { flex: 1 1 100%; }
+  .manage-actions > .row > .btn { justify-content: center; text-align: center; min-height: 44px; }
+  .manage-actions form { flex-wrap: nowrap; }
+  .manage-actions form input { flex: 1 1 0; min-width: 0; width: auto !important; }
+  .manage-actions form .btn { flex: none; width: auto; min-height: 44px; padding-inline: 20px; }
+}
