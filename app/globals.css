@@ -1,30 +1,30 @@
 /* Desain diambil dari Prototipe Benih: topbar + container 1100px.
-   Palet "Lumut Lavender": hijau lumut, ungu lavender, kuning mentega. */
+   Palet "Matcha Pop": hijau limau, hijau hutan tua, aksen pink. */
 :root {
-  --brand: #7fb069; --action: #4f7d52; --action-hover: #3f6842; --soft: #ece6ff; --on-action: #ffffff; --ink: #1e2620; --btn: #4f7d52;
-  --accent: #ffe27a; --on-accent: #3a2e00; --hero-a: #c9b8ff; --hero-b: #e3ecc8; --hero-fg: #1e2620;
-  --bg: #f8f6fc; --card: #ffffff; --text: #3a433c; --muted: #6b726d; --border: #e2dfea;
+  --brand: #8cc41a; --action: #3b6e12; --action-hover: #b4e01f; --soft: #edf7cf; --on-action: #0e2a1f; --ink: #0e2a1f; --btn: #c6f135;
+  --accent: #ff8ac2; --on-accent: #3a0a22; --hero-a: #0e2a1f; --hero-b: #1f5a2e; --hero-fg: #f4fbe4;
+  --bg: #fbfaf4; --card: #ffffff; --text: #2e3b33; --muted: #66716a; --border: #e1e6d6;
   --map-land: #eef0ea; --map-water: #c6dfee; --map-road: #ffffff; --map-park: #d9e9c6;
   --danger: #8a1c13; --danger-soft: #fdecea; --info: #1a3d8f; --info-soft: #e8f0fe; --warn: #8a5a00; --warn-soft: #fff4e5;
-  --pin: #d93025; --you: #2563eb; --overlay: rgba(20, 30, 20, .45); --chat-mine: #e3daff;
+  --pin: #d93025; --you: #2563eb; --overlay: rgba(20, 30, 20, .45); --chat-mine: #e4f8b0;
   --radius: 8px; --shadow: 0 2px 8px rgba(0, 0, 0, .12);
   --serif: "Source Serif 4", Georgia, serif; --mono: "Courier Prime", "Courier New", monospace;
   --font: "Lato", "Helvetica Neue", Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --brand: #9ccc85; --action: #a7d48f; --action-hover: #bce3a7; --soft: #2a2440; --on-action: #14190f; --ink: #f3f1f8; --btn: #a7d48f;
-  --accent: #f0d46a; --on-accent: #2b2200; --hero-a: #3b3160; --hero-b: #24331f; --hero-fg: #f3f1f8;
-  --bg: #16141c; --card: #201d28; --text: #e6e3ee; --muted: #a8a3b5; --border: #34303f;
+  --brand: #b6e83a; --action: #c6f135; --action-hover: #d6ff5a; --soft: #22301a; --on-action: #0e2a1f; --ink: #f2f6ea; --btn: #c6f135;
+  --accent: #ff8ac2; --on-accent: #3a0a22; --hero-a: #0b1f16; --hero-b: #1f4a26; --hero-fg: #f4fbe4;
+  --bg: #10150f; --card: #19201a; --text: #e4eadf; --muted: #a0aa9b; --border: #2d3729;
   --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
-  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #3b3160; color-scheme: dark; } }
+  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #2e4a17; color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --brand: #9ccc85; --action: #a7d48f; --action-hover: #bce3a7; --soft: #2a2440; --on-action: #14190f; --ink: #f3f1f8; --btn: #a7d48f;
-  --accent: #f0d46a; --on-accent: #2b2200; --hero-a: #3b3160; --hero-b: #24331f; --hero-fg: #f3f1f8;
-  --bg: #16141c; --card: #201d28; --text: #e6e3ee; --muted: #a8a3b5; --border: #34303f;
+  --brand: #b6e83a; --action: #c6f135; --action-hover: #d6ff5a; --soft: #22301a; --on-action: #0e2a1f; --ink: #f2f6ea; --btn: #c6f135;
+  --accent: #ff8ac2; --on-accent: #3a0a22; --hero-a: #0b1f16; --hero-b: #1f4a26; --hero-fg: #f4fbe4;
+  --bg: #10150f; --card: #19201a; --text: #e4eadf; --muted: #a0aa9b; --border: #2d3729;
   --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
-  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #3b3160; color-scheme: dark; }
+  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #2e4a17; color-scheme: dark; }
 
 * { box-sizing: border-box; }
 body { margin: 0; font-family: var(--font); font-size: 15px; background: var(--bg); color: var(--text); line-height: 1.5; overflow-x: clip; }
@@ -47,7 +47,7 @@ button { font: inherit; }
 .pill:hover { box-shadow: 0 3px 12px rgba(0, 0, 0, .2); }
 .pill .leaf { color: var(--brand); }
 .full-bleed { margin-inline: calc(50% - 50vw); }
-.hero-photo { color: var(--hero-fg); text-align: center; padding: 64px 16px 56px; margin-top: -24px; background: linear-gradient(140deg, var(--hero-a), var(--soft) 55%, var(--hero-b)); }
+.hero-photo { color: var(--hero-fg); text-align: center; padding: 64px 16px 56px; margin-top: -24px; background: linear-gradient(150deg, var(--hero-a), var(--hero-b)); }
 .hero-photo .inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px; }
 .hero-photo h1 { color: var(--hero-fg); font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.12; margin: 0; }
 .hero-photo p { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.25rem); max-width: 52ch; }
@@ -171,7 +171,7 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--bo
 .qris-logo { font-weight: 900; letter-spacing: .08em; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { border: 1px solid var(--border); background: var(--card); color: var(--text); border-radius: 999px; padding: 6px 14px; cursor: pointer; font-weight: 700; }
-.chip[aria-pressed="true"] { background: var(--action); color: var(--on-action); border-color: var(--action); }
+.chip[aria-pressed="true"] { background: var(--btn); color: var(--on-action); border-color: var(--btn); }
 .photo-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
 .photo-preview img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); }
 
@@ -315,7 +315,7 @@ iframe.google-map { display: block; border: 0; }
   .bottom-nav svg { width: 28px; height: 28px; padding: 2px; }
   .bottom-nav a[aria-current] { color: var(--text); }
   .bottom-nav a[aria-current] svg { stroke-width: 2.6; }
-  .bottom-nav a.create svg { background: var(--action); color: var(--on-action); border-radius: 10px; width: 44px; padding: 3px 11px; }
+  .bottom-nav a.create svg { background: var(--btn); color: var(--on-action); border-radius: 10px; width: 44px; padding: 3px 11px; }
   .bottom-nav a .count-badge { position: absolute; top: 0; right: 10px; }
   .profile-head { flex-direction: column; align-items: center; text-align: center; }
   .profile-head .row { justify-content: center; }
