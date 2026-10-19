@@ -1,27 +1,30 @@
 /* Desain diambil dari Prototipe Benih: topbar + container 1100px.
-   Palet terinspirasi iNaturalist: hijau daun cerah, latar abu terang, teks arang. */
+   Palet "Lumut Lavender": hijau lumut, ungu lavender, kuning mentega. */
 :root {
-  --brand: #74ac00; --action: #4f7a00; --action-hover: #5f8f00; --soft: #ecf2e2; --on-action: #ffffff; --ink: #111111; --btn: #74ac00;
-  --bg: #ffffff; --card: #ffffff; --text: #454545; --muted: #6f706c; --border: #dcdfd6;
+  --brand: #7fb069; --action: #4f7d52; --action-hover: #3f6842; --soft: #ece6ff; --on-action: #ffffff; --ink: #1e2620; --btn: #4f7d52;
+  --accent: #ffe27a; --on-accent: #3a2e00; --hero-a: #c9b8ff; --hero-b: #e3ecc8; --hero-fg: #1e2620;
+  --bg: #f8f6fc; --card: #ffffff; --text: #3a433c; --muted: #6b726d; --border: #e2dfea;
   --map-land: #eef0ea; --map-water: #c6dfee; --map-road: #ffffff; --map-park: #d9e9c6;
   --danger: #8a1c13; --danger-soft: #fdecea; --info: #1a3d8f; --info-soft: #e8f0fe; --warn: #8a5a00; --warn-soft: #fff4e5;
-  --pin: #d93025; --you: #2563eb; --overlay: rgba(20, 30, 20, .45); --chat-mine: #d9fdd3;
+  --pin: #d93025; --you: #2563eb; --overlay: rgba(20, 30, 20, .45); --chat-mine: #e3daff;
   --radius: 8px; --shadow: 0 2px 8px rgba(0, 0, 0, .12);
   --serif: "Source Serif 4", Georgia, serif; --mono: "Courier Prime", "Courier New", monospace;
   --font: "Lato", "Helvetica Neue", Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --brand: #8fc31f; --action: #8fc31f; --action-hover: #a5d63a; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: #8fc31f;
-  --bg: #151813; --card: #1e221b; --text: #e6e9e2; --muted: #a2a99c; --border: #33392f;
+  --brand: #9ccc85; --action: #a7d48f; --action-hover: #bce3a7; --soft: #2a2440; --on-action: #14190f; --ink: #f3f1f8; --btn: #a7d48f;
+  --accent: #f0d46a; --on-accent: #2b2200; --hero-a: #3b3160; --hero-b: #24331f; --hero-fg: #f3f1f8;
+  --bg: #16141c; --card: #201d28; --text: #e6e3ee; --muted: #a8a3b5; --border: #34303f;
   --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
-  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #144d37; color-scheme: dark; } }
+  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #3b3160; color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --brand: #8fc31f; --action: #8fc31f; --action-hover: #a5d63a; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: #8fc31f;
-  --bg: #151813; --card: #1e221b; --text: #e6e9e2; --muted: #a2a99c; --border: #33392f;
+  --brand: #9ccc85; --action: #a7d48f; --action-hover: #bce3a7; --soft: #2a2440; --on-action: #14190f; --ink: #f3f1f8; --btn: #a7d48f;
+  --accent: #f0d46a; --on-accent: #2b2200; --hero-a: #3b3160; --hero-b: #24331f; --hero-fg: #f3f1f8;
+  --bg: #16141c; --card: #201d28; --text: #e6e3ee; --muted: #a8a3b5; --border: #34303f;
   --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
-  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #144d37; color-scheme: dark; }
+  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #3b3160; color-scheme: dark; }
 
 * { box-sizing: border-box; }
 body { margin: 0; font-family: var(--font); font-size: 15px; background: var(--bg); color: var(--text); line-height: 1.5; overflow-x: clip; }
@@ -44,13 +47,13 @@ button { font: inherit; }
 .pill:hover { box-shadow: 0 3px 12px rgba(0, 0, 0, .2); }
 .pill .leaf { color: var(--brand); }
 .full-bleed { margin-inline: calc(50% - 50vw); }
-.hero-photo { color: #fff; text-align: center; padding: 64px 16px 56px; margin-top: -24px; background: linear-gradient(rgba(0,0,0,.38), rgba(0,0,0,.38)), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAwIDcwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgc2xpY2UiPgogIDwhLS0gSWx1c3RyYXNpIGxhdGFyIGhlcm86IGthbm9waSBkYXVuIGdlbGFwIGRlbmdhbiBjYWhheWEgeWFuZyBtZW5lbWJ1cy4gR2FudGkgZGVuZ2FuIGZvdG8gZGkgcHVibGljL2ltZy9oZXJvLmpwZy4gLS0+CiAgPGRlZnM+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9Imdsb3ciIGN4PSI3MCUiIGN5PSIzNSUiIHI9IjcwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzNkNWExMiIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii41NSIgc3RvcC1jb2xvcj0iIzE0MzAwYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwNjE0MDUiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJibHVyIiB4PSItMjAlIiB5PSItMjAlIiB3aWR0aD0iMTQwJSIgaGVpZ2h0PSIxNDAlIj48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIyMiIvPjwvZmlsdGVyPgogICAgPGZpbHRlciBpZD0ic29mdCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMyIvPjwvZmlsdGVyPgogICAgPHBhdGggaWQ9ImxlYWYiIGQ9Ik0wIDAgQyA0MCAtNjAgMTQwIC03MCAyMDAgMCBDIDE0MCA3MCA0MCA2MCAwIDAgWiIvPgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iMTYwMCIgaGVpZ2h0PSI3MDAiIGZpbGw9InVybCgjZ2xvdykiLz4KICA8ZyBmaWx0ZXI9InVybCgjYmx1cikiIG9wYWNpdHk9Ii44NSI+CiAgICA8Y2lyY2xlIGN4PSIxMTgwIiBjeT0iMjEwIiByPSI5MCIgZmlsbD0iI2M5YTIyNyIvPgogICAgPGNpcmNsZSBjeD0iMTMyMCIgY3k9IjQyMCIgcj0iNzAiIGZpbGw9IiNlMGI5M2EiLz4KICAgIDxjaXJjbGUgY3g9IjEwNTAiIGN5PSI1MjAiIHI9IjExMCIgZmlsbD0iIzZmOGYxZSIvPgogICAgPGNpcmNsZSBjeD0iMzAwIiBjeT0iMTYwIiByPSI4MCIgZmlsbD0iIzRmN2EwMCIvPgogICAgPGNpcmNsZSBjeD0iNTIwIiBjeT0iNTYwIiByPSIxMjAiIGZpbGw9IiMyZjUyMTAiLz4KICAgIDxjaXJjbGUgY3g9IjgyMCIgY3k9IjEyMCIgcj0iNjAiIGZpbGw9IiM4ZmFlMmEiLz4KICAgIDxjaXJjbGUgY3g9IjE0ODAiIGN5PSIxMjAiIHI9IjcwIiBmaWxsPSIjNWU3ZjE4Ii8+CiAgPC9nPgogIDxnIGZpbGw9IiMwZDI1MDgiIG9wYWNpdHk9Ii45IiBmaWx0ZXI9InVybCgjc29mdCkiPgogICAgPHVzZSBocmVmPSIjbGVhZiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQwIDEyMCkgcm90YXRlKDE1KSBzY2FsZSgxLjYpIi8+CiAgICA8dXNlIGhyZWY9IiNsZWFmIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MCA1MjApIHJvdGF0ZSgtMjUpIHNjYWxlKDEuOSkiLz4KICAgIDx1c2UgaHJlZj0iI2xlYWYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzODAgNjQwKSByb3RhdGUoLTE1MCkgc2NhbGUoMS43KSIvPgogICAgPHVzZSBocmVmPSIjbGVhZiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTU2MCAyNjApIHJvdGF0ZSgxNzApIHNjYWxlKDEuNSkiLz4KICA8L2c+CiAgPGcgZmlsbD0iIzJjNGQwZSIgb3BhY2l0eT0iLjc1Ij4KICAgIDx1c2UgaHJlZj0iI2xlYWYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDk4MCA2NDApIHJvdGF0ZSgtNjApIHNjYWxlKDEuMSkiLz4KICAgIDx1c2UgaHJlZj0iI2xlYWYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI0MCAzODApIHJvdGF0ZSgtMTApIHNjYWxlKC45KSIvPgogICAgPHVzZSBocmVmPSIjbGVhZiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTI1MCA5MCkgcm90YXRlKDE0MCkgc2NhbGUoLjgpIi8+CiAgPC9nPgogIDxnIHN0cm9rZT0iIzBkMjUwOCIgc3Ryb2tlLXdpZHRoPSI2IiBvcGFjaXR5PSIuOCIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBkPSJNMTAwMCA3MDAgQyAxMDIwIDU2MCAxMTAwIDQ3MCAxMjQwIDQyMCIvPgogICAgPHBhdGggZD0iTTAgNDcwIEMgMTQwIDQzMCAyMjAgMzgwIDI4MCAzMDAiLz4KICA8L2c+Cjwvc3ZnPgo=') center / cover, #0b2108; }
+.hero-photo { color: var(--hero-fg); text-align: center; padding: 64px 16px 56px; margin-top: -24px; background: linear-gradient(140deg, var(--hero-a), var(--soft) 55%, var(--hero-b)); }
 .hero-photo .inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px; }
-.hero-photo h1 { color: #fff; font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.12; margin: 0; }
+.hero-photo h1 { color: var(--hero-fg); font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.12; margin: 0; }
 .hero-photo p { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.25rem); max-width: 52ch; }
 .hero-photo .tagline { font-family: var(--mono); }
-.btn.light { background: #fff; color: #454545; font-family: var(--serif); font-weight: 600; font-size: 1.3rem; padding: 12px 32px; border-radius: 8px; }
-.btn.light:hover { background: #f1f1f1; }
+.btn.light { background: var(--btn); color: var(--on-action); font-family: var(--serif); font-weight: 600; font-size: 1.3rem; padding: 12px 32px; border-radius: 8px; }
+.btn.light:hover { background: var(--action-hover); }
 .band { background: var(--soft); padding: 44px 16px; }
 .band .inner { max-width: 1000px; margin: 0 auto; text-align: center; }
 .band h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0 0 8px; }
@@ -132,7 +135,7 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--bo
 .stat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 .stat-label { color: var(--muted); font-size: .9rem; }
 .stat-value { font-size: 1.75rem; font-weight: 900; font-variant-numeric: tabular-nums; }
-.badge-pill { background: var(--soft); color: var(--action); border-radius: 999px; padding: 2px 10px; font-weight: 700; }
+.badge-pill { background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: 2px 10px; font-weight: 700; }
 .table-wrap { overflow-x: auto; }
 .table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .table th, .table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
@@ -190,7 +193,7 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--bo
 .empty { padding: 24px; text-align: center; }
 a.btn { color: var(--on-action); }
 a.btn.ghost { color: var(--action); }
-a.btn.light { color: #454545; }
+a.btn.light { color: var(--on-action); }
 .navlink { text-decoration: none; display: inline-block; }
 
 /* ───────── Tahap 2 sosial: profil member, pesan, lightbox, Google Maps, menu bawah, ikon fitur ───────── */
@@ -312,7 +315,7 @@ iframe.google-map { display: block; border: 0; }
   .bottom-nav svg { width: 28px; height: 28px; padding: 2px; }
   .bottom-nav a[aria-current] { color: var(--text); }
   .bottom-nav a[aria-current] svg { stroke-width: 2.6; }
-  .bottom-nav a.create svg { background: var(--brand); color: var(--on-action); border-radius: 10px; width: 44px; padding: 3px 11px; }
+  .bottom-nav a.create svg { background: var(--action); color: var(--on-action); border-radius: 10px; width: 44px; padding: 3px 11px; }
   .bottom-nav a .count-badge { position: absolute; top: 0; right: 10px; }
   .profile-head { flex-direction: column; align-items: center; text-align: center; }
   .profile-head .row { justify-content: center; }
