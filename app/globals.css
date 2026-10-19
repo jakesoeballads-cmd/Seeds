@@ -1,23 +1,27 @@
 /* Desain diambil dari Prototipe Benih: topbar + container 1100px.
-   Palet terinspirasi iNaturalist: hijau daun cerah, latar abu terang, teks arang. */
+   Tiga warna merek: Primer zaitun (tombol utama, judul), Sekunder hijau daun (ikon, label),
+   Aksen madu (hanya ajakan terpenting). Satu font: Poppins. Ikon: MDI. */
 :root {
-  --brand: #74ac00; --action: #4f7a00; --action-hover: #5f8f00; --soft: #ecf2e2; --on-action: #ffffff; --ink: #111111; --btn: #74ac00;
+  --primer: #414f1c; --sekunder: #74ac00; --aksen: #e9b949; --aksen-hover: #f0c75e; --on-aksen: #2b2a12;
+  --brand: var(--sekunder); --action: var(--primer); --action-hover: #536424; --soft: #ecf2e2; --on-action: #ffffff; --ink: #111111; --btn: var(--primer);
   --bg: #ffffff; --card: #ffffff; --text: #454545; --muted: #6f706c; --border: #dcdfd6;
   --map-land: #eef0ea; --map-water: #c6dfee; --map-road: #ffffff; --map-park: #d9e9c6;
   --danger: #8a1c13; --danger-soft: #fdecea; --info: #1a3d8f; --info-soft: #e8f0fe; --warn: #8a5a00; --warn-soft: #fff4e5;
   --pin: #d93025; --you: #2563eb; --overlay: rgba(20, 30, 20, .45); --chat-mine: #d9fdd3;
   --radius: 8px; --shadow: 0 2px 8px rgba(0, 0, 0, .12);
-  --serif: "Source Serif 4", Georgia, serif; --mono: "Courier Prime", "Courier New", monospace;
-  --font: "Lato", "Helvetica Neue", Arial, sans-serif;
+  --font: "Poppins", "Helvetica Neue", Arial, sans-serif; --serif: var(--font);
+  --mono: ui-monospace, "SFMono-Regular", Menlo, "Courier New", monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --brand: #8fc31f; --action: #8fc31f; --action-hover: #a5d63a; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: #8fc31f;
+  --primer: #a8bd5c; --sekunder: #8fc31f; --aksen: #f0c75e; --aksen-hover: #f5d47e; --on-aksen: #2b2a12;
+  --brand: var(--sekunder); --action: var(--primer); --action-hover: #bccf72; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: var(--primer);
   --bg: #151813; --card: #1e221b; --text: #e6e9e2; --muted: #a2a99c; --border: #33392f;
   --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
   --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #144d37; color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --brand: #8fc31f; --action: #8fc31f; --action-hover: #a5d63a; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: #8fc31f;
+  --primer: #a8bd5c; --sekunder: #8fc31f; --aksen: #f0c75e; --aksen-hover: #f5d47e; --on-aksen: #2b2a12;
+  --brand: var(--sekunder); --action: var(--primer); --action-hover: #bccf72; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: var(--primer);
   --bg: #151813; --card: #1e221b; --text: #e6e9e2; --muted: #a2a99c; --border: #33392f;
   --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
@@ -38,7 +42,7 @@ button { font: inherit; }
 .navlink { background: none; border: 0; padding: 4px 0; color: var(--text); font-weight: 400; font-size: 1rem; cursor: pointer; border-bottom: 3px solid transparent; }
 .navlink:hover { color: var(--action); }
 .navlink[aria-current="page"] { border-bottom-color: var(--brand); }
-.brand { display: inline-flex; align-items: center; gap: 2px; font-weight: 900; font-size: 1.6rem; color: var(--ink); background: none; border: 0; cursor: pointer; padding: 0; letter-spacing: -.02em; }
+.brand { display: inline-flex; align-items: center; gap: 2px; font-weight: 700; font-size: 1.6rem; color: var(--ink); background: none; border: 0; cursor: pointer; padding: 0; letter-spacing: -.02em; }
 .brand .wordmark { display: block; height: 38px; width: auto; color: var(--ink); }
 .pill { display: inline-flex; align-items: center; gap: 6px; background: var(--card); color: var(--text); border: 0; border-radius: 999px; padding: 7px 15px; box-shadow: var(--shadow); cursor: pointer; }
 .pill:hover { box-shadow: 0 3px 12px rgba(0, 0, 0, .2); }
@@ -48,16 +52,21 @@ button { font: inherit; }
 .hero-photo .inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px; }
 .hero-photo h1 { color: #fff; font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.12; margin: 0; }
 .hero-photo p { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.25rem); max-width: 52ch; }
-.hero-photo .tagline { font-family: var(--mono); }
-.seed-hero { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.seed-hero-canvas { width: min(100%, 380px); aspect-ratio: 1 / 1; touch-action: pan-y; cursor: grab; margin-bottom: -18px;
-  -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); }
-.seed-hero-canvas:active { cursor: grabbing; }
-.seed-hero-stages { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
-.seed-hero-stages button { border: 1px solid rgba(255,255,255,.45); background: rgba(255,255,255,.08); color: #fff; border-radius: 999px; padding: 4px 12px; font-size: .85rem; cursor: pointer; }
-.seed-hero-stages button[aria-pressed="true"] { background: #fff; color: #2c3a12; border-color: #fff; font-weight: 700; }
-@media (max-width: 600px) { .seed-hero-canvas { width: min(100%, 270px); } }
-.btn.light { background: #fff; color: #454545; font-family: var(--serif); font-weight: 600; font-size: 1.3rem; padding: 12px 32px; border-radius: 8px; }
+.hero-photo .tagline { font-weight: 500; letter-spacing: .03em; }
+/* Globe Bumi 3D sebagai latar hero; tulisan di atasnya dengan bayangan lembut supaya terbaca. */
+.hero-photo.globe-hero { position: relative; overflow: hidden; isolation: isolate; min-height: min(78vh, 660px); display: grid; place-items: center; padding-block: 72px 64px; background: radial-gradient(ellipse at 50% 35%, #46551f 0%, #3f4d1c 45%, #2c3814 100%), #3f4d1c; touch-action: pan-y; cursor: grab; }
+.globe-hero:active { cursor: grabbing; }
+.globe-hero .globe-bg { position: absolute; inset: 0; z-index: -2; }
+.globe-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 60% 45% at 50% 50%, rgba(22,32,8,.55), rgba(22,32,8,.2) 70%, rgba(22,32,8,0) 100%); }
+.globe-hero .inner { text-shadow: 0 2px 14px rgba(0,0,0,.6); }
+.globe-hero h1 { font-weight: 700; }
+.globe-hero .tagline { color: #f0c75e; }
+.globe-hero .btn { text-shadow: none; box-shadow: 0 6px 24px rgba(0,0,0,.3); }
+.ico { width: 1.25em; height: 1.25em; flex: none; vertical-align: -0.25em; }
+.btn.light { background: #fff; color: #454545; font-weight: 600; font-size: 1.3rem; padding: 12px 32px; border-radius: 8px; }
+.btn.aksen, a.btn.aksen { background: var(--aksen); color: var(--on-aksen); }
+.btn.aksen:hover { background: var(--aksen-hover); }
+.btn.lg { display: inline-flex; align-items: center; gap: 8px; font-size: 1.1rem; font-weight: 600; padding: 13px 28px; }
 .btn.light:hover { background: #f1f1f1; }
 .band { background: var(--soft); padding: 44px 16px; }
 .band .inner { max-width: 1000px; margin: 0 auto; text-align: center; }
@@ -66,10 +75,12 @@ button { font: inherit; }
 .features { display: grid; grid-template-columns: repeat(3, 1fr); align-items: start; gap: 28px 24px; }
 .feature { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text); text-decoration: none; padding: 12px; border-radius: 16px; }
 .feature:hover { background: color-mix(in srgb, var(--card) 55%, transparent); }
-.feature svg { width: 128px; height: 128px; }
-.feature h3 { font-family: var(--serif); font-weight: 600; font-size: 2rem; line-height: 1.15; margin: 8px 0 0; color: var(--text); }
+.feature-badge { display: grid; place-items: center; width: 96px; height: 96px; border-radius: 28px; background: var(--card); color: var(--brand); box-shadow: var(--shadow); }
+.feature-badge .ico { width: 56px; height: 56px; }
+.feature:first-child .feature-badge { background: var(--primer); color: var(--on-action); }
+.feature h3 { font-weight: 600; font-size: 2rem; line-height: 1.15; margin: 8px 0 0; color: var(--text); }
 .feature p { margin: 0; font-size: 1.1rem; max-width: 26ch; }
-@media (max-width: 800px) { .features { grid-template-columns: 1fr; gap: 12px; } .feature svg { width: 96px; height: 96px; } .feature h3 { font-size: 1.6rem; } .feature p { font-size: 1rem; } }
+@media (max-width: 800px) { .features { grid-template-columns: 1fr; gap: 12px; } .feature-badge { width: 76px; height: 76px; border-radius: 22px; } .feature-badge .ico { width: 44px; height: 44px; } .feature h3 { font-size: 1.4rem; } .feature p { font-size: 1rem; } }
 .wallet-chip { font-size: .85rem; background: var(--soft); color: var(--action); border-radius: 999px; padding: 2px 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
@@ -285,8 +296,11 @@ iframe.google-map { display: block; border: 0; }
 .search-bar .btn { flex: none; }
 
 /* Ikon fitur dinamis (kelas "play" dari PlayOnView) */
-.feature svg { transition: transform .3s ease; }
-.feature:hover svg { transform: translateY(-4px); }
+.feature-badge { transition: transform .3s ease; }
+.feature:hover .feature-badge { transform: translateY(-4px); }
+.band.play .feature-badge .ico { animation: pulse 2.4s ease-in-out infinite; }
+.band.play .feature:nth-child(2) .feature-badge .ico { animation-delay: .3s; }
+.band.play .feature:nth-child(3) .feature-badge .ico { animation-delay: .6s; }
 .band.play .anim-draw { stroke-dasharray: 1; animation: draw 2.4s ease-in-out infinite; }
 .band.play .anim-grow { transform-box: fill-box; transform-origin: 50% 100%; animation: grow 2.4s ease-in-out .3s infinite; }
 .band.play .anim-pulse { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-in-out .6s infinite; }
@@ -297,7 +311,8 @@ iframe.google-map { display: block; border: 0; }
 @keyframes twinkle { 0%, 100% { transform: rotate(0) scale(1); } 30% { transform: rotate(72deg) scale(1.2); } 60% { transform: rotate(144deg) scale(1); } }
 @media (prefers-reduced-motion: reduce) {
   .band.play .anim-draw, .band.play .anim-grow, .band.play .anim-pulse, .band.play .anim-twinkle { animation: none; }
-  .feature:hover svg { transform: none; }
+  .feature:hover .feature-badge { transform: none; }
+  .band.play .feature-badge .ico { animation: none; }
 }
 
 /* Menu bawah melayang ala Threads (ponsel). Ada di dalam .topbar, jadi selektornya dibuat lebih spesifik. */
@@ -319,8 +334,7 @@ iframe.google-map { display: block; border: 0; }
   .bottom-nav a { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 56px; padding: 6px 4px; color: var(--muted); text-decoration: none; font-size: .72rem; font-weight: 700; border-radius: 14px; }
   .bottom-nav svg { width: 28px; height: 28px; padding: 2px; }
   .bottom-nav a[aria-current] { color: var(--text); }
-  .bottom-nav a[aria-current] svg { stroke-width: 2.6; }
-  .bottom-nav a.create svg { background: var(--brand); color: var(--on-action); border-radius: 10px; width: 44px; padding: 3px 11px; }
+  .bottom-nav a.create svg { background: var(--aksen); color: var(--on-aksen); border-radius: 10px; width: 44px; padding: 3px 11px; }
   .bottom-nav a .count-badge { position: absolute; top: 0; right: 10px; }
   .profile-head { flex-direction: column; align-items: center; text-align: center; }
   .profile-head .row { justify-content: center; }

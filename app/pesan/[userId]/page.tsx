@@ -8,6 +8,8 @@ import { UUID_RE } from '@/lib/social';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { ChatMessage } from '@/lib/types';
+import { mdiArrowLeft } from '@mdi/js';
+import { Icon } from '@/components/Icon';
 
 export const metadata: Metadata = { title: 'Pesan' };
 export const dynamic = 'force-dynamic';
@@ -44,7 +46,7 @@ export default async function DirectMessagePage({ params, searchParams }: Props)
   return (
     <section className="card narrow stack tight" style={{ maxWidth: 640 }}>
       <p>
-        <Link href="/pesan">← {t('msg.all')}</Link>
+        <Link href="/pesan"><Icon path={mdiArrowLeft} /> {t('msg.all')}</Link>
       </p>
       <div className="chat-head">
         <Avatar name={name} src={other.avatar_url} />

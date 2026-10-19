@@ -8,6 +8,8 @@ import { getConversations } from '@/lib/social';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Conversation } from '@/lib/types';
+import { mdiSprout } from '@mdi/js';
+import { Icon } from '@/components/Icon';
 
 export const metadata: Metadata = { title: 'Pesan' };
 export const dynamic = 'force-dynamic';
@@ -44,7 +46,7 @@ export default async function InboxPage() {
                     <strong>{c.otherName || t('member.title')}</strong>
                     <LocalTime iso={c.lastAt} />
                   </span>
-                  <span className="inbox-tag">{c.kind === 'activity' ? `🌱 ${c.activityTitle}` : t('msg.direct')}</span>
+                  <span className="inbox-tag">{c.kind === 'activity' ? <><Icon path={mdiSprout} /> {c.activityTitle}</> : t('msg.direct')}</span>
                   <span className="inbox-preview">
                     {c.lastFromMe ? t('msg.you') + ' ' : ''}
                     {c.lastBody}

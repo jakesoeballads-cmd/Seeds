@@ -10,6 +10,8 @@ import { sampleActivities } from '@/lib/sample';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Activity } from '@/lib/types';
+import { mdiAccountGroup, mdiSprout } from '@mdi/js';
+import { Icon } from '@/components/Icon';
 
 export const metadata: Metadata = { title: 'Admin' };
 export const dynamic = 'force-dynamic';
@@ -143,7 +145,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                   </span>
                   <br />
                   <span className="muted">
-                    {when(t, f, a)} · 👥 {f.num(a.participant_count)} · 🌱 {f.num(a.collected_benih)}
+                    {when(t, f, a)} · <Icon path={mdiAccountGroup} /> {f.num(a.participant_count)} · <Icon path={mdiSprout} /> {f.num(a.collected_benih)}
                   </span>
                 </div>
                 <AdminDeleteActivity id={a.id} title={a.title} demo={demo} />

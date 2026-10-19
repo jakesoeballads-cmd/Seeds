@@ -11,6 +11,8 @@ import { snapJsUrl } from '@/lib/payments/midtrans';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import { getWallet } from '@/lib/wallet';
+import { mdiArrowLeft } from '@mdi/js';
+import { Icon } from '@/components/Icon';
 
 export const metadata: Metadata = { title: 'Benih' };
 export const dynamic = 'force-dynamic';
@@ -124,7 +126,7 @@ export default async function WalletPage() {
       </section>
 
       <Link className="btn ghost" href="/dashboard">
-        ← {t('nav.dashboard')}
+        <Icon path={mdiArrowLeft} /> {t('nav.dashboard')}
       </Link>
     </div>
   );

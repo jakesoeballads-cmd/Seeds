@@ -17,6 +17,8 @@ import { SITE_URL } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Participant } from '@/lib/types';
 import { getWallet } from '@/lib/wallet';
+import { mdiAccountGroup, mdiCalendar, mdiEmailOutline, mdiMapMarker, mdiSprout } from '@mdi/js';
+import { Icon } from '@/components/Icon';
 
 export const dynamic = 'force-dynamic';
 
@@ -70,9 +72,9 @@ export default async function ActivityPage({ params }: Props) {
             <span className="org-type">{t('org.' + a.org_type)}</span>
           </p>
           <p className="muted">
-            📅 {when(t, f, a, true)}
-            <br />📍 {a.location_name}
-            <br />👥{' '}
+            <Icon path={mdiCalendar} /> {when(t, f, a, true)}
+            <br /><Icon path={mdiMapMarker} /> {a.location_name}
+            <br /><Icon path={mdiAccountGroup} />{' '}
             {t('detail.participants', {
               n: a.max_participants ?? a.participant_count,
               count: f.num(a.participant_count) + (a.max_participants ? ' / ' + f.num(a.max_participants) : ''),
@@ -82,14 +84,14 @@ export default async function ActivityPage({ params }: Props) {
           <div>
             <ProgressBar a={a} />
             <p className="muted" style={{ margin: 0 }}>
-              🌱 <strong>{f.num(a.collected_benih)}</strong>
+              <Icon path={mdiSprout} /> <strong>{f.num(a.collected_benih)}</strong>
               {a.target_benih ? ' / ' + f.num(a.target_benih) : ''} Benih
             </p>
           </div>
         </div>
         <section className="card stack tight loc-card">
           <h2>{t('loc.title')}</h2>
-          <p className="muted">📍 {a.location_name}</p>
+          <p className="muted"><Icon path={mdiMapMarker} /> {a.location_name}</p>
           <iframe
             className="map-embed"
             src={embedUrl(a.lat, a.lng, { lang })}
@@ -116,7 +118,7 @@ export default async function ActivityPage({ params }: Props) {
             <>
               <p className="alert success">{t('join.own')}</p>
               <a className="btn" href="#kelola-peserta">
-                👥 {t('manage.open', { count: f.num(participants.length) })}
+                <Icon path={mdiAccountGroup} /> {t('manage.open', { count: f.num(participants.length) })}
               </a>
             </>
           ) : !user ? (
@@ -135,7 +137,7 @@ export default async function ActivityPage({ params }: Props) {
             <h2>{t('join.msgOrg')}</h2>
             <p className="muted">{t('msg.askOrg')}</p>
             <Link className="btn ghost" href={`/pesan/${a.owner_id}?tentang=${encodeURIComponent(a.title)}`}>
-              ✉️ {t('join.msgOrg')}
+              <Icon path={mdiEmailOutline} /> {t('join.msgOrg')}
             </Link>
           </section>
         )}

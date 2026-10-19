@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { deleteActivity } from '@/app/admin/actions';
 import { useI18n } from './I18nProvider';
+import { mdiDeleteOutline } from '@mdi/js';
+import { Icon } from './Icon';
 
 /** Tombol hapus kegiatan untuk admin. Setelah terhapus, pindah ke `after` atau muat ulang daftar. */
 export function AdminDeleteActivity({ id, title, after, demo }: { id: string; title: string; after?: string; demo?: boolean }) {
@@ -28,7 +30,7 @@ export function AdminDeleteActivity({ id, title, after, demo }: { id: string; ti
   return (
     <>
       <button className="btn small danger" type="button" onClick={run} disabled={busy}>
-        🗑 {busy ? t('admin.deleting') : t('admin.delete')}
+        <Icon path={mdiDeleteOutline} /> {busy ? t('admin.deleting') : t('admin.delete')}
       </button>
       {error && <p className="alert error" role="alert">{error}</p>}
     </>

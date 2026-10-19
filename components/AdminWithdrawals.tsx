@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { rpcErrorText } from '@/lib/rpc-errors';
 import { getBrowserClient } from '@/lib/supabase/client';
 import { useI18n } from './I18nProvider';
+import { mdiCheck } from '@mdi/js';
+import { Icon } from './Icon';
 
 export type AdminWithdrawal = {
   id: string;
@@ -98,7 +100,7 @@ export function AdminWithdrawals({ items, demo }: { items: AdminWithdrawal[]; de
               ) : (
                 <div className="row">
                   <button className="btn small" type="button" disabled={busyId === w.id} onClick={() => act(w, 'admin_mark_withdrawal_paid', '')}>
-                    ✓ {t('admin.markPaid')}
+                    <Icon path={mdiCheck} /> {t('admin.markPaid')}
                   </button>
                   <button className="btn small ghost" type="button" disabled={busyId === w.id} onClick={() => setRejecting(w.id)}>
                     {t('admin.reject')}
