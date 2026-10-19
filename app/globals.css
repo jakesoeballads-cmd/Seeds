@@ -49,6 +49,14 @@ button { font: inherit; }
 .hero-photo h1 { color: #fff; font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.12; margin: 0; }
 .hero-photo p { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.25rem); max-width: 52ch; }
 .hero-photo .tagline { font-family: var(--mono); }
+.seed-hero { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.seed-hero-canvas { width: min(100%, 380px); aspect-ratio: 1 / 1; touch-action: pan-y; cursor: grab; margin-bottom: -18px;
+  -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); }
+.seed-hero-canvas:active { cursor: grabbing; }
+.seed-hero-stages { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.seed-hero-stages button { border: 1px solid rgba(255,255,255,.45); background: rgba(255,255,255,.08); color: #fff; border-radius: 999px; padding: 4px 12px; font-size: .85rem; cursor: pointer; }
+.seed-hero-stages button[aria-pressed="true"] { background: #fff; color: #2c3a12; border-color: #fff; font-weight: 700; }
+@media (max-width: 600px) { .seed-hero-canvas { width: min(100%, 270px); } }
 .btn.light { background: #fff; color: #454545; font-family: var(--serif); font-weight: 600; font-size: 1.3rem; padding: 12px 32px; border-radius: 8px; }
 .btn.light:hover { background: #f1f1f1; }
 .band { background: var(--soft); padding: 44px 16px; }
