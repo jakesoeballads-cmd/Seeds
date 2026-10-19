@@ -5,6 +5,8 @@ import { AgreeForm } from './AgreeForm';
 import { Rich } from './ActivityBits';
 import { Avatar } from './Avatar';
 import { Chat } from './Chat';
+import { mdiArrowLeft } from '@mdi/js';
+import { Icon } from './Icon';
 
 type Props = {
   t: T;
@@ -29,7 +31,7 @@ export function ActivityChat({ t, num, activity, join, me, otherId, otherName, o
   return (
     <section className="card narrow stack tight" style={{ maxWidth: 640 }}>
       <p>
-        <Link href={`/kegiatan/${activity.id}`}>← {activity.title}</Link>
+        <Link href={`/kegiatan/${activity.id}`}><Icon path={mdiArrowLeft} /> {activity.title}</Link>
       </p>
       <div className="chat-head">
         <Avatar name={otherName} src={otherAvatar} />

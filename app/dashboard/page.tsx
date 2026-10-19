@@ -9,6 +9,8 @@ import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Activity, JoinWithActivity } from '@/lib/types';
 import { getWallet } from '@/lib/wallet';
+import { mdiHandshake, mdiHeart, mdiSprout, mdiTree } from '@mdi/js';
+import { Icon } from '@/components/Icon';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 export const dynamic = 'force-dynamic';
@@ -67,23 +69,23 @@ export default async function DashboardPage() {
       <div className="stats">
         <div className="stat">
           <span className="stat-label">{t('dash.owned')}</span>
-          <span className="stat-value">🌱 {f.num(balance)}</span>
+          <span className="stat-value"><Icon path={mdiSprout} /> {f.num(balance)}</span>
           <Link className="btn small" href="/dompet">{t('dash.buyWithdraw')}</Link>
         </div>
         <div className="stat">
           <span className="stat-label">{t('dash.donated')}</span>
-          <span className="stat-value">💚 {f.num(donated)}</span>
+          <span className="stat-value"><Icon path={mdiHeart} /> {f.num(donated)}</span>
           <BadgeTile t={t} b={db} unit="Benih" num={f.num} />
         </div>
         <div className="stat">
           <span className="stat-label">{t('dash.points')}</span>
-          <span className="stat-value">🤝 {f.num(points)}</span>
+          <span className="stat-value"><Icon path={mdiHandshake} /> {f.num(points)}</span>
           <BadgeTile t={t} b={vb} unit={t('unit.points')} num={f.num} />
           <span className="muted">{t('dash.volEvents', { n: attended, p: POINTS })}</span>
         </div>
         <div className="stat">
           <span className="stat-label">{t('dash.received')}</span>
-          <span className="stat-value">🌳 {f.num(received)}</span>
+          <span className="stat-value"><Icon path={mdiTree} /> {f.num(received)}</span>
           <span className="muted">{t('dash.fromN', { n: mine.length })}</span>
           <Link className="btn small" href="/buat">{t('home.ctaCreate')}</Link>
         </div>
@@ -205,7 +207,7 @@ export default async function DashboardPage() {
                   <br />
                   <span className="muted">{f.date(d.created_at)}</span>
                 </span>
-                <strong>💚 {f.num(d.amount)} Benih</strong>
+                <strong><Icon path={mdiHeart} /> {f.num(d.amount)} Benih</strong>
               </li>
             ))}
           </ul>

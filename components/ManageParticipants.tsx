@@ -8,6 +8,8 @@ import { rpcErrorText } from '@/lib/rpc-errors';
 import { getBrowserClient } from '@/lib/supabase/client';
 import type { Participant } from '@/lib/types';
 import { useI18n } from './I18nProvider';
+import { mdiMessageTextOutline } from '@mdi/js';
+import { Icon } from './Icon';
 
 export function ManageParticipants({ participants }: { participants: Participant[] }) {
   const { t, f } = useI18n();
@@ -91,7 +93,7 @@ export function ManageParticipants({ participants }: { participants: Participant
                       )}
                       {p.role === 'paid' && (
                         <Link className="btn small ghost" href={`/kegiatan/${p.activity_id}/pesan/${p.user_id}`}>
-                          💬 {t('chat.open')}
+                          <Icon path={mdiMessageTextOutline} /> {t('chat.open')}
                         </Link>
                       )}
                       {p.role === 'paid' && p.status === 'agreed' && p.agreed_benih ? (

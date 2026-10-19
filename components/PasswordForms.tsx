@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { getBrowserClient } from '@/lib/supabase/client';
 import { RECOVERY_COOKIE } from '@/lib/constants';
 import { useI18n } from './I18nProvider';
+import { mdiArrowLeft } from '@mdi/js';
+import { Icon } from './Icon';
 
 type Msg = { ok: boolean; text: string } | null;
 
@@ -52,7 +54,7 @@ export function ForgotPasswordForm() {
         </button>
       </form>
       <p className="muted">
-        <Link href="/masuk">← {t('auth.login')}</Link>
+        <Link href="/masuk"><Icon path={mdiArrowLeft} /> {t('auth.login')}</Link>
       </p>
     </section>
   );

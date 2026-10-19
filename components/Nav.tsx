@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import { mdiHandHeart } from '@mdi/js';
 import { getI18n } from '@/lib/i18n-server';
 import { isAdmin } from '@/lib/admin';
 import { getUnreadCount } from '@/lib/social';
 import { getUser } from '@/lib/supabase/server';
 import { BottomNav } from './BottomNav';
+import { Icon } from './Icon';
 import { UnreadBadge } from './UnreadBadge';
 
 export async function Nav() {
@@ -16,7 +18,7 @@ export async function Nav() {
       <BottomNav userId={null} unread={0} />
       <nav className="main-nav">
         <Link className="pill" href="/masuk">
-          <span className="leaf">♥</span> {t('nav.donate')}
+          <Icon path={mdiHandHeart} className="leaf" /> {t('nav.donate')}
         </Link>
         <Link className="navlink" href="/masuk">{t('nav.login')}</Link>
       </nav>
@@ -37,7 +39,7 @@ export async function Nav() {
       </Link>
       {admin && <Link className="navlink" href="/admin">{t('nav.admin')}</Link>}
       <Link className="pill" href="/dompet">
-        <span className="leaf">♥</span> {t('nav.buy')}
+        <Icon path={mdiHandHeart} className="leaf" /> {t('nav.buy')}
       </Link>
       <form action="/keluar" method="post">
         <button className="navlink" type="submit">{t('nav.logout')}</button>

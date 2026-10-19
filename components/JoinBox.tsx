@@ -8,6 +8,8 @@ import { getBrowserClient } from '@/lib/supabase/client';
 import type { Participant, Role } from '@/lib/types';
 import { Rich } from './ActivityBits';
 import { useI18n } from './I18nProvider';
+import { mdiMessageTextOutline } from '@mdi/js';
+import { Icon } from './Icon';
 
 export function JoinBox({ activityId, join, full }: { activityId: string; join: Participant | null; full: boolean }) {
   const { t, f } = useI18n();
@@ -62,7 +64,7 @@ export function JoinBox({ activityId, join, full }: { activityId: string; join: 
               {join.agreed_benih ? ` · ${f.num(join.agreed_benih)} Benih` : ''}
             </p>
             <Link className="btn small" href={`/kegiatan/${activityId}/pesan`}>
-              💬 {t('chat.open')}
+              <Icon path={mdiMessageTextOutline} /> {t('chat.open')}
             </Link>
           </>
         )}

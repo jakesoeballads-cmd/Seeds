@@ -9,6 +9,8 @@ import type { Activity } from '@/lib/types';
 import { ActivityMap } from './ActivityMap';
 import { ProgressBar, collectedText, when } from './ActivityBits';
 import { useI18n } from './I18nProvider';
+import { mdiMapMarker, mdiSprout } from '@mdi/js';
+import { Icon } from './Icon';
 
 export function NearbyActivities({ activities, userId }: { activities: Activity[]; userId: string | null }) {
   const { t, f, lang } = useI18n();
@@ -111,7 +113,7 @@ export function NearbyActivities({ activities, userId }: { activities: Activity[
           {t('search.btn')}
         </button>
         <button className="btn ghost" type="button" onClick={myLocation}>
-          📍 {t('search.mine')}
+          <Icon path={mdiMapMarker} /> {t('search.mine')}
         </button>
       </form>
       {searchMsg && (
@@ -156,7 +158,7 @@ export function NearbyActivities({ activities, userId }: { activities: Activity[
                       {a.location_name} · {f.km(a.km)} km · {when(t, f, a)}
                     </p>
                     <ProgressBar a={a} />
-                    <p className="muted">🌱 {collectedText(t, f, a)}</p>
+                    <p className="muted"><Icon path={mdiSprout} /> {collectedText(t, f, a)}</p>
                     <div className="row" style={{ marginTop: 6 }}>
                       <Link className="btn small" href={`/kegiatan/${a.id}`}>
                         {own ? t('btn.manage') : t('btn.viewJoin')}

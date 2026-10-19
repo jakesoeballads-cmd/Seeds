@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { GOOGLE_MAPS_KEY, embedUrl, geocode, type MapProps } from '@/lib/maps';
 import { GoogleMap } from './GoogleMap';
 import { useI18n } from './I18nProvider';
+import { mdiMapMarker } from '@mdi/js';
+import { Icon } from './Icon';
 
 /** Peta kegiatan, selalu Google Maps: interaktif bila NEXT_PUBLIC_GOOGLE_MAPS_API_KEY diisi, selain itu embed Google Maps. */
 export function ActivityMap(props: MapProps) {
@@ -71,7 +73,7 @@ function GoogleEmbedMap({ center, pins = [], activeId, picking, pick, onPick, zo
             {t('search.btn')}
           </button>
           <button className="btn ghost" type="button" onClick={here}>
-            📍 {t('search.mine')}
+            <Icon path={mdiMapMarker} /> {t('search.mine')}
           </button>
         </div>
       )}

@@ -2,7 +2,9 @@ import Link from 'next/link';
 import { Features } from '@/components/Features';
 import { NearbyActivities } from '@/components/NearbyActivities';
 import { PlayOnView } from '@/components/PlayOnView';
-import { SeedHero } from '@/components/SeedHero';
+import { GlobeHero } from '@/components/GlobeHero';
+import { Icon } from '@/components/Icon';
+import { mdiAccountGroup, mdiPlusCircle } from '@mdi/js';
 import { getUpcomingActivities } from '@/lib/data';
 import { getI18n } from '@/lib/i18n-server';
 import { getUser } from '@/lib/supabase/server';
@@ -15,17 +17,17 @@ export default async function HomePage() {
 
   return (
     <div className="stack">
-      <section className="hero-photo full-bleed">
+      <GlobeHero>
         <div className="inner">
-          <SeedHero label={t('home.growLabel')} labels={[0, 1, 2, 3, 4].map((i) => t(`home.grow${i}`))} />
           <h1>{t('home.welcomeTitle')}</h1>
           <p>{t('home.welcomeText')}</p>
-          <Link className="btn light" href={user ? '/buat' : '/daftar'}>
+          <Link className="btn aksen lg" href={user ? '/buat' : '/daftar'}>
+            <Icon path={user ? mdiPlusCircle : mdiAccountGroup} />
             {user ? t('home.ctaCreate') : t('home.ctaJoin')}
           </Link>
           <span className="tagline">{t('home.tagline')}</span>
         </div>
-      </section>
+      </GlobeHero>
       <PlayOnView className="band full-bleed">
         <div className="inner">
           <h2>{t('home.nearTitle')}</h2>

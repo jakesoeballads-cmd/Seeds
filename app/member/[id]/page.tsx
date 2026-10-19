@@ -7,6 +7,8 @@ import { POINTS, VOLUNTEER_BADGES, badgeInfo } from '@/lib/constants';
 import { getI18n } from '@/lib/i18n-server';
 import { getMember } from '@/lib/social';
 import { getUser } from '@/lib/supabase/server';
+import { mdiEmailOutline, mdiHandshake, mdiLock, mdiMapMarker, mdiSprout, mdiTree } from '@mdi/js';
+import { Icon } from '@/components/Icon';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,7 +46,7 @@ export default async function MemberPage({ params }: Props) {
             {m.is_private && (
               <>
                 {' '}
-                <span title={t('member.lockedTitle')} aria-label={t('member.lockedTitle')}>🔒</span>
+                <span title={t('member.lockedTitle')} aria-label={t('member.lockedTitle')}><Icon path={mdiLock} /></span>
               </>
             )}
           </h1>
@@ -52,7 +54,7 @@ export default async function MemberPage({ params }: Props) {
             <>
               {m.member_type && <span className="member-type">{t('mt.' + m.member_type)}</span>}
               <p className="muted">
-                {m.city && <>📍 {m.city} · </>}
+                {m.city && <><Icon path={mdiMapMarker} /> {m.city} · </>}
                 {m.created_at ? t('member.since', { date: f.date(m.created_at) }) : t('member.sample')}
               </p>
               {m.bio && <p className="bio">{m.bio}</p>}
@@ -61,7 +63,7 @@ export default async function MemberPage({ params }: Props) {
           {!isOwner && !m.locked && supabase && (
             <div className="row">
               <Link className="btn small" href={user ? dmPath : `/masuk?next=${encodeURIComponent(dmPath)}`}>
-                ✉️ {t('member.send')}
+                <Icon path={mdiEmailOutline} /> {t('member.send')}
               </Link>
             </div>
           )}
@@ -79,7 +81,7 @@ export default async function MemberPage({ params }: Props) {
 
       {m.locked ? (
         <section className="card narrow locked stack tight">
-          <p className="lock-big" aria-hidden="true">🔒</p>
+          <p className="lock-big" aria-hidden="true"><Icon path={mdiLock} /></p>
           <h2>{t('member.lockedTitle')}</h2>
           <p className="muted">{t('member.lockedText')}</p>
           <Link className="btn" href="/">{t('member.backHome')}</Link>
@@ -89,7 +91,7 @@ export default async function MemberPage({ params }: Props) {
           <div className="stats">
             <div className="stat">
               <span className="stat-label">{t('dash.points')}</span>
-              <span className="stat-value">🤝 {f.num(points)}</span>
+              <span className="stat-value"><Icon path={mdiHandshake} /> {f.num(points)}</span>
               {vb.current ? (
                 <span className="badge-pill">
                   {vb.current.icon} {t(vb.current.key)}
@@ -100,7 +102,7 @@ export default async function MemberPage({ params }: Props) {
             </div>
             <div className="stat">
               <span className="stat-label">{t('member.organized')}</span>
-              <span className="stat-value">🌳 {f.num(activities.length)}</span>
+              <span className="stat-value"><Icon path={mdiTree} /> {f.num(activities.length)}</span>
             </div>
           </div>
           <section className="card stack tight">
@@ -118,7 +120,7 @@ export default async function MemberPage({ params }: Props) {
                       {when(t, f, a)} · {a.location_name}
                     </span>
                     <span className="muted">
-                      {t('by', { name: a.org_name })} · <span className="org-type">{t('org.' + a.org_type)}</span> · 🌱 {f.num(a.collected_benih)}
+                      {t('by', { name: a.org_name })} · <span className="org-type">{t('org.' + a.org_type)}</span> · <Icon path={mdiSprout} /> {f.num(a.collected_benih)}
                       {a.target_benih ? ' / ' + f.num(a.target_benih) : ''} Benih
                     </span>
                     <ProgressBar a={a} />
