@@ -6,7 +6,8 @@ import type { GlobeScene } from '@/lib/globe3d';
 /**
  * Hero beranda dengan globe Bumi 3D sebagai latar. three.js dan citra satelit baru dimuat
  * setelah hero terlihat dan halaman senggang, jadi teks dan tombol tampil lebih dulu.
- * Tanpa WebGL, hero tetap tampil dengan latar zaitun biasa.
+ * Tanpa WebGL, hero tetap tampil dengan latar zaitun biasa. Saat digulir, globe bergerak lebih
+ * lambat dari teks (paralaks) lewat variabel CSS --par.
  */
 export function GlobeHero({ children }: { children: React.ReactNode }) {
   const hero = useRef<HTMLElement>(null);
@@ -29,7 +30,20 @@ export function GlobeHero({ children }: { children: React.ReactNode }) {
       if (idle) idle(() => void start()); else setTimeout(() => void start(), 200);
     });
     io.observe(area);
-    return () => { cancelled = true; io.disconnect(); scene?.destroy(); };
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        area.style.setProperty('--par', `${Math.min(window.scrollY, area.offsetHeight) * 0.35}px`);
+      });
+    };
+    if (!still) window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      cancelled = true; io.disconnect(); scene?.destroy();
+      window.removeEventListener('scroll', onScroll); cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
