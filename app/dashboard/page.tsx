@@ -235,7 +235,7 @@ function BadgeTile({ t, b, unit, num }: { t: T; b: ReturnType<typeof badgeInfo>;
     <>
       {b.current ? (
         <span className="badge-pill">
-          {b.current.icon} {t(b.current.key)}
+          <span className="coin" aria-hidden="true">{b.current.icon}</span> {t(b.current.key)}
         </span>
       ) : (
         <span className="muted">{t('badge.none')}</span>
@@ -259,7 +259,7 @@ function BadgeList({ t, tiers, total, req }: { t: T; tiers: Badge[]; total: numb
     <ul className="badge-list">
       {tiers.map((x) => (
         <li key={x.key} className={total >= x.min ? 'earned' : ''}>
-          {x.icon} <strong>{t(x.key)}</strong> <span className="muted">{req(x)}</span>
+          <span className="coin" aria-hidden="true">{x.icon}</span> <strong>{t(x.key)}</strong> <span className="muted">{req(x)}</span>
         </li>
       ))}
     </ul>

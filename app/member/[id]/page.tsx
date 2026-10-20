@@ -94,7 +94,7 @@ export default async function MemberPage({ params }: Props) {
               <span className="stat-value"><Icon path={mdiHandshake} /> {f.num(points)}</span>
               {vb.current ? (
                 <span className="badge-pill">
-                  {vb.current.icon} {t(vb.current.key)}
+                  <span className="coin" aria-hidden="true">{vb.current.icon}</span> {t(vb.current.key)}
                 </span>
               ) : (
                 <span className="muted">{t('badge.none')}</span>

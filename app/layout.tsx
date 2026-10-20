@@ -5,6 +5,7 @@ import { I18nProvider } from '@/components/I18nProvider';
 import { LangSelect } from '@/components/LangSelect';
 import { Nav } from '@/components/Nav';
 import { Logo } from '@/components/Logo';
+import { TiltCards } from '@/components/TiltCards';
 import { getI18n } from '@/lib/i18n-server';
 import { isSupabaseConfigured, supabaseConfigInvalid } from '@/lib/supabase/config';
 
@@ -45,6 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <LangSelect />
           </header>
           <main className="container">{children}</main>
+          <TiltCards />
           <footer className="footer">© {new Date().getFullYear()} PT Daya Reforestasi Indonesia</footer>
         </I18nProvider>
       </body>
