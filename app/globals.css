@@ -190,6 +190,7 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--bo
 .chip[aria-pressed="true"] { background: var(--action); color: var(--on-action); border-color: var(--action); }
 .photo-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
 .photo-preview img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); }
+.photo-kept { display: grid; gap: 6px; justify-items: start; }
 
 .modal { position: fixed; inset: 0; background: var(--overlay); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
 .modal .card { width: 100%; max-width: 420px; }
