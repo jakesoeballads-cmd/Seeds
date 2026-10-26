@@ -43,7 +43,8 @@ button { font: inherit; }
 .navlink:hover { color: var(--action); }
 .navlink[aria-current="page"] { border-bottom-color: var(--brand); }
 .brand { display: inline-flex; align-items: center; gap: 2px; font-weight: 700; font-size: 1.6rem; color: var(--ink); background: none; border: 0; cursor: pointer; padding: 0; letter-spacing: -.02em; }
-.brand .wordmark { display: block; height: 38px; width: auto; color: var(--ink); }
+.brand picture { display: block; line-height: 0; }
+.brand .logo { display: block; height: 52px; width: auto; }
 .pill { display: inline-flex; align-items: center; gap: 6px; background: var(--card); color: var(--text); border: 0; border-radius: 999px; padding: 7px 15px; box-shadow: var(--shadow); cursor: pointer; }
 .pill:hover { box-shadow: 0 3px 12px rgba(0, 0, 0, .2); }
 .pill .leaf { color: var(--brand); }

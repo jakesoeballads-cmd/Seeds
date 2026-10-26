@@ -12,7 +12,17 @@ import { isSupabaseConfigured, supabaseConfigInvalid } from '@/lib/supabase/conf
 export const metadata: Metadata = {
   title: { default: 'Benih', template: '%s · Benih' },
   description: 'Tempat para environmentalist berkontribusi dan saling mendukung untuk pelestarian lingkungan.',
-  icons: { icon: '/icon.svg' },
+  metadataBase: new URL('https://benih.earth'),
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon-16.png', type: 'image/png', sizes: '16x16' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
+  openGraph: { images: [{ url: '/og-image.png', width: 1200, height: 630 }] },
 };
 
 export const viewport: Viewport = {
