@@ -67,6 +67,12 @@ button { font: inherit; }
 .btn.light { background: #fff; color: #454545; font-weight: 600; font-size: 1.3rem; padding: 12px 32px; border-radius: 8px; }
 .btn.aksen, a.btn.aksen { background: var(--aksen); color: var(--on-aksen); }
 .btn.aksen:hover { background: var(--aksen-hover); }
+/* Tombol "berlian": bening seperti kaca, tepinya berkilau pelangi lembut. */
+:root { --diamond-fill: linear-gradient(135deg, rgba(255, 255, 255, .42), rgba(255, 255, 255, .08) 45%, rgba(255, 255, 255, .26)); --diamond-edge: conic-gradient(from 200deg, #ffffff, #bfe9ff, #e6d4ff, #fff3c4, #c8ffe9, #bfe9ff, #ffffff); }
+.btn.diamond, a.btn.diamond { position: relative; color: #fff; background: linear-gradient(135deg, rgba(255, 255, 255, .26), rgba(255, 255, 255, .04) 50%, rgba(255, 255, 255, .16)); backdrop-filter: blur(10px) saturate(1.3); -webkit-backdrop-filter: blur(10px) saturate(1.3); text-shadow: 0 1px 6px rgba(0, 0, 0, .35); }
+.btn.diamond::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; background: var(--diamond-edge); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); pointer-events: none; }
+.btn.diamond:hover { background: linear-gradient(135deg, rgba(255, 255, 255, .38), rgba(255, 255, 255, .1) 50%, rgba(255, 255, 255, .26)); }
+.globe-hero .btn.diamond { text-shadow: 0 1px 6px rgba(0, 0, 0, .35); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 0 18px rgba(200, 230, 255, .35), 0 16px 32px -6px rgba(0, 0, 0, .5); }
 .btn.lg { display: inline-flex; align-items: center; gap: 8px; font-size: 1.1rem; font-weight: 600; padding: 13px 28px; }
 .btn.light:hover { background: #f1f1f1; }
 .band { background: var(--soft); padding: 44px 16px; }
@@ -335,7 +341,9 @@ iframe.google-map { display: block; border: 0; }
   .bottom-nav a { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 56px; padding: 6px 4px; color: var(--muted); text-decoration: none; font-size: .72rem; font-weight: 700; border-radius: 14px; }
   .bottom-nav svg { width: 28px; height: 28px; padding: 2px; }
   .bottom-nav a[aria-current] { color: var(--text); }
-  .bottom-nav a.create svg { background: var(--aksen); color: var(--on-aksen); border-radius: 10px; width: 44px; padding: 3px 11px; }
+  .bottom-nav a.create svg { background: var(--diamond-fill) padding-box, var(--diamond-edge) border-box; border: 2px solid transparent; color: var(--text); border-radius: 10px; width: 44px; padding: 3px 11px; }
+  .bottom-nav a.home-logo { padding: 2px 4px; }
+  .bottom-nav a.home-logo .logo { display: block; height: 44px; width: auto; }
   .bottom-nav a .count-badge { position: absolute; top: 0; right: 10px; }
   .profile-head { flex-direction: column; align-items: center; text-align: center; }
   .profile-head .row { justify-content: center; }
@@ -468,7 +476,7 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 @media (max-width: 760px) {
   .topbar { box-shadow: var(--e1); }
   .topbar nav.bottom-nav { background: color-mix(in srgb, var(--card) 72%, transparent); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border-color: color-mix(in srgb, var(--border) 60%, transparent); box-shadow: inset 0 1px 0 var(--hi), var(--e3); }
-  .bottom-nav a.create svg { width: 52px; height: 52px; padding: 12px; border-radius: 50%; margin-top: -26px; background: linear-gradient(180deg, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 60%), var(--aksen); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 3px 0 var(--edge-aksen), 0 10px 20px -4px rgba(0, 0, 0, .4), 0 0 0 4px var(--bg); }
+  .bottom-nav a.create svg { width: 52px; height: 52px; padding: 11px; border-radius: 50%; margin-top: -26px; color: var(--text); border: 2px solid transparent; background: var(--diamond-fill) padding-box, var(--diamond-edge) border-box; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 8px 20px -6px rgba(90, 120, 160, .45), 0 0 0 4px var(--bg); }
   .stack > .globe-hero + .band { margin-top: -56px; }
 }
 
