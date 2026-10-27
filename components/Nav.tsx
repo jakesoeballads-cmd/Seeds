@@ -38,9 +38,6 @@ export async function Nav() {
         {t('nav.messages')} <UnreadBadge initial={unread} />
       </Link>
       {admin && <Link className="navlink" href="/admin">{t('nav.admin')}</Link>}
-      <Link className="pill" href="/dompet">
-        <Icon path={mdiHandHeart} className="leaf" /> {t('nav.buy')}
-      </Link>
       <form action="/keluar" method="post">
         <button className="navlink" type="submit">{t('nav.logout')}</button>
       </form>

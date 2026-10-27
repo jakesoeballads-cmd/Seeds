@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { mdiAccountCircleOutline, mdiHomeOutline, mdiMagnify, mdiMessageTextOutline, mdiPlus } from '@mdi/js';
+import { mdiAccountCircleOutline, mdiMagnify, mdiMessageTextOutline, mdiPlus } from '@mdi/js';
 import { Icon } from './Icon';
+import { Logo } from './Logo';
 import { useI18n } from './I18nProvider';
 import { UnreadBadge } from './UnreadBadge';
 
@@ -17,9 +18,8 @@ export function BottomNav({ userId, unread }: { userId: string | null; unread: n
 
   return (
     <nav className="bottom-nav" aria-label={t('bn.label')}>
-      <Link href="/" {...cur(path === '/')}>
-        <Icon path={mdiHomeOutline} />
-        <span>{t('bn.home')}</span>
+      <Link href="/" className="home-logo" aria-label={t('bn.home')} {...cur(path === '/')}>
+        <Logo height={44} />
       </Link>
       <Link href="/#cari">
         <Icon path={mdiMagnify} />

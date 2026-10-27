@@ -21,7 +21,7 @@ export default async function HomePage() {
         <div className="inner">
           <h1>{t('home.welcomeTitle')}</h1>
           <p>{t('home.welcomeText')}</p>
-          <Link className="btn aksen lg" href={user ? '/buat' : '/daftar'}>
+          <Link className={user ? 'btn diamond lg' : 'btn aksen lg'} href={user ? '/buat' : '/daftar'}>
             <Icon path={user ? mdiPlusCircle : mdiAccountGroup} />
             {user ? t('home.ctaCreate') : t('home.ctaJoin')}
           </Link>
