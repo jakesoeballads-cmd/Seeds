@@ -9,6 +9,7 @@ import { JoinBox } from '@/components/JoinBox';
 import { ManageParticipants } from '@/components/ManageParticipants';
 import { ShareBox } from '@/components/ShareBox';
 import { isAdmin } from '@/lib/admin';
+import { editDeadline, editLocked } from '@/lib/constants';
 import { getActivity } from '@/lib/data';
 import { getI18n } from '@/lib/i18n-server';
 import { directionsUrl, embedUrl, openUrl } from '@/lib/maps';
@@ -17,7 +18,7 @@ import { SITE_URL } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Participant } from '@/lib/types';
 import { getWallet } from '@/lib/wallet';
-import { mdiAccountGroup, mdiCalendar, mdiEmailOutline, mdiMapMarker, mdiSprout } from '@mdi/js';
+import { mdiAccountGroup, mdiCalendar, mdiEmailOutline, mdiMapMarker, mdiPencil, mdiSprout } from '@mdi/js';
 import { Icon } from '@/components/Icon';
 
 export const dynamic = 'force-dynamic';
@@ -57,6 +58,8 @@ export default async function ActivityPage({ params }: Props) {
   const photos = photosOf(a);
   const shareUrl = `${SITE_URL}/kegiatan/${a.id}`;
   const full = a.max_participants != null && a.participant_count >= a.max_participants;
+  const locked = own && editLocked(a);
+  const deadline = editDeadline(a);
 
   return (
     <div className="program-layout">
@@ -120,6 +123,23 @@ export default async function ActivityPage({ params }: Props) {
               <a className="btn" href="#kelola-peserta">
                 <Icon path={mdiAccountGroup} /> {t('manage.open', { count: f.num(participants.length) })}
               </a>
+              {locked ? (
+                <>
+                  <button className="btn ghost" type="button" disabled aria-describedby="edit-locked">
+                    <Icon path={mdiPencil} /> {t('edit.btn')}
+                  </button>
+                  <p id="edit-locked" className="muted" style={{ margin: 0 }}>{t('edit.locked')}</p>
+                </>
+              ) : (
+                <>
+                  <Link className="btn ghost" href={`/kegiatan/${a.id}/ubah`}>
+                    <Icon path={mdiPencil} /> {t('edit.btn')}
+                  </Link>
+                  <p className="muted" style={{ margin: 0 }}>
+                    {t('edit.until', { when: f.date(deadline.date) + ' ' + f.hm(deadline.time) + ' WIB' })}
+                  </p>
+                </>
+              )}
             </>
           ) : !user ? (
             <>

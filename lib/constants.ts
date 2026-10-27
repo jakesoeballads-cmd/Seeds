@@ -64,3 +64,20 @@ export function distanceKm(a: { lat: number; lng: number }, b: { lat: number; ln
 
 /** Cookie penanda permintaan reset password dari browser ini (lihat middleware.ts). */
 export const RECOVERY_COOKIE = 'benih_recovery';
+
+/** Kegiatan tidak bisa diedit dalam rentang ini sebelum dimulai (sama dengan supabase/tahap5-edit-kegiatan.sql). */
+export const EDIT_LOCK_MS = 2 * 864e5;
+
+/** Waktu mulai kegiatan; tanggal & jam disimpan sebagai waktu lokal Indonesia (WIB). */
+export function startsAt(a: { date: string; start_time: string }) {
+  return new Date(`${a.date}T${a.start_time.slice(0, 5)}:00+07:00`).getTime();
+}
+
+export function editLocked(a: { date: string; start_time: string }, now = Date.now()) {
+  return startsAt(a) - now < EDIT_LOCK_MS;
+}
+
+/** Batas akhir edit dalam WIB: tanggal (YYYY-MM-DD) dan jam yang sama dengan jam mulai. */
+export function editDeadline(a: { date: string; start_time: string }) {
+  return { date: new Date(startsAt(a) - EDIT_LOCK_MS + 7 * 3600e3).toISOString().slice(0, 10), time: a.start_time };
+}

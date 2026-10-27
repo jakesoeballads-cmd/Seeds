@@ -3,8 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { compressPhoto } from '@/lib/compress';
-import { CATEGORIES, DEFAULT_CENTER, MAX_PHOTOS, MAX_PHOTO_INPUT_BYTES, ORG_TYPES, PHOTO_BUCKET } from '@/lib/constants';
+import { CATEGORIES, DEFAULT_CENTER, editLocked, MAX_PHOTOS, MAX_PHOTO_INPUT_BYTES, ORG_TYPES, PHOTO_BUCKET } from '@/lib/constants';
+import { rpcErrorText } from '@/lib/rpc-errors';
 import { getBrowserClient } from '@/lib/supabase/client';
+import type { Activity } from '@/lib/types';
 import { ActivityMap } from './ActivityMap';
 import { useI18n } from './I18nProvider';
 
@@ -15,33 +17,38 @@ function isoDay(offset: number) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg: string }) {
+/** Formulir buat kegiatan; dengan `activity` menjadi formulir edit kegiatan itu. */
+export function CreateForm({ userId, defaultOrg, activity }: { userId: string; defaultOrg: string; activity?: Activity }) {
   const { t, f } = useI18n();
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
-  const [pick, setPick] = useState<Point | null>(null);
-  const [center, setCenter] = useState(DEFAULT_CENTER);
+  // Foto lama yang dipertahankan saat edit.
+  const [kept, setKept] = useState<string[]>(activity?.photos ?? []);
+  const [pick, setPick] = useState<Point | null>(activity ? { lat: activity.lat, lng: activity.lng } : null);
+  const [center, setCenter] = useState(activity ? { lat: activity.lat, lng: activity.lng } : DEFAULT_CENTER);
   const [timeErr, setTimeErr] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    if (activity) return;
     navigator.geolocation?.getCurrentPosition(
       (p) => setCenter({ lat: p.coords.latitude, lng: p.coords.longitude }),
       () => {},
       { timeout: 8000, maximumAge: 600000 },
     );
-  }, []);
+  }, [activity]);
 
   useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews]);
 
   function onFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const all = Array.from(e.target.files ?? []);
     const images = all.filter((x) => x.type.startsWith('image/'));
-    const ok = images.filter((x) => x.size <= MAX_PHOTO_INPUT_BYTES).slice(0, MAX_PHOTOS);
-    setError(all.length > MAX_PHOTOS ? t('toast.max5') : ok.length < Math.min(images.length, MAX_PHOTOS) ? t('toast.photoTooBig') : null);
+    const room = MAX_PHOTOS - kept.length;
+    const ok = images.filter((x) => x.size <= MAX_PHOTO_INPUT_BYTES).slice(0, room);
+    setError(all.length > room ? t('toast.max5') : ok.length < Math.min(images.length, room) ? t('toast.photoTooBig') : null);
     setFiles(ok);
     setPreviews(ok.map((x) => URL.createObjectURL(x)));
   }
@@ -57,6 +64,10 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
     if (!(end > start)) return setTimeErr(true);
     setTimeErr(false);
     if (!pick) return setError(t('toast.pickMap'));
+    if (activity) {
+      if (editLocked(activity)) return setError(t('edit.locked'));
+      if (editLocked({ date: v('date'), start_time: start })) return setError(t('edit.dateErr'));
+    }
 
     setBusy(true);
     setError(null);
@@ -79,31 +90,34 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
 
       // 2. Simpan kegiatan.
       const num = (k: string) => (v(k) ? Number(v(k)) : null);
-      const { data, error } = await supabase
-        .from('activities')
-        .insert({
-          title: v('title'),
-          category: v('category'),
-          org_name: v('org_name'),
-          org_type: v('org_type'),
-          description: v('description'),
-          location_name: v('location_name'),
-          lat: pick.lat,
-          lng: pick.lng,
-          date: v('date'),
-          start_time: start,
-          end_time: end,
-          max_participants: num('max_participants'),
-          target_benih: num('target_benih'),
-          photos: urls,
-        })
+      const fields = {
+        title: v('title'),
+        category: v('category'),
+        org_name: v('org_name'),
+        org_type: v('org_type'),
+        description: v('description'),
+        location_name: v('location_name'),
+        lat: pick.lat,
+        lng: pick.lng,
+        date: v('date'),
+        start_time: start,
+        end_time: end,
+        max_participants: num('max_participants'),
+        target_benih: num('target_benih'),
+        photos: [...kept, ...urls],
+      };
+      const { data, error } = await (activity
+        ? supabase.from('activities').update(fields).eq('id', activity.id)
+        : supabase.from('activities').insert(fields)
+      )
         .select('id')
         .single();
       if (error) throw error;
       router.push(`/kegiatan/${data.id}`);
       router.refresh();
     } catch (err) {
-      setError(t('err.generic', { msg: err instanceof Error ? err.message : String(err) }));
+      const e = err as { hint?: string | null; message?: string };
+      setError(e?.hint ? rpcErrorText(t, { hint: e.hint, message: e.message ?? '' }) : t('err.generic', { msg: err instanceof Error ? err.message : e?.message ?? String(err) }));
       setBusy(false);
       setStatus(null);
     }
@@ -111,16 +125,16 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
 
   return (
     <section className="card stack tight">
-      <h1>{t('create.title')}</h1>
-      <p className="muted">{t('create.intro')}</p>
+      <h1>{t(activity ? 'edit.title' : 'create.title')}</h1>
+      <p className="muted">{t(activity ? 'edit.intro' : 'create.intro')}</p>
       <form className="grid-form" onSubmit={onSubmit}>
         <label>
           {t('f.title')}
-          <input name="title" required minLength={3} maxLength={140} />
+          <input name="title" required minLength={3} maxLength={140} defaultValue={activity?.title} />
         </label>
         <label>
           {t('f.cat')}
-          <select name="category" defaultValue="reforest">
+          <select name="category" defaultValue={activity?.category ?? 'reforest'}>
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
                 {t('cat.' + c)}
@@ -130,11 +144,11 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
         </label>
         <label>
           {t('f.org')}
-          <input name="org_name" required maxLength={140} defaultValue={defaultOrg} placeholder={t('f.orgPh')} />
+          <input name="org_name" required maxLength={140} defaultValue={activity?.org_name ?? defaultOrg} placeholder={t('f.orgPh')} />
         </label>
         <label>
           {t('f.type')}
-          <select name="org_type" defaultValue="perorangan">
+          <select name="org_type" defaultValue={activity?.org_type ?? 'perorangan'}>
             {ORG_TYPES.map((k) => (
               <option key={k} value={k}>
                 {t('org.' + k)}
@@ -144,12 +158,25 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
         </label>
         <label className="full">
           {t('f.desc')}
-          <textarea name="description" rows={4} maxLength={4000} />
+          <textarea name="description" rows={4} maxLength={4000} defaultValue={activity?.description} />
         </label>
         <label className="full">
           {t('f.photos')}
-          <input type="file" accept="image/*" multiple onChange={onFiles} />
+          <input type="file" accept="image/*" multiple onChange={onFiles} disabled={kept.length >= MAX_PHOTOS} />
         </label>
+        {kept.length > 0 && (
+          <div className="full photo-preview">
+            {kept.map((s) => (
+              <div key={s} className="photo-kept">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={s} alt="" />
+                <button type="button" className="btn small ghost" onClick={() => setKept(kept.filter((x) => x !== s))}>
+                  {t('edit.removePhoto')}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         {previews.length > 0 && (
           <div className="full photo-preview">
             {previews.map((s) => (
@@ -160,27 +187,27 @@ export function CreateForm({ userId, defaultOrg }: { userId: string; defaultOrg:
         )}
         <label>
           {t('f.loc')}
-          <input name="location_name" required maxLength={200} />
+          <input name="location_name" required maxLength={200} defaultValue={activity?.location_name} />
         </label>
         <label>
           {t('f.target')}
-          <input name="target_benih" type="number" min={1} />
+          <input name="target_benih" type="number" min={1} defaultValue={activity?.target_benih ?? undefined} />
         </label>
         <label>
           {t('f.date')}
-          <input name="date" type="date" required min={isoDay(0)} defaultValue={isoDay(7)} />
+          <input name="date" type="date" required min={isoDay(activity ? 2 : 0)} defaultValue={activity?.date ?? isoDay(7)} />
         </label>
         <label>
           {t('f.max')}
-          <input name="max_participants" type="number" min={1} />
+          <input name="max_participants" type="number" min={activity?.participant_count || 1} defaultValue={activity?.max_participants ?? undefined} />
         </label>
         <label>
           {t('f.start')}
-          <input name="start" type="time" required defaultValue="08:00" aria-invalid={timeErr || undefined} />
+          <input name="start" type="time" required defaultValue={activity?.start_time.slice(0, 5) ?? '08:00'} aria-invalid={timeErr || undefined} />
         </label>
         <label>
           {t('f.end')}
-          <input name="end" type="time" required defaultValue="11:00" aria-invalid={timeErr || undefined} />
+          <input name="end" type="time" required defaultValue={activity?.end_time.slice(0, 5) ?? '11:00'} aria-invalid={timeErr || undefined} />
         </label>
         {timeErr && (
           <p className="full alert error" role="alert">
