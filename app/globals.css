@@ -1,31 +1,31 @@
 /* Desain diambil dari Prototipe Benih: topbar + container 1100px.
-   Tiga warna merek: Primer zaitun (tombol utama, judul), Sekunder hijau daun (ikon, label),
-   Aksen madu (hanya ajakan terpenting). Satu font: Poppins. Ikon: MDI. */
+   Warna merek: Primer biru laut #1b4965 (tombol, tautan, judul, hero globe), Sekunder hijau daun #3f8f5a
+   (ikon, label), Aksen amber #ffc300 (hanya ajakan terpenting), sea mist #cae9ff untuk pita dan latar lembut. Satu font: Poppins. Ikon: MDI. */
 :root {
-  --primer: #414f1c; --sekunder: #74ac00; --aksen: #e9b949; --aksen-hover: #f0c75e; --on-aksen: #2b2a12;
-  --brand: var(--sekunder); --action: var(--primer); --action-hover: #536424; --soft: #ecf2e2; --on-action: #ffffff; --ink: #111111; --btn: var(--primer);
-  --bg: #ffffff; --card: #ffffff; --text: #454545; --muted: #6f706c; --border: #dcdfd6;
-  --map-land: #eef0ea; --map-water: #c6dfee; --map-road: #ffffff; --map-park: #d9e9c6;
+  --primer: #1b4965; --sekunder: #3f8f5a; --aksen: #ffc300; --aksen-hover: #ffcf33; --on-aksen: #1b2a33;
+  --brand: var(--sekunder); --action: var(--primer); --action-hover: #245c7e; --soft: #cae9ff; --on-action: #ffffff; --ink: #1b4965; --btn: var(--primer);
+  --bg: #f3f9fe; --card: #ffffff; --text: #1d3444; --muted: #5a7080; --border: #d3e6f3;
+  --map-land: #eef4f8; --map-water: #c6dfee; --map-road: #ffffff; --map-park: #d9e9c6;
   --danger: #8a1c13; --danger-soft: #fdecea; --info: #1a3d8f; --info-soft: #e8f0fe; --warn: #8a5a00; --warn-soft: #fff4e5;
-  --pin: #d93025; --you: #2563eb; --overlay: rgba(20, 30, 20, .45); --chat-mine: #d9fdd3;
+  --pin: #d93025; --you: #2563eb; --overlay: rgba(10, 26, 38, .45); --chat-mine: #dff1ff;
   --radius: 8px; --shadow: 0 2px 8px rgba(0, 0, 0, .12);
   --font: "Poppins", "Helvetica Neue", Arial, sans-serif; --serif: var(--font);
   --mono: ui-monospace, "SFMono-Regular", Menlo, "Courier New", monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --primer: #a8bd5c; --sekunder: #8fc31f; --aksen: #f0c75e; --aksen-hover: #f5d47e; --on-aksen: #2b2a12;
-  --brand: var(--sekunder); --action: var(--primer); --action-hover: #bccf72; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: var(--primer);
-  --bg: #151813; --card: #1e221b; --text: #e6e9e2; --muted: #a2a99c; --border: #33392f;
-  --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
+  --primer: #8cc8f0; --sekunder: #6fc48a; --aksen: #ffcf33; --aksen-hover: #ffda5c; --on-aksen: #1b2a33;
+  --brand: var(--sekunder); --action: var(--primer); --action-hover: #a8d6f5; --soft: #16344a; --on-action: #0d1e2a; --ink: #eef6fc; --btn: var(--primer);
+  --bg: #0e1a23; --card: #15252f; --text: #e3edf4; --muted: #9bb0bf; --border: #26394a;
+  --map-land: #1a2833; --map-water: #1d3a4a; --map-road: #2c3f4e; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
-  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #144d37; color-scheme: dark; } }
+  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #17405a; color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --primer: #a8bd5c; --sekunder: #8fc31f; --aksen: #f0c75e; --aksen-hover: #f5d47e; --on-aksen: #2b2a12;
-  --brand: var(--sekunder); --action: var(--primer); --action-hover: #bccf72; --soft: #24301a; --on-action: #14190f; --ink: #f2f4ef; --btn: var(--primer);
-  --bg: #151813; --card: #1e221b; --text: #e6e9e2; --muted: #a2a99c; --border: #33392f;
-  --map-land: #222820; --map-water: #1d3a4a; --map-road: #3a4236; --map-park: #2b3d24;
+  --primer: #8cc8f0; --sekunder: #6fc48a; --aksen: #ffcf33; --aksen-hover: #ffda5c; --on-aksen: #1b2a33;
+  --brand: var(--sekunder); --action: var(--primer); --action-hover: #a8d6f5; --soft: #16344a; --on-action: #0d1e2a; --ink: #eef6fc; --btn: var(--primer);
+  --bg: #0e1a23; --card: #15252f; --text: #e3edf4; --muted: #9bb0bf; --border: #26394a;
+  --map-land: #1a2833; --map-water: #1d3a4a; --map-road: #2c3f4e; --map-park: #2b3d24;
   --danger: #f2a39b; --danger-soft: #3a1d1a; --info: #a9c1ff; --info-soft: #1a2440; --warn: #f0c46b; --warn-soft: #3a2c10;
-  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #144d37; color-scheme: dark; }
+  --pin: #ff6b5e; --you: #6aa1ff; --overlay: rgba(0, 0, 0, .6); --chat-mine: #17405a; color-scheme: dark; }
 
 * { box-sizing: border-box; }
 body { margin: 0; font-family: var(--font); font-size: 15px; background: var(--bg); color: var(--text); line-height: 1.5; overflow-x: clip; }
@@ -55,10 +55,10 @@ button { font: inherit; }
 .hero-photo p { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.25rem); max-width: 52ch; }
 .hero-photo .tagline { font-weight: 500; letter-spacing: .03em; }
 /* Globe Bumi 3D sebagai latar hero; tulisan di atasnya dengan bayangan lembut supaya terbaca. */
-.hero-photo.globe-hero { position: relative; overflow: hidden; isolation: isolate; min-height: min(78vh, 660px); display: grid; place-items: center; padding-block: 72px 64px; background: radial-gradient(ellipse at 50% 35%, #46551f 0%, #3f4d1c 45%, #2c3814 100%), #3f4d1c; touch-action: pan-y; cursor: grab; }
+.hero-photo.globe-hero { position: relative; overflow: hidden; isolation: isolate; min-height: min(78vh, 660px); display: grid; place-items: center; padding-block: 72px 64px; background: radial-gradient(ellipse at 50% 35%, #245c7e 0%, #1b4965 45%, #11324a 100%), #1b4965; touch-action: pan-y; cursor: grab; }
 .globe-hero:active { cursor: grabbing; }
 .globe-hero .globe-bg { position: absolute; inset: 0; z-index: -2; }
-.globe-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 60% 45% at 50% 50%, rgba(22,32,8,.55), rgba(22,32,8,.2) 70%, rgba(22,32,8,0) 100%); }
+.globe-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 60% 45% at 50% 50%, rgba(8,24,36,.55), rgba(8,24,36,.2) 70%, rgba(8,24,36,0) 100%); }
 .globe-hero .inner { text-shadow: 0 2px 14px rgba(0,0,0,.6); }
 .globe-hero h1 { font-weight: 700; }
 .globe-hero .tagline { color: #fff; }
@@ -396,13 +396,13 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 }
 
 /* ───────── Depth: bayangan berlapis, tombol timbul, kartu miring, koin badge ─────────
-   Bayangan bernuansa zaitun, bukan abu-abu. Kemiringan kartu diatur components/TiltCards.tsx,
+   Bayangan bernuansa biru laut, bukan abu-abu. Kemiringan kartu diatur components/TiltCards.tsx,
    paralaks hero diatur components/GlobeHero.tsx. */
 :root {
-  --e1: 0 1px 2px rgba(40, 52, 14, .08), 0 2px 6px rgba(40, 52, 14, .06);
-  --e2: 0 1px 2px rgba(40, 52, 14, .06), 0 4px 10px rgba(40, 52, 14, .08), 0 14px 28px -8px rgba(40, 52, 14, .18);
-  --e3: 0 2px 4px rgba(40, 52, 14, .06), 0 10px 22px rgba(40, 52, 14, .10), 0 28px 56px -12px rgba(40, 52, 14, .28);
-  --hi: rgba(255, 255, 255, .7); --edge-aksen: #b98d24; --gloss: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 60%);
+  --e1: 0 1px 2px rgba(16, 44, 64, .08), 0 2px 6px rgba(16, 44, 64, .06);
+  --e2: 0 1px 2px rgba(16, 44, 64, .06), 0 4px 10px rgba(16, 44, 64, .08), 0 14px 28px -8px rgba(16, 44, 64, .18);
+  --e3: 0 2px 4px rgba(16, 44, 64, .06), 0 10px 22px rgba(16, 44, 64, .10), 0 28px 56px -12px rgba(16, 44, 64, .28);
+  --hi: rgba(255, 255, 255, .7); --edge-aksen: #c79800; --gloss: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 60%);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --e1: 0 1px 2px rgba(0, 0, 0, .4), 0 2px 6px rgba(0, 0, 0, .3);
@@ -425,18 +425,18 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 .globe-hero .inner { transform: translate3d(0, calc(var(--par, 0px) * -.35), 0); }
 .globe-hero h1 { text-shadow: 0 1px 0 rgba(0, 0, 0, .25), 0 4px 10px rgba(0, 0, 0, .45), 0 14px 34px rgba(0, 0, 0, .45); }
 .stack > .globe-hero { padding-bottom: 104px; }
-.stack > .globe-hero + .band { position: relative; z-index: 2; margin-top: -64px; border-radius: 28px 28px 0 0; box-shadow: 0 -12px 30px -10px rgba(20, 30, 8, .45); padding-top: 34px; }
+.stack > .globe-hero + .band { position: relative; z-index: 2; margin-top: -64px; border-radius: 28px 28px 0 0; box-shadow: 0 -12px 30px -10px rgba(8, 24, 36, .45); padding-top: 34px; }
 .stack > .globe-hero + .band::before { content: ""; position: absolute; top: 10px; left: 50%; width: 44px; height: 5px; margin-left: -22px; border-radius: 99px; background: color-mix(in srgb, var(--muted) 35%, transparent); }
 
 /* Tombol timbul: tepi bawah dan kilau atas, turun saat ditekan. */
 .btn { transition: transform .12s ease, box-shadow .12s ease; }
 .btn:where(:not(.ghost, .light, :disabled, .disabled)), .btn:where(:not(.ghost, .light, :disabled, .disabled)):hover { background-image: var(--gloss); }
-.btn:where(:not(.ghost, .light, :disabled, .disabled)) { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 3px 0 rgba(0, 0, 0, .28), 0 8px 16px -6px rgba(40, 52, 14, .45); }
+.btn:where(:not(.ghost, .light, :disabled, .disabled)) { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 3px 0 rgba(0, 0, 0, .28), 0 8px 16px -6px rgba(16, 44, 64, .45); }
 .btn.aksen:not(:disabled) { background-image: linear-gradient(180deg, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 60%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 4px 0 var(--edge-aksen), 0 12px 24px -6px rgba(0, 0, 0, .4); }
 .globe-hero .btn.aksen { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 4px 0 var(--edge-aksen), 0 16px 32px -6px rgba(0, 0, 0, .6); }
 .btn.ghost { background: var(--card); box-shadow: 0 2px 0 var(--border); }
 .btn:not(:disabled):not(.disabled):hover { transform: translateY(-1px); }
-.btn.small:not(.ghost):not(:disabled) { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 2px 0 rgba(0, 0, 0, .28), 0 5px 10px -4px rgba(40, 52, 14, .45); }
+.btn.small:not(.ghost):not(:disabled) { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 2px 0 rgba(0, 0, 0, .28), 0 5px 10px -4px rgba(16, 44, 64, .45); }
 .btn:not(:disabled):not(.disabled):active { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 0 0 transparent, 0 2px 4px rgba(0, 0, 0, .3); }
 
 /* Kartu miring: perspektif dari induknya, kilau cahaya mengikuti kursor. */
@@ -451,8 +451,8 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 .features { align-items: stretch; }
 .feature { background: var(--card); box-shadow: var(--e2); padding: 20px 16px; }
 .feature:hover { background: var(--card); }
-.feature-badge { background: linear-gradient(160deg, color-mix(in srgb, var(--sekunder) 28%, var(--card)), var(--soft) 70%); box-shadow: inset 0 1px 0 var(--hi), inset 0 -2px 0 rgba(40, 52, 14, .12), 0 6px 14px -4px rgba(60, 90, 0, .4); }
-.feature:first-child .feature-badge { background: linear-gradient(160deg, color-mix(in srgb, var(--primer) 70%, #fff), var(--primer) 70%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), inset 0 -2px 0 rgba(0, 0, 0, .25), 0 8px 16px -4px rgba(40, 52, 14, .6); }
+.feature-badge { background: linear-gradient(160deg, color-mix(in srgb, var(--sekunder) 28%, var(--card)), var(--soft) 70%); box-shadow: inset 0 1px 0 var(--hi), inset 0 -2px 0 rgba(16, 44, 64, .12), 0 6px 14px -4px rgba(27, 73, 101, .3); }
+.feature:first-child .feature-badge { background: linear-gradient(160deg, color-mix(in srgb, var(--primer) 70%, #fff), var(--primer) 70%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), inset 0 -2px 0 rgba(0, 0, 0, .25), 0 8px 16px -4px rgba(16, 44, 64, .6); }
 .feature-badge .ico { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .25)); }
 
 /* Daftar kegiatan jadi kartu-kartu terpisah. */
@@ -462,7 +462,7 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 .thumb { box-shadow: 0 4px 10px -4px rgba(0, 0, 0, .35); }
 
 /* Progres: alur cekung dengan isian mengkilap. */
-.bar { height: 8px; background: var(--soft); box-shadow: inset 0 1px 3px rgba(40, 52, 14, .25), inset 0 -1px 0 var(--hi); }
+.bar { height: 8px; background: var(--soft); box-shadow: inset 0 1px 3px rgba(16, 44, 64, .25), inset 0 -1px 0 var(--hi); }
 .bar > div { border-radius: inherit; background-image: linear-gradient(180deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, .12)); }
 
 /* Koin badge: emoji di atas koin emas timbul yang berputar sedikit saat disentuh. */
