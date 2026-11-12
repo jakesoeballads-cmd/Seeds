@@ -79,15 +79,22 @@ button { font: inherit; }
 .band .inner { max-width: 1000px; margin: 0 auto; text-align: center; }
 .band h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0 0 8px; }
 .band .welcome-text { max-width: 62ch; margin: 0 auto 28px; font-size: 1.08rem; }
-.features { display: grid; grid-template-columns: repeat(3, 1fr); align-items: start; gap: 28px 24px; }
-.feature { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text); text-decoration: none; padding: 12px; border-radius: 16px; }
-.feature:hover { background: color-mix(in srgb, var(--card) 55%, transparent); }
-.feature-badge { display: grid; place-items: center; width: 96px; height: 96px; border-radius: 28px; background: var(--card); color: var(--brand); box-shadow: var(--shadow); }
-.feature-badge .ico { width: 56px; height: 56px; }
-.feature:first-child .feature-badge { background: var(--primer); color: var(--on-action); }
-.feature h3 { font-weight: 600; font-size: 2rem; line-height: 1.15; margin: 8px 0 0; color: var(--text); }
-.feature p { margin: 0; font-size: 1.1rem; max-width: 26ch; }
-@media (max-width: 800px) { .features { grid-template-columns: 1fr; gap: 12px; } .feature-badge { width: 76px; height: 76px; border-radius: 22px; } .feature-badge .ico { width: 44px; height: 44px; } .feature h3 { font-size: 1.4rem; } .feature p { font-size: 1rem; } }
+/* Kartu aksi beranda: baris ringkas dengan foto kecil di kiri. Buat kegiatan paling menonjol: hijau daun yang sama di mode terang dan gelap supaya teks putih tetap terbaca. */
+.features { display: grid; grid-template-columns: 1fr; max-width: 680px; margin: 0 auto; gap: 12px; text-align: left; }
+.feature { display: flex; align-items: center; gap: 16px; color: var(--text); text-decoration: none; padding: 12px 16px 12px 12px; border-radius: 20px; }
+.feature-photo { width: 92px; height: 92px; border-radius: 16px; object-fit: cover; flex: none; background: var(--soft); }
+.feature-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.feature h3 { font-weight: 600; font-size: 1.25rem; line-height: 1.2; margin: 0; color: var(--text); }
+.feature p { margin: 0; font-size: .95rem; color: var(--muted); }
+.feature-go { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 999px; flex: none; background: var(--soft); color: var(--primer); transition: transform .3s ease; }
+.feature-go .ico { width: 22px; height: 22px; }
+.feature:hover .feature-go { transform: translateX(3px); }
+.feature:first-child { background: #3f8f5a; padding: 14px 18px 14px 14px; }
+.feature:first-child .feature-photo { width: 120px; height: 120px; }
+.feature:first-child h3 { color: #fff; font-size: 1.55rem; }
+.feature:first-child p { color: rgba(255, 255, 255, .94); }
+.feature:first-child .feature-go { background: var(--aksen); color: var(--on-aksen); }
+@media (max-width: 800px) { .feature-photo { width: 76px; height: 76px; } .feature:first-child .feature-photo { width: 96px; height: 96px; } .feature h3 { font-size: 1.1rem; } .feature:first-child h3 { font-size: 1.3rem; } .feature p { font-size: .88rem; } }
 .wallet-chip { font-size: .85rem; background: var(--soft); color: var(--action); border-radius: 999px; padding: 2px 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
@@ -303,12 +310,6 @@ iframe.google-map { display: block; border: 0; }
 .search-bar input { flex: 1 1 220px; width: auto; border-radius: 999px; padding: 10px 16px; }
 .search-bar .btn { flex: none; }
 
-/* Ikon fitur dinamis (kelas "play" dari PlayOnView) */
-.feature-badge { transition: transform .3s ease; }
-.feature:hover .feature-badge { transform: translateY(-4px); }
-.band.play .feature-badge .ico { animation: pulse 2.4s ease-in-out infinite; }
-.band.play .feature:nth-child(2) .feature-badge .ico { animation-delay: .3s; }
-.band.play .feature:nth-child(3) .feature-badge .ico { animation-delay: .6s; }
 .band.play .anim-draw { stroke-dasharray: 1; animation: draw 2.4s ease-in-out infinite; }
 .band.play .anim-grow { transform-box: fill-box; transform-origin: 50% 100%; animation: grow 2.4s ease-in-out .3s infinite; }
 .band.play .anim-pulse { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-in-out .6s infinite; }
@@ -319,8 +320,6 @@ iframe.google-map { display: block; border: 0; }
 @keyframes twinkle { 0%, 100% { transform: rotate(0) scale(1); } 30% { transform: rotate(72deg) scale(1.2); } 60% { transform: rotate(144deg) scale(1); } }
 @media (prefers-reduced-motion: reduce) {
   .band.play .anim-draw, .band.play .anim-grow, .band.play .anim-pulse, .band.play .anim-twinkle { animation: none; }
-  .feature:hover .feature-badge { transform: none; }
-  .band.play .feature-badge .ico { animation: none; }
 }
 
 /* Menu bawah melayang ala Threads (ponsel). Ada di dalam .topbar, jadi selektornya dibuat lebih spesifik. */
@@ -447,13 +446,7 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 .feature.lift::after, .program-list li.lift::after, .stat.lift::after { opacity: 1; }
 .stat.lift, .program-list li.lift { box-shadow: var(--e3); }
 
-/* Fitur beranda jadi kartu, ikonnya ubin timbul. */
-.features { align-items: stretch; }
-.feature { background: var(--card); box-shadow: var(--e2); padding: 20px 16px; }
-.feature:hover { background: var(--card); }
-.feature-badge { background: linear-gradient(160deg, color-mix(in srgb, var(--sekunder) 28%, var(--card)), var(--soft) 70%); box-shadow: inset 0 1px 0 var(--hi), inset 0 -2px 0 rgba(16, 44, 64, .12), 0 6px 14px -4px rgba(27, 73, 101, .3); }
-.feature:first-child .feature-badge { background: linear-gradient(160deg, color-mix(in srgb, var(--primer) 70%, #fff), var(--primer) 70%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), inset 0 -2px 0 rgba(0, 0, 0, .25), 0 8px 16px -4px rgba(16, 44, 64, .6); }
-.feature-badge .ico { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .25)); }
+.feature { background: var(--card); box-shadow: var(--e2); }
 
 /* Daftar kegiatan jadi kartu-kartu terpisah. */
 .program-list { display: grid; gap: 12px; }
@@ -485,98 +478,3 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
   .globe-hero .globe-bg, .globe-hero .inner { transform: none; }
   .feature, .program-list li, .stat, .coin, .btn { transition: none; transform: none !important; }
 }
-
-/* ===== Pilihan kartu aksi beranda (pratinjau) ===== */
-.feature-body { display: flex; flex-direction: column; align-items: inherit; gap: 6px; }
-.feature-go { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 999px; flex: none; }
-.feature-go .ico { width: 22px; height: 22px; }
-.features:not(.v-ikon) .feature { text-align: left; align-items: flex-start; overflow: hidden; }
-.features:not(.v-ikon) .feature h3 { margin: 0; }
-
-/* A. Foto penuh: foto jadi latar, teks putih di atas gradasi gelap. Buat kegiatan paling besar. */
-.v-foto { grid-template-columns: 1.25fr 1fr; grid-template-rows: auto auto; gap: 16px; }
-.v-foto .feature { position: relative; justify-content: flex-end; min-height: 230px; padding: 22px; color: #fff; background: #10242f; border-radius: 22px; }
-.v-foto .feature:first-child { grid-row: span 2; min-height: 476px; }
-.v-foto .feature-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
-.v-foto .feature:hover .feature-photo { transform: scale(1.05); }
-.v-foto .feature::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 30, 45, 0) 30%, rgba(10, 30, 45, .82) 100%); }
-.v-foto .feature > :not(.feature-photo) { position: relative; z-index: 1; }
-.v-foto .feature h3, .v-foto .feature p { color: #fff; text-shadow: 0 1px 8px rgba(0, 0, 0, .4); }
-.v-foto .feature p { max-width: 34ch; opacity: .92; }
-.v-foto .feature-badge { position: absolute !important; top: 18px; left: 18px; width: 48px; height: 48px; border-radius: 14px; background: rgba(255, 255, 255, .2) !important; color: #fff; backdrop-filter: blur(8px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35) !important; }
-.v-foto .feature-badge .ico { width: 28px; height: 28px; animation: none !important; }
-.v-foto .feature-go { position: absolute !important; top: 22px; right: 22px; background: rgba(255, 255, 255, .9); color: var(--primer); }
-.v-foto .feature:first-child .feature-go { background: var(--aksen); color: var(--on-aksen); width: 52px; height: 52px; }
-.v-foto .feature:first-child h3 { font-size: 2.4rem; }
-.v-foto .feature:not(:first-child) h3 { font-size: 1.5rem; }
-
-/* B. Blok warna: poster tegas, ikon besar samar di pojok. */
-.v-blok { grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; }
-.v-blok .feature { position: relative; justify-content: space-between; min-height: 300px; padding: 26px 24px; border-radius: 24px; color: #fff; background: var(--primer); }
-.v-blok .feature:nth-child(2) { background: var(--sekunder); }
-.v-blok .feature:nth-child(3) { background: var(--aksen); color: var(--on-aksen); }
-.v-blok .feature h3, .v-blok .feature p { color: inherit; }
-.v-blok .feature p { opacity: .9; }
-.v-blok .feature-badge { position: absolute !important; right: -26px; bottom: -30px; width: 180px; height: 180px; background: none !important; box-shadow: none !important; color: currentColor; opacity: .16; }
-.v-blok .feature-badge .ico { width: 180px; height: 180px; filter: none; }
-.v-blok .feature-body { order: -1; position: relative; }
-.v-blok .feature h3 { font-size: 2.1rem; font-weight: 700; letter-spacing: -.01em; }
-.v-blok .feature:first-child h3 { font-size: 2.8rem; }
-.v-blok .feature-go { position: relative; background: rgba(255, 255, 255, .22); color: inherit; }
-.v-blok .feature:nth-child(3) .feature-go { background: rgba(27, 42, 51, .12); }
-.v-blok .feature:first-child .feature-go { background: var(--aksen); color: var(--on-aksen); width: 52px; height: 52px; }
-
-/* C. Ilustrasi: gambar datar khas Benih di atas, teks di bawah. */
-.v-ilustrasi { --il-sun: #ffc300; --il-hill1: #3f8f5a; --il-hill2: #9fd3a8; --il-leaf: #3f8f5a; --il-ink: #1b4965; --il-flag: #e76f51; --il-soil: #7a5a3a; --il-skin: #e0a878; grid-template-columns: 1.3fr 1fr 1fr; gap: 16px; }
-.v-ilustrasi .feature { padding: 0; border-radius: 22px; position: relative; }
-.v-ilustrasi .feature-art { display: block; width: 100%; background: linear-gradient(180deg, #e3f3ff, #cae9ff); }
-.v-ilustrasi .feature-art svg { display: block; width: 100%; height: auto; }
-.v-ilustrasi .feature-body { padding: 16px 20px 22px; }
-.v-ilustrasi .feature h3 { font-size: 1.5rem; }
-.v-ilustrasi .feature:first-child { background: var(--primer); color: #fff; }
-.v-ilustrasi .feature:first-child h3, .v-ilustrasi .feature:first-child p { color: #fff; }
-.v-ilustrasi .feature:first-child h3 { font-size: 1.9rem; }
-.v-ilustrasi .feature-go { position: absolute; top: 14px; right: 14px; background: #fff; color: var(--primer); box-shadow: var(--e1); }
-.v-ilustrasi .feature:first-child .feature-go { background: var(--aksen); color: var(--on-aksen); }
-
-/* D. Foto ringkas: baris seperti aplikasi, foto bulat kecil di kiri. */
-.v-ringkas { grid-template-columns: 1fr; max-width: 680px; margin: 0 auto; gap: 12px; }
-.v-ringkas .feature { flex-direction: row; align-items: center !important; gap: 16px; padding: 12px 16px 12px 12px; border-radius: 20px; }
-.v-ringkas .feature-photo { width: 92px; height: 92px; border-radius: 16px; object-fit: cover; flex: none; }
-.v-ringkas .feature-body { flex: 1; gap: 2px; }
-.v-ringkas .feature h3 { font-size: 1.25rem; }
-.v-ringkas .feature p { font-size: .95rem; max-width: none; color: var(--muted); }
-.v-ringkas .feature-go { background: var(--soft); color: var(--primer); }
-.v-ringkas .feature:first-child { background: var(--primer); padding: 14px 18px 14px 14px; }
-.v-ringkas .feature:first-child .feature-photo { width: 120px; height: 120px; }
-.v-ringkas .feature:first-child h3 { color: #fff; font-size: 1.55rem; }
-.v-ringkas .feature:first-child p { color: rgba(255, 255, 255, .85); }
-.v-ringkas .feature:first-child .feature-go { background: var(--aksen); color: var(--on-aksen); }
-
-@media (max-width: 800px) {
-  .v-foto, .v-blok, .v-ilustrasi { grid-template-columns: 1fr; }
-  .v-foto .feature { min-height: 190px; padding: 18px; }
-  .v-foto .feature:first-child { grid-row: auto; min-height: 340px; }
-  .v-foto .feature:first-child h3 { font-size: 1.9rem; }
-  .v-foto .feature:not(:first-child) h3 { font-size: 1.3rem; }
-  .v-blok .feature { min-height: 0; gap: 18px; padding: 20px; }
-  .v-blok .feature:first-child { min-height: 230px; }
-  .v-blok .feature h3 { font-size: 1.5rem; }
-  .v-blok .feature:first-child h3 { font-size: 2rem; }
-  .v-blok .feature-badge { width: 130px; height: 130px; }
-  .v-blok .feature-badge .ico { width: 130px; height: 130px; }
-  .v-ilustrasi .feature:not(:first-child) { flex-direction: row; align-items: center !important; }
-  .v-ilustrasi .feature:not(:first-child) .feature-art { width: 100px; flex: none; align-self: stretch; }
-  .v-ilustrasi .feature:not(:first-child) .feature-art svg { height: 100%; object-fit: cover; }
-  .v-ilustrasi .feature:not(:first-child) .feature-body { padding: 14px 52px 14px 14px; }
-  .v-ilustrasi .feature:not(:first-child) h3 { font-size: 1.2rem; }
-  .v-ilustrasi .feature:not(:first-child) p { font-size: .92rem; }
-  .v-ilustrasi .feature:not(:first-child) .feature-go { top: 50%; transform: translateY(-50%); width: 34px; height: 34px; }
-  .v-ringkas .feature-photo { width: 76px; height: 76px; }
-  .v-ringkas .feature:first-child .feature-photo { width: 96px; height: 96px; }
-  .v-ringkas .feature h3 { font-size: 1.1rem; }
-  .v-ringkas .feature:first-child h3 { font-size: 1.3rem; }
-  .v-ringkas .feature p { font-size: .88rem; }
-}
-.features:not(.v-ikon) .feature-body { align-items: flex-start; text-align: left; }
-.v-foto .feature::before { background: linear-gradient(180deg, rgba(10, 30, 45, 0) 15%, rgba(10, 30, 45, .55) 55%, rgba(10, 30, 45, .9) 100%); }

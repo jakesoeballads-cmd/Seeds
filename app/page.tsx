@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Features, type FeatureVariant } from '@/components/Features';
+import { Features } from '@/components/Features';
 import { NearbyActivities } from '@/components/NearbyActivities';
 import { PlayOnView } from '@/components/PlayOnView';
 import { GlobeHero } from '@/components/GlobeHero';
@@ -11,8 +11,7 @@ import { getUser } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<{ kartu?: string }> }) {
-  const { kartu } = await searchParams;
+export default async function HomePage() {
   const { t, f } = await getI18n();
   const [{ user }, { activities, error }] = await Promise.all([getUser(), getUpcomingActivities()]);
 
@@ -33,7 +32,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <div className="inner">
           <h2>{t('home.nearTitle')}</h2>
           <p className="welcome-text">{t('home.nearText')}</p>
-          <Features t={t} variant={(kartu as FeatureVariant) ?? 'ikon'} />
+          <Features t={t} />
         </div>
       </PlayOnView>
       <h2 style={{ margin: '16px 0 0' }}>{t('home.programs')}</h2>
