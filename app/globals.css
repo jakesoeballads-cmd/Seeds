@@ -79,15 +79,22 @@ button { font: inherit; }
 .band .inner { max-width: 1000px; margin: 0 auto; text-align: center; }
 .band h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0 0 8px; }
 .band .welcome-text { max-width: 62ch; margin: 0 auto 28px; font-size: 1.08rem; }
-.features { display: grid; grid-template-columns: repeat(3, 1fr); align-items: start; gap: 28px 24px; }
-.feature { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text); text-decoration: none; padding: 12px; border-radius: 16px; }
-.feature:hover { background: color-mix(in srgb, var(--card) 55%, transparent); }
-.feature-badge { display: grid; place-items: center; width: 96px; height: 96px; border-radius: 28px; background: var(--card); color: var(--brand); box-shadow: var(--shadow); }
-.feature-badge .ico { width: 56px; height: 56px; }
-.feature:first-child .feature-badge { background: var(--primer); color: var(--on-action); }
-.feature h3 { font-weight: 600; font-size: 2rem; line-height: 1.15; margin: 8px 0 0; color: var(--text); }
-.feature p { margin: 0; font-size: 1.1rem; max-width: 26ch; }
-@media (max-width: 800px) { .features { grid-template-columns: 1fr; gap: 12px; } .feature-badge { width: 76px; height: 76px; border-radius: 22px; } .feature-badge .ico { width: 44px; height: 44px; } .feature h3 { font-size: 1.4rem; } .feature p { font-size: 1rem; } }
+/* Kartu aksi beranda: baris ringkas dengan foto kecil di kiri. Buat kegiatan paling menonjol: hijau daun yang sama di mode terang dan gelap supaya teks putih tetap terbaca. */
+.features { display: grid; grid-template-columns: 1fr; max-width: 680px; margin: 0 auto; gap: 12px; text-align: left; }
+.feature { display: flex; align-items: center; gap: 16px; color: var(--text); text-decoration: none; padding: 12px 16px 12px 12px; border-radius: 20px; }
+.feature-photo { width: 92px; height: 92px; border-radius: 16px; object-fit: cover; flex: none; background: var(--soft); }
+.feature-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.feature h3 { font-weight: 600; font-size: 1.25rem; line-height: 1.2; margin: 0; color: var(--text); }
+.feature p { margin: 0; font-size: .95rem; color: var(--muted); }
+.feature-go { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 999px; flex: none; background: var(--soft); color: var(--primer); transition: transform .3s ease; }
+.feature-go .ico { width: 22px; height: 22px; }
+.feature:hover .feature-go { transform: translateX(3px); }
+.feature:first-child { background: #3f8f5a; padding: 14px 18px 14px 14px; }
+.feature:first-child .feature-photo { width: 120px; height: 120px; }
+.feature:first-child h3 { color: #fff; font-size: 1.55rem; }
+.feature:first-child p { color: rgba(255, 255, 255, .94); }
+.feature:first-child .feature-go { background: var(--aksen); color: var(--on-aksen); }
+@media (max-width: 800px) { .feature-photo { width: 76px; height: 76px; } .feature:first-child .feature-photo { width: 96px; height: 96px; } .feature h3 { font-size: 1.1rem; } .feature:first-child h3 { font-size: 1.3rem; } .feature p { font-size: .88rem; } }
 .wallet-chip { font-size: .85rem; background: var(--soft); color: var(--action); border-radius: 999px; padding: 2px 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
@@ -303,12 +310,6 @@ iframe.google-map { display: block; border: 0; }
 .search-bar input { flex: 1 1 220px; width: auto; border-radius: 999px; padding: 10px 16px; }
 .search-bar .btn { flex: none; }
 
-/* Ikon fitur dinamis (kelas "play" dari PlayOnView) */
-.feature-badge { transition: transform .3s ease; }
-.feature:hover .feature-badge { transform: translateY(-4px); }
-.band.play .feature-badge .ico { animation: pulse 2.4s ease-in-out infinite; }
-.band.play .feature:nth-child(2) .feature-badge .ico { animation-delay: .3s; }
-.band.play .feature:nth-child(3) .feature-badge .ico { animation-delay: .6s; }
 .band.play .anim-draw { stroke-dasharray: 1; animation: draw 2.4s ease-in-out infinite; }
 .band.play .anim-grow { transform-box: fill-box; transform-origin: 50% 100%; animation: grow 2.4s ease-in-out .3s infinite; }
 .band.play .anim-pulse { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-in-out .6s infinite; }
@@ -319,8 +320,6 @@ iframe.google-map { display: block; border: 0; }
 @keyframes twinkle { 0%, 100% { transform: rotate(0) scale(1); } 30% { transform: rotate(72deg) scale(1.2); } 60% { transform: rotate(144deg) scale(1); } }
 @media (prefers-reduced-motion: reduce) {
   .band.play .anim-draw, .band.play .anim-grow, .band.play .anim-pulse, .band.play .anim-twinkle { animation: none; }
-  .feature:hover .feature-badge { transform: none; }
-  .band.play .feature-badge .ico { animation: none; }
 }
 
 /* Menu bawah melayang ala Threads (ponsel). Ada di dalam .topbar, jadi selektornya dibuat lebih spesifik. */
@@ -447,13 +446,7 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 .feature.lift::after, .program-list li.lift::after, .stat.lift::after { opacity: 1; }
 .stat.lift, .program-list li.lift { box-shadow: var(--e3); }
 
-/* Fitur beranda jadi kartu, ikonnya ubin timbul. */
-.features { align-items: stretch; }
-.feature { background: var(--card); box-shadow: var(--e2); padding: 20px 16px; }
-.feature:hover { background: var(--card); }
-.feature-badge { background: linear-gradient(160deg, color-mix(in srgb, var(--sekunder) 28%, var(--card)), var(--soft) 70%); box-shadow: inset 0 1px 0 var(--hi), inset 0 -2px 0 rgba(16, 44, 64, .12), 0 6px 14px -4px rgba(27, 73, 101, .3); }
-.feature:first-child .feature-badge { background: linear-gradient(160deg, color-mix(in srgb, var(--primer) 70%, #fff), var(--primer) 70%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), inset 0 -2px 0 rgba(0, 0, 0, .25), 0 8px 16px -4px rgba(16, 44, 64, .6); }
-.feature-badge .ico { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .25)); }
+.feature { background: var(--card); box-shadow: var(--e2); }
 
 /* Daftar kegiatan jadi kartu-kartu terpisah. */
 .program-list { display: grid; gap: 12px; }
