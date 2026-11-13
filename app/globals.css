@@ -67,6 +67,10 @@ button { font: inherit; }
 .btn.light { background: #fff; color: #454545; font-weight: 600; font-size: 1.3rem; padding: 12px 32px; border-radius: 8px; }
 .btn.aksen, a.btn.aksen { background: var(--aksen); color: var(--on-aksen); }
 .btn.aksen:hover { background: var(--aksen-hover); }
+/* Hijau daun dari logo Benih, sedikit lebih gelap agar teks putih terbaca. Dipakai tombol hero dan kartu Buat kegiatan. */
+:root { --hijau-logo: #6b8e3a; --hijau-logo-hover: #779c44; --hijau-logo-edge: #4c6a27; }
+.btn.hijau, a.btn.hijau { background: var(--hijau-logo); color: #fff; }
+.btn.hijau:hover { background: var(--hijau-logo-hover); }
 /* Tombol "berlian": bening seperti kaca, tepinya berkilau pelangi lembut. */
 :root { --diamond-fill: linear-gradient(135deg, rgba(232, 235, 238, .45), rgba(185, 190, 196, .14) 45%, rgba(218, 221, 225, .3)); --diamond-edge: conic-gradient(from 200deg, #ffffff, #c4d9e4, #dcd3e6, #ebe4c9, #c9e2d7, #c4d9e4, #ffffff); }
 .btn.diamond, a.btn.diamond { position: relative; color: #fff; background: linear-gradient(135deg, rgba(228, 231, 235, .3), rgba(175, 180, 186, .1) 50%, rgba(212, 216, 220, .2)); backdrop-filter: blur(10px) saturate(1.3); -webkit-backdrop-filter: blur(10px) saturate(1.3); text-shadow: 0 1px 6px rgba(0, 0, 0, .35); }
@@ -79,7 +83,7 @@ button { font: inherit; }
 .band .inner { max-width: 1000px; margin: 0 auto; text-align: center; }
 .band h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0 0 8px; }
 .band .welcome-text { max-width: 62ch; margin: 0 auto 28px; font-size: 1.08rem; }
-/* Kartu aksi beranda: baris ringkas dengan foto kecil di kiri. Buat kegiatan paling menonjol: hijau daun yang sama di mode terang dan gelap supaya teks putih tetap terbaca. */
+/* Kartu aksi beranda: baris ringkas dengan foto kecil di kiri. Buat kegiatan paling menonjol: hijau logo yang sama di mode terang dan gelap supaya teks putih tetap terbaca. */
 .features { display: grid; grid-template-columns: 1fr; max-width: 680px; margin: 0 auto; gap: 12px; text-align: left; }
 .feature { display: flex; align-items: center; gap: 16px; color: var(--text); text-decoration: none; padding: 12px 16px 12px 12px; border-radius: 20px; }
 .feature-photo { width: 92px; height: 92px; border-radius: 16px; object-fit: cover; flex: none; background: var(--soft); }
@@ -89,7 +93,7 @@ button { font: inherit; }
 .feature-go { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 999px; flex: none; background: var(--soft); color: var(--primer); transition: transform .3s ease; }
 .feature-go .ico { width: 22px; height: 22px; }
 .feature:hover .feature-go { transform: translateX(3px); }
-.feature:first-child { background: #3f8f5a; padding: 14px 18px 14px 14px; }
+.feature:first-child { background: var(--hijau-logo); padding: 14px 18px 14px 14px; }
 .feature:first-child .feature-photo { width: 120px; height: 120px; }
 .feature:first-child h3 { color: #fff; font-size: 1.55rem; }
 .feature:first-child p { color: rgba(255, 255, 255, .94); }
@@ -432,6 +436,8 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
 .btn:where(:not(.ghost, .light, :disabled, .disabled)), .btn:where(:not(.ghost, .light, :disabled, .disabled)):hover { background-image: var(--gloss); }
 .btn:where(:not(.ghost, .light, :disabled, .disabled)) { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 3px 0 rgba(0, 0, 0, .28), 0 8px 16px -6px rgba(16, 44, 64, .45); }
 .btn.aksen:not(:disabled) { background-image: linear-gradient(180deg, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 60%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 4px 0 var(--edge-aksen), 0 12px 24px -6px rgba(0, 0, 0, .4); }
+.btn.hijau:not(:disabled) { background-image: linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, 0) 60%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 4px 0 var(--hijau-logo-edge), 0 12px 24px -6px rgba(0, 0, 0, .4); }
+.globe-hero .btn.hijau { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 4px 0 var(--hijau-logo-edge), 0 16px 32px -6px rgba(0, 0, 0, .6); }
 .globe-hero .btn.aksen { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 4px 0 var(--edge-aksen), 0 16px 32px -6px rgba(0, 0, 0, .6); }
 .btn.ghost { background: var(--card); box-shadow: 0 2px 0 var(--border); }
 .btn:not(:disabled):not(.disabled):hover { transform: translateY(-1px); }
