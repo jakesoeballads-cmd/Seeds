@@ -26,6 +26,17 @@ Dibangun dengan **Next.js** (App Router), **Supabase** (akun, database, foto), d
 
 Tanpa variabel Supabase, aplikasi tetap berjalan dalam **mode contoh** (data contoh, login nonaktif), jadi tampilannya bisa dicek dulu.
 
+## Saklar fitur uang (mati secara bawaan)
+
+Beli Benih, donasi ke kegiatan, tenaga berbayar, dan tarik saldo **dimatikan** sampai ada pendapat hukum tertulis tentang izin uang elektronik/transfer dana (Bank Indonesia), izin Pengumpulan Uang dan Barang, dan perpajakan.
+
+- Aplikasi: `NEXT_PUBLIC_ENABLE_PAYMENTS` (lihat `lib/features.ts`). Kosong atau `false` = mati. Tombol, halaman beli, dan kolom target Benih disembunyikan; `/api/payments/checkout`, simulasi, dan alur PayPal diblokir di `middleware.ts`. `/dompet` hanya menampilkan saldo lama dan cara meminta pengembalian dana.
+- Database: jalankan [`supabase/tahap6-matikan-uang.sql`](supabase/tahap6-matikan-uang.sql) agar fungsi donasi, bayar, dan tarik saldo juga tertutup bagi pengguna yang memanggil database langsung.
+- Tetap berjalan: notifikasi Midtrans dan pemrosesan penarikan yang sudah diajukan di halaman Admin.
+- Menyalakan lagi: isi `NEXT_PUBLIC_ENABLE_PAYMENTS=true`, build ulang, jalankan [`supabase/aktifkan-uang.sql`](supabase/aktifkan-uang.sql), lalu perbarui Syarat Penggunaan dan Kebijakan Privasi di `lib/legal.ts`.
+
+Kebijakan Privasi ada di `/privasi` dan Syarat Penggunaan di `/syarat` (teks di `lib/legal.ts`, tiga bahasa).
+
 ## 1. Siapkan Supabase
 
 1. Buat proyek di [supabase.com](https://supabase.com) (region Singapore paling dekat).

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { mdiArrowRight } from '@mdi/js';
 import type { T } from '@/lib/i18n';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { Icon } from './Icon';
 
 // Urutan tampil: buat kegiatan (paling menonjol), ikuti kegiatan, kumpulkan & donasikan Benih.
@@ -9,7 +10,7 @@ const items = [
   { key: 'feat3', href: '/buat', img: 'buat' },
   { key: 'feat1', href: '/#cari', img: 'ikuti' },
   { key: 'feat2', href: '/dompet', img: 'donasi' },
-];
+].filter((i) => PAYMENTS_ENABLED || i.key !== 'feat2');
 
 export function Features({ t }: { t: T }) {
   return (

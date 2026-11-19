@@ -6,6 +6,7 @@ import { compressPhoto } from '@/lib/compress';
 import { CATEGORIES, DEFAULT_CENTER, editLocked, MAX_PHOTOS, MAX_PHOTO_INPUT_BYTES, ORG_TYPES, PHOTO_BUCKET } from '@/lib/constants';
 import { rpcErrorText } from '@/lib/rpc-errors';
 import { getBrowserClient } from '@/lib/supabase/client';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import type { Activity } from '@/lib/types';
 import { ActivityMap } from './ActivityMap';
 import { useI18n } from './I18nProvider';
@@ -103,7 +104,7 @@ export function CreateForm({ userId, defaultOrg, activity }: { userId: string; d
         start_time: start,
         end_time: end,
         max_participants: num('max_participants'),
-        target_benih: num('target_benih'),
+        target_benih: PAYMENTS_ENABLED ? num('target_benih') : (activity?.target_benih ?? null),
         photos: [...kept, ...urls],
       };
       const { data, error } = await (activity
@@ -189,10 +190,12 @@ export function CreateForm({ userId, defaultOrg, activity }: { userId: string; d
           {t('f.loc')}
           <input name="location_name" required maxLength={200} defaultValue={activity?.location_name} />
         </label>
-        <label>
-          {t('f.target')}
-          <input name="target_benih" type="number" min={1} defaultValue={activity?.target_benih ?? undefined} />
-        </label>
+        {PAYMENTS_ENABLED && (
+          <label>
+            {t('f.target')}
+            <input name="target_benih" type="number" min={1} defaultValue={activity?.target_benih ?? undefined} />
+          </label>
+        )}
         <label>
           {t('f.date')}
           <input name="date" type="date" required min={isoDay(activity ? 2 : 0)} defaultValue={activity?.date ?? isoDay(7)} />

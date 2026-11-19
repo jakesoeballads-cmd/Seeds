@@ -456,5 +456,20 @@
   "crop.help": "Drag the photo and set the zoom so it fits inside the circle.",
   "crop.zoom": "Zoom",
   "crop.use": "Use this photo",
-  "crop.cancel": "Cancel"
+  "crop.cancel": "Cancel",
+  "off.wallet": "Buying, donating and withdrawing Benih are paused while we make sure everything complies with regulations. You can still use Benih to create and join activities.",
+  "off.refund": "You still have a balance. For a refund, email us from your account address at",
+  "off.dashBalance": "You still have {n} Benih. See how to get a refund.",
+  "err.paymentsOff": "Payments are paused.",
+  "legal.privacy": "Privacy Policy",
+  "legal.terms": "Terms of Use",
+  "legal.agreeA": "I am 18 or older (or accompanied by a parent/guardian) and agree to the",
+  "legal.agreeB": "and the",
+  "legal.googleNote": "By signing up with Google you agree to the",
+  "report.activity": "Report this activity",
+  "report.member": "Report this user",
+  "report.subjectActivity": "Benih activity report {id}",
+  "report.subjectMember": "Benih user report {id}",
+  "report.body": "Tell us what is wrong (for example a fake, unsafe or fraudulent activity, or harassment):",
+  "legal.agreeEnd": ""
 }

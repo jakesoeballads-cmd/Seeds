@@ -57,7 +57,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </header>
           <main className="container">{children}</main>
           <TiltCards />
-          <footer className="footer">© {new Date().getFullYear()} PT Daya Reforestasi Indonesia</footer>
+          <footer className="footer">
+            © {new Date().getFullYear()} PT Daya Reforestasi Indonesia
+            <span className="footer-links">
+              <Link href="/privasi">{t('legal.privacy')}</Link>
+              <Link href="/syarat">{t('legal.terms')}</Link>
+            </span>
+          </footer>
         </I18nProvider>
       </body>
     </html>

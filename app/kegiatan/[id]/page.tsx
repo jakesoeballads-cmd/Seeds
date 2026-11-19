@@ -18,6 +18,7 @@ import { SITE_URL } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Participant } from '@/lib/types';
 import { getWallet } from '@/lib/wallet';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { mdiAccountGroup, mdiCalendar, mdiEmailOutline, mdiMapMarker, mdiPencil, mdiSprout } from '@mdi/js';
 import { Icon } from '@/components/Icon';
 
@@ -53,7 +54,7 @@ export default async function ActivityPage({ params }: Props) {
   }
 
   // Saldo hanya untuk kotak donasi (bukan pemilik kegiatan).
-  const wallet = user && !own ? await getWallet(supabase, user.id) : null;
+  const wallet = PAYMENTS_ENABLED && user && !own ? await getWallet(supabase, user.id) : null;
 
   const photos = photosOf(a);
   const shareUrl = `${SITE_URL}/kegiatan/${a.id}`;
@@ -84,13 +85,15 @@ export default async function ActivityPage({ params }: Props) {
             })}
           </p>
           <p style={{ maxWidth: '70ch', whiteSpace: 'pre-line' }}>{a.description}</p>
-          <div>
-            <ProgressBar a={a} />
-            <p className="muted" style={{ margin: 0 }}>
-              <Icon path={mdiSprout} /> <strong>{f.num(a.collected_benih)}</strong>
-              {a.target_benih ? ' / ' + f.num(a.target_benih) : ''} Benih
-            </p>
-          </div>
+          {PAYMENTS_ENABLED && (
+            <div>
+              <ProgressBar a={a} />
+              <p className="muted" style={{ margin: 0 }}>
+                <Icon path={mdiSprout} /> <strong>{f.num(a.collected_benih)}</strong>
+                {a.target_benih ? ' / ' + f.num(a.target_benih) : ''} Benih
+              </p>
+            </div>
+          )}
         </div>
         <section className="card stack tight loc-card">
           <h2>{t('loc.title')}</h2>
@@ -161,7 +164,7 @@ export default async function ActivityPage({ params }: Props) {
             </Link>
           </section>
         )}
-        {!own && (
+        {PAYMENTS_ENABLED && !own && (
           <section className="card stack tight">
             <h2>{t('support.title')}</h2>
             {wallet ? (
@@ -177,6 +180,14 @@ export default async function ActivityPage({ params }: Props) {
           </section>
         )}
         <ShareBox title={a.title} url={shareUrl} />
+        {!own && (
+          <a
+            className="report-link"
+            href={`mailto:contribute@dareindo.com?subject=${encodeURIComponent(t('report.subjectActivity', { id: a.id }))}&body=${encodeURIComponent(shareUrl + '\n\n' + t('report.body'))}`}
+          >
+            {t('report.activity')}
+          </a>
+        )}
         {admin && (
           <section className="card stack tight">
             <h2>{t('admin.adminBox')}</h2>

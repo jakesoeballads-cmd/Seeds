@@ -478,3 +478,10 @@ fieldset.role-options legend { padding: 0; margin-bottom: 4px; }
   .globe-hero .globe-bg, .globe-hero .inner { transform: none; }
   .feature, .program-list li, .stat, .coin, .btn { transition: none; transform: none !important; }
 }
+
+/* Halaman Kebijakan Privasi dan Syarat Penggunaan */
+.legal ul { padding-left: 1.25rem; display: grid; gap: .4rem; margin: 0; }
+.legal h2 { margin-top: .6rem; }
+.footer-links { display: inline-flex; gap: 12px; margin-left: 12px; }
+.footer-links a { color: inherit; }
+.report-link { font-size: .85rem; color: var(--muted); }

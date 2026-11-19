@@ -11,6 +11,7 @@ import { snapJsUrl } from '@/lib/payments/midtrans';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import { getWallet } from '@/lib/wallet';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { mdiArrowLeft } from '@mdi/js';
 import { Icon } from '@/components/Icon';
 
@@ -57,6 +58,34 @@ export default async function WalletPage() {
       ? new Intl.NumberFormat(locale, { style: 'currency', currency: x.currency }).format(Number(x.provider_amount))
       : f.rp(x.gross_amount);
   const via = (x: Trx) => (x.currency !== 'IDR' ? 'PayPal' : x.provider === 'simulation' ? t('method.sim') : 'Midtrans');
+
+  // Fitur uang dimatikan (lib/features.ts): tidak ada beli atau tarik saldo. Saldo lama tetap
+  // ditampilkan, dan pemiliknya diarahkan ke email untuk pengembalian dana.
+  if (!PAYMENTS_ENABLED) {
+    return (
+      <div className="stack narrow">
+        <section className="card stack tight">
+          <h1>{t('wallet.title')}</h1>
+          <p className="alert info">{t('off.wallet')}</p>
+          {wallet.balance > 0 && (
+            <>
+              <p style={{ margin: 0 }}>
+                <Rich text={t('wallet.balance', { v: `🌱 ${f.num(wallet.balance)} Benih` })} />{' '}
+                <span className="muted">({f.rp(wallet.balance * PRICE)})</span>
+              </p>
+              <p>
+                <Rich text={t('off.refund')} />{' '}
+                <a href="mailto:contribute@dareindo.com?subject=Pengembalian%20saldo%20Benih">contribute@dareindo.com</a>
+              </p>
+            </>
+          )}
+          <Link className="btn ghost" href="/dashboard">
+            <Icon path={mdiArrowLeft} /> {t('nav.dashboard')}
+          </Link>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="stack narrow">

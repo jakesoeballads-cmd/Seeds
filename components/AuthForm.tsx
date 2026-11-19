@@ -95,6 +95,13 @@ export function AuthForm({ mode, next }: { mode: 'login' | 'register'; next?: st
               <GoogleIcon /> {t(isLogin ? 'auth.loginWith' : 'auth.regWith', { p: 'Google' })}
             </button>
           </div>
+          {!isLogin && (
+            <p className="muted" style={{ margin: 0, fontSize: '.85rem' }}>
+              {t('legal.googleNote')} <Link href="/syarat" target="_blank">{t('legal.terms')}</Link> {t('legal.agreeB')}{' '}
+              <Link href="/privasi" target="_blank">{t('legal.privacy')}</Link>
+              {t('legal.agreeEnd')}.
+            </p>
+          )}
           <div className="divider">{t('auth.orEmail')}</div>
         </>
       )}
@@ -119,6 +126,16 @@ export function AuthForm({ mode, next }: { mode: 'login' | 'register'; next?: st
           <p className="forgot">
             <Link href="/lupa-password">{t('pw.forgotLink')}</Link>
           </p>
+        )}
+        {!isLogin && (
+          <label className="check">
+            <input type="checkbox" name="consent" required />{' '}
+            <span>
+              {t('legal.agreeA')} <Link href="/syarat" target="_blank">{t('legal.terms')}</Link> {t('legal.agreeB')}{' '}
+              <Link href="/privasi" target="_blank">{t('legal.privacy')}</Link>
+              {t('legal.agreeEnd')}.
+            </span>
+          </label>
         )}
         {error && <p className="alert error" role="alert">{error}</p>}
         {info && <p className="alert success" role="status">{info}</p>}
