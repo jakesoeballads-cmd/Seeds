@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { T } from '@/lib/i18n';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import type { Activity, ChatMessage, Participant } from '@/lib/types';
 import { AgreeForm } from './AgreeForm';
 import { Rich } from './ActivityBits';
@@ -44,7 +45,7 @@ export function ActivityChat({ t, num, activity, join, me, otherId, otherName, o
       <p className="alert info">
         <Rich text={note} />
       </p>
-      {organizer && join.status !== 'paid' && <AgreeForm participantId={join.id} name={otherName} current={join.agreed_benih} />}
+      {PAYMENTS_ENABLED && organizer && join.status !== 'paid' && <AgreeForm participantId={join.id} name={otherName} current={join.agreed_benih} />}
       <Chat
         me={me}
         target={{ kind: 'activity', activityId: activity.id, participantId: join.user_id }}

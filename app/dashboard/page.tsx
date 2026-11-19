@@ -9,6 +9,7 @@ import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getUser } from '@/lib/supabase/server';
 import type { Activity, JoinWithActivity } from '@/lib/types';
 import { getWallet } from '@/lib/wallet';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { mdiHandshake, mdiHeart, mdiSprout, mdiTree } from '@mdi/js';
 import { Icon } from '@/components/Icon';
 
@@ -66,7 +67,14 @@ export default async function DashboardPage() {
         <Link className="btn small ghost" href={`/member/${user.id}`}>{t('profile.viewPublic')}</Link>
         <Link className="btn small ghost" href="/profil">{t('member.edit')}</Link>
       </div>
+      {!PAYMENTS_ENABLED && balance > 0 && (
+        <p className="alert info">
+          <Link href="/dompet">{t('off.dashBalance', { n: f.num(balance) })}</Link>
+        </p>
+      )}
       <div className="stats">
+        {PAYMENTS_ENABLED && (
+        <>
         <div className="stat">
           <span className="stat-label">{t('dash.owned')}</span>
           <span className="stat-value"><Icon path={mdiSprout} /> {f.num(balance)}</span>
@@ -77,6 +85,8 @@ export default async function DashboardPage() {
           <span className="stat-value"><Icon path={mdiHeart} /> {f.num(donated)}</span>
           <BadgeTile t={t} b={db} unit="Benih" num={f.num} />
         </div>
+        </>
+        )}
         <div className="stat">
           <span className="stat-label">{t('dash.points')}</span>
           <span className="stat-value"><Icon path={mdiHandshake} /> {f.num(points)}</span>
@@ -84,9 +94,9 @@ export default async function DashboardPage() {
           <span className="muted">{t('dash.volEvents', { n: attended, p: POINTS })}</span>
         </div>
         <div className="stat">
-          <span className="stat-label">{t('dash.received')}</span>
-          <span className="stat-value"><Icon path={mdiTree} /> {f.num(received)}</span>
-          <span className="muted">{t('dash.fromN', { n: mine.length })}</span>
+          <span className="stat-label">{PAYMENTS_ENABLED ? t('dash.received') : t('dash.mine')}</span>
+          <span className="stat-value"><Icon path={mdiTree} /> {f.num(PAYMENTS_ENABLED ? received : mine.length)}</span>
+          {PAYMENTS_ENABLED && <span className="muted">{t('dash.fromN', { n: mine.length })}</span>}
           <Link className="btn small" href="/buat">{t('home.ctaCreate')}</Link>
         </div>
       </div>
@@ -159,7 +169,7 @@ export default async function DashboardPage() {
                   <th>{t('th.activity')}</th>
                   <th>{t('th.date')}</th>
                   <th>{t('th.participants')}</th>
-                  <th>{t('th.collected')}</th>
+                  {PAYMENTS_ENABLED && <th>{t('th.collected')}</th>}
                 </tr>
               </thead>
               <tbody>
@@ -172,12 +182,14 @@ export default async function DashboardPage() {
                     </td>
                     <td>{when(t, f, a)}</td>
                     <td>{f.num(a.participant_count)}</td>
-                    <td>
-                      <strong>{f.num(a.collected_benih)}</strong>
-                      {a.target_benih ? ' / ' + f.num(a.target_benih) : ''}
-                      <br />
-                      <span className="muted">{f.rp(a.collected_benih * PRICE)}</span>
-                    </td>
+                    {PAYMENTS_ENABLED && (
+                      <td>
+                        <strong>{f.num(a.collected_benih)}</strong>
+                        {a.target_benih ? ' / ' + f.num(a.target_benih) : ''}
+                        <br />
+                        <span className="muted">{f.rp(a.collected_benih * PRICE)}</span>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -186,6 +198,7 @@ export default async function DashboardPage() {
         )}
       </section>
 
+      {PAYMENTS_ENABLED && (
       <section className="card stack tight">
         <h2>{t('dash.recentDonations')}</h2>
         {donations.length === 0 ? (
@@ -214,11 +227,15 @@ export default async function DashboardPage() {
         )}
       </section>
 
+      )}
+
       <div className="badge-columns">
-        <section className="card stack tight">
-          <h2>{t('dash.donorBadges')}</h2>
-          <BadgeList t={t} tiers={DONOR_BADGES} total={donated} req={(x) => t('badge.donorReq', { n: f.num(x.min) })} />
-        </section>
+        {PAYMENTS_ENABLED && (
+          <section className="card stack tight">
+            <h2>{t('dash.donorBadges')}</h2>
+            <BadgeList t={t} tiers={DONOR_BADGES} total={donated} req={(x) => t('badge.donorReq', { n: f.num(x.min) })} />
+          </section>
+        )}
         <section className="card stack tight">
           <h2>{t('dash.volBadges')}</h2>
           <BadgeList t={t} tiers={VOLUNTEER_BADGES} total={points} req={(x) => t('badge.volReq', { pts: f.num(x.min), n: x.min / POINTS })} />

@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from '@/lib/supabase/config';
 import { RECOVERY_COOKIE } from '@/lib/constants';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 
 /**
  * Bila Redirect URL di Supabase belum mengizinkan /auth/callback, tautan email jatuh ke Site URL
@@ -31,6 +32,21 @@ function strayAuthRedirect(request: NextRequest) {
 
 /** Memperbarui sesi login Supabase di setiap permintaan. */
 export async function middleware(request: NextRequest) {
+  // Fitur uang dimatikan: pembelian, simulasi, dan alur PayPal tidak bisa dibuka.
+  // /dompet tetap terbuka untuk menampilkan saldo lama; notifikasi Midtrans tetap diterima
+  // agar transaksi yang sempat dibayar tetap tercatat.
+  if (!PAYMENTS_ENABLED) {
+    const p = request.nextUrl.pathname;
+    if (p.startsWith('/api/payments/checkout') || p.startsWith('/api/payments/simulate')) {
+      return NextResponse.json({ error: 'err.paymentsOff' }, { status: 404 });
+    }
+    if (p.startsWith('/dompet/simulasi') || p.startsWith('/dompet/paypal')) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/dompet';
+      url.search = '';
+      return NextResponse.redirect(url);
+    }
+  }
   let response = NextResponse.next({ request });
   if (!isSupabaseConfigured) return response;
   const stray = strayAuthRedirect(request);

@@ -4,6 +4,7 @@ import { getI18n } from '@/lib/i18n-server';
 import { isAdmin } from '@/lib/admin';
 import { getUnreadCount } from '@/lib/social';
 import { getUser } from '@/lib/supabase/server';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { BottomNav } from './BottomNav';
 import { Icon } from './Icon';
 import { UnreadBadge } from './UnreadBadge';
@@ -17,9 +18,11 @@ export async function Nav() {
       <>
       <BottomNav userId={null} unread={0} />
       <nav className="main-nav">
-        <Link className="pill" href="/masuk">
-          <Icon path={mdiHandHeart} className="leaf" /> {t('nav.donate')}
-        </Link>
+        {PAYMENTS_ENABLED && (
+          <Link className="pill" href="/masuk">
+            <Icon path={mdiHandHeart} className="leaf" /> {t('nav.donate')}
+          </Link>
+        )}
         <Link className="navlink" href="/masuk">{t('nav.login')}</Link>
       </nav>
       </>

@@ -7,6 +7,7 @@ import { POINTS, VOLUNTEER_BADGES, badgeInfo } from '@/lib/constants';
 import { getI18n } from '@/lib/i18n-server';
 import { getMember } from '@/lib/social';
 import { getUser } from '@/lib/supabase/server';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { mdiEmailOutline, mdiHandshake, mdiLock, mdiMapMarker, mdiSprout, mdiTree } from '@mdi/js';
 import { Icon } from '@/components/Icon';
 
@@ -67,6 +68,14 @@ export default async function MemberPage({ params }: Props) {
               </Link>
             </div>
           )}
+          {!isOwner && (
+            <a
+              className="report-link"
+              href={`mailto:contribute@dareindo.com?subject=${encodeURIComponent(t('report.subjectMember', { id: m.id }))}&body=${encodeURIComponent(t('report.body'))}`}
+            >
+              {t('report.member')}
+            </a>
+          )}
           {isOwner && (
             <>
               <div className="row">
@@ -120,8 +129,13 @@ export default async function MemberPage({ params }: Props) {
                       {when(t, f, a)} · {a.location_name}
                     </span>
                     <span className="muted">
-                      {t('by', { name: a.org_name })} · <span className="org-type">{t('org.' + a.org_type)}</span> · <Icon path={mdiSprout} /> {f.num(a.collected_benih)}
-                      {a.target_benih ? ' / ' + f.num(a.target_benih) : ''} Benih
+                      {t('by', { name: a.org_name })} · <span className="org-type">{t('org.' + a.org_type)}</span>
+                      {PAYMENTS_ENABLED && (
+                        <>
+                          {' · '}<Icon path={mdiSprout} /> {f.num(a.collected_benih)}
+                          {a.target_benih ? ' / ' + f.num(a.target_benih) : ''} Benih
+                        </>
+                      )}
                     </span>
                     <ProgressBar a={a} />
                   </li>

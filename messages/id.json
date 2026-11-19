@@ -435,5 +435,20 @@
   "crop.help": "Geser foto dan atur zoom agar pas di dalam lingkaran.",
   "crop.zoom": "Zoom",
   "crop.use": "Pakai foto ini",
-  "crop.cancel": "Batal"
+  "crop.cancel": "Batal",
+  "off.wallet": "Fitur beli, donasi, dan tarik Benih sedang dihentikan sementara sambil kami memastikan semuanya sesuai peraturan. Benih tetap bisa dipakai untuk membuat dan mengikuti kegiatan.",
+  "off.refund": "Anda masih memiliki saldo. Untuk pengembalian dana, kirim email dari alamat akun Anda ke",
+  "off.dashBalance": "Anda masih memiliki {n} Benih. Lihat cara pengembalian dana.",
+  "err.paymentsOff": "Fitur pembayaran sedang dihentikan sementara.",
+  "legal.privacy": "Kebijakan Privasi",
+  "legal.terms": "Syarat Penggunaan",
+  "legal.agreeA": "Saya berusia 18 tahun ke atas (atau didampingi orang tua/wali) dan menyetujui",
+  "legal.agreeB": "serta",
+  "legal.googleNote": "Dengan mendaftar lewat Google, Anda menyetujui",
+  "report.activity": "Laporkan kegiatan ini",
+  "report.member": "Laporkan pengguna ini",
+  "report.subjectActivity": "Laporan kegiatan Benih {id}",
+  "report.subjectMember": "Laporan pengguna Benih {id}",
+  "report.body": "Ceritakan apa masalahnya (misalnya kegiatan palsu, tidak aman, penipuan, atau pelecehan):",
+  "legal.agreeEnd": ""
 }

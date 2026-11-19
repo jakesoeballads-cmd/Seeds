@@ -6,6 +6,7 @@ import { DEFAULT_CENTER, RADII, distanceKm } from '@/lib/constants';
 import { geocode } from '@/lib/maps';
 import { photosOf } from '@/lib/scene';
 import type { Activity } from '@/lib/types';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { ActivityMap } from './ActivityMap';
 import { ProgressBar, collectedText, when } from './ActivityBits';
 import { useI18n } from './I18nProvider';
@@ -158,7 +159,7 @@ export function NearbyActivities({ activities, userId }: { activities: Activity[
                       {a.location_name} · {f.km(a.km)} km · {when(t, f, a)}
                     </p>
                     <ProgressBar a={a} />
-                    <p className="muted"><Icon path={mdiSprout} /> {collectedText(t, f, a)}</p>
+                    {PAYMENTS_ENABLED && <p className="muted"><Icon path={mdiSprout} /> {collectedText(t, f, a)}</p>}
                     <div className="row" style={{ marginTop: 6 }}>
                       <Link className="btn small" href={`/kegiatan/${a.id}`}>
                         {own ? t('btn.manage') : t('btn.viewJoin')}

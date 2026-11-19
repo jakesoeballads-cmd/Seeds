@@ -1,10 +1,11 @@
 import type { T } from '@/lib/i18n';
 import type { Activity } from '@/lib/types';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 
 type F = { num: (n: number) => string; date: (d: string) => string; longDate: (d: string) => string; hm: (s?: string | null) => string };
 
 export function ProgressBar({ a }: { a: Pick<Activity, 'collected_benih' | 'target_benih'> }) {
-  if (!a.target_benih) return null;
+  if (!PAYMENTS_ENABLED || !a.target_benih) return null;
   const w = Math.min(100, (a.collected_benih / a.target_benih) * 100);
   return (
     <div className="bar">

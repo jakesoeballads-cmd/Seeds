@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { POINTS } from '@/lib/constants';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { getBrowserClient } from '@/lib/supabase/client';
 import type { Participant, Role } from '@/lib/types';
 import { Rich } from './ActivityBits';
@@ -22,7 +23,7 @@ export function JoinBox({ activityId, join, full }: { activityId: string; join: 
     e.preventDefault();
     const supabase = getBrowserClient();
     if (!supabase) return setError(t('err.needSupabase'));
-    const role = new FormData(e.currentTarget).get('role') as Role;
+    const role = (PAYMENTS_ENABLED ? new FormData(e.currentTarget).get('role') : 'volunteer') as Role;
     setBusy(true);
     setError(null);
     const { error } = await supabase
@@ -89,12 +90,14 @@ export function JoinBox({ activityId, join, full }: { activityId: string; join: 
           <br />
           <span className="muted">{t('role.volDesc')}</span>
         </label>
-        <label className="role-option">
-          <input type="radio" name="role" value="paid" />
-          <strong>{t('role.paid')}</strong>
-          <br />
-          <span className="muted">{t('role.paidDesc')}</span>
-        </label>
+        {PAYMENTS_ENABLED && (
+          <label className="role-option">
+            <input type="radio" name="role" value="paid" />
+            <strong>{t('role.paid')}</strong>
+            <br />
+            <span className="muted">{t('role.paidDesc')}</span>
+          </label>
+        )}
       </div>
       {error && <p className="alert error" role="alert">{error}</p>}
       <button className="btn" type="submit" disabled={busy}>

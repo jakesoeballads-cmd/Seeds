@@ -453,5 +453,20 @@
   "crop.help": "Verschiebe das Foto und stelle den Zoom ein, damit es in den Kreis passt.",
   "crop.zoom": "Zoom",
   "crop.use": "Dieses Foto verwenden",
-  "crop.cancel": "Abbrechen"
+  "crop.cancel": "Abbrechen",
+  "off.wallet": "Kaufen, Spenden und Auszahlen von Benih sind vorübergehend ausgesetzt, während wir die Einhaltung aller Vorschriften sicherstellen. Aktivitäten erstellen und daran teilnehmen geht weiterhin.",
+  "off.refund": "Sie haben noch ein Guthaben. Für eine Rückerstattung schreiben Sie uns von Ihrer Konto-E-Mail an",
+  "off.dashBalance": "Sie haben noch {n} Benih. So erhalten Sie eine Rückerstattung.",
+  "err.paymentsOff": "Zahlungen sind ausgesetzt.",
+  "legal.privacy": "Datenschutzerklärung",
+  "legal.terms": "Nutzungsbedingungen",
+  "legal.agreeA": "Ich bin mindestens 18 Jahre alt (oder werde von einem Elternteil/Vormund begleitet) und stimme den",
+  "legal.agreeB": "sowie der",
+  "legal.googleNote": "Mit der Registrierung über Google stimmen Sie den",
+  "report.activity": "Diese Aktivität melden",
+  "report.member": "Diese Person melden",
+  "report.subjectActivity": "Meldung Benih-Aktivität {id}",
+  "report.subjectMember": "Meldung Benih-Nutzer {id}",
+  "report.body": "Beschreiben Sie das Problem (z. B. gefälschte, unsichere oder betrügerische Aktivität, Belästigung):",
+  "legal.agreeEnd": " zu"
 }

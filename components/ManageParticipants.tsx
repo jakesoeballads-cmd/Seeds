@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { POINTS } from '@/lib/constants';
+import { PAYMENTS_ENABLED } from '@/lib/features';
 import { rpcErrorText } from '@/lib/rpc-errors';
 import { getBrowserClient } from '@/lib/supabase/client';
 import type { Participant } from '@/lib/types';
@@ -96,12 +97,12 @@ export function ManageParticipants({ participants }: { participants: Participant
                           <Icon path={mdiMessageTextOutline} /> {t('chat.open')}
                         </Link>
                       )}
-                      {p.role === 'paid' && p.status === 'agreed' && p.agreed_benih ? (
+                      {PAYMENTS_ENABLED && p.role === 'paid' && p.status === 'agreed' && p.agreed_benih ? (
                         <button className="btn small" type="button" disabled={busyId === p.id} onClick={() => pay(p)}>
                           {t('btn.payN', { n: f.num(p.agreed_benih) })}
                         </button>
                       ) : null}
-                      {p.role === 'paid' && p.status !== 'paid' && (
+                      {PAYMENTS_ENABLED && p.role === 'paid' && p.status !== 'paid' && (
                         <form
                           className="row"
                           style={{ flexDirection: 'row', gap: 6 }}
